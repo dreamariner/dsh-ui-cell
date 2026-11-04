@@ -11,6 +11,16 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { buildStyleModule, cssClassNames, loadRegistry, prefixCss, srcDir } from '../cli/add.ts'
 
+/** 官方 token 清单（pinned 快照，由 scripts/gen-tokens.mjs 从 DSH checkout 生成）。 */
+const tokenInventory = JSON.parse(
+  readFileSync(join(import.meta.dirname, '..', 'tokens', 'official-tokens.json'), 'utf8'),
+) as {
+  tokens: Record<string, string[]>
+  hostContextVariables: string[]
+}
+const KNOWN_TOKENS = new Set(Object.values(tokenInventory.tokens).flat())
+const HOST_CONTEXT = new Set(tokenInventory.hostContextVariables)
+
 const registry = loadRegistry()
 const src = srcDir()
 
@@ -54,6 +64,44 @@ describe('token 纪律（DSH 官方规范）', () => {
       }
     }
     expect(offenders, `CSS 引用了不该引用的 token / 字面颜色：\n${offenders.join('\n')}`).toEqual([])
+  })
+})
+
+describe('token 存在性（拼错 = 样式静默失效）', () => {
+  it('组件引用的每个 var(--x) 都是官方清单里的 token（或宿主上下文变量）', () => {
+    // CSS 规范：var() 解析失败 → 整条声明被静默丢弃 → 样式不生效且**无任何报错**。
+    // 格式类护栏（禁 static/specific/字面色）看不出「token 名拼错」或「官方已删除」，
+    // 故这里按 pinned 的官方清单做存在性校验。
+    const known = new Set([...KNOWN_TOKENS, ...HOST_CONTEXT])
+    const offenders: string[] = []
+    for (const item of registry.items) {
+      if (item.status !== 'ready') continue
+      for (const file of item.files) {
+        if (!file.endsWith('.css')) continue
+        const text = readFileSync(join(src, file), 'utf8')
+        for (const m of text.matchAll(/var\((--[a-z0-9-]+)/g)) {
+          const token = m[1]!
+          // 组件自有变量（--dsh-segment-count 等，由组件自己设置）不在官方清单里
+          if (known.has(token)) continue
+          if (/^--dsh-segment-/.test(token)) continue
+          offenders.push(`${file}: ${token}`)
+        }
+      }
+    }
+    expect(offenders, `引用了清单里不存在的 token（会静默失效）：\n${offenders.join('\n')}`).toEqual([])
+  })
+
+  it('组件自有变量（--dsh-segment-*）在源码里真的被设置（否则 var() 解析失败）', () => {
+    // 这类变量由组件在 JS 里 inline style 设置（SegmentedControl 的 --dsh-segment-count/index），
+    // CSS 只消费。它们必须真被设置——否则同样是静默失效。
+    const tsx = readFileSync(join(src, 'segmented-control.tsx'), 'utf8')
+    expect(tsx).toContain("'--dsh-segment-count'")
+    expect(tsx).toContain("'--dsh-segment-index'")
+  })
+
+  it('官方清单本身非空且覆盖 alias 层（清单空了校验就形同虚设）', () => {
+    expect(tokenInventory.tokens.alias.length).toBeGreaterThan(50)
+    expect(KNOWN_TOKENS.size).toBeGreaterThan(80)
   })
 })
 

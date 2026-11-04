@@ -21,6 +21,8 @@ DSH 官方插件开发规范（`packages/preset/agent-preset/skills/cordis-plugi
 ## 红线（破坏即返工）
 
 1. **样式只引用 `--dsw-alias-*` / `--dsw-radius-*` / `--dsw-elevation-*` / `--dsw-focus-ring-*`**：禁 `--dsw-static-*`（调色板原子色，官方换肤会重映射）、禁 `--dsw-specific-*`（场景级）、禁字面颜色（hex / rgb / 具名色）。官方规范原话是 alias 层是唯一稳定语义面。
+
+   ⚠ **「类别对」不等于「token 对」**：token 名拼错、或官方在某版本删了它，CSS 规范是**整条声明被静默丢弃**（var() 解析失败），样式不生效且**无任何报错**。故除了类别护栏，还有一条**存在性校验**：`tokens/official-tokens.json`（pinned 快照，官方 ui-theme 的 token 定义）里必须能查到每个 `var(--x)`。清单外的 token 只有两类合法例外：宿主上下文变量（`--dsh-frame-*`，宿主 AppFrame 注入）与组件自有变量（`--dsh-segment-*`，组件自己 inline 设置）。DSH 升级时跑 `scripts/gen-tokens.mjs` 重生成清单。
 2. **类名一律带插件前缀**：复制进插件后必须重命名（`.button` → `duk-button` 之类），否则与插件自身样式撞车。`dsh-ui-kit add` 负责这件事，不要手抄组件绕过。
 3. **行为保真清单**（官方点名要保的用户依赖行为，不得简化）：
    - Modal：焦点陷阱（Tab 环绕）、Escape 关闭、关闭后焦点归还触发控件、`data-modal-autofocus` 初始焦点
@@ -42,6 +44,9 @@ dsh-ui-kit/
 │   ├── icons.tsx                                 # 官方 icons/ 的子集（5 个）
 │   ├── use-modal-layer.ts、focus.ts、keyboard-composition.ts   # Modal 行为依赖
 │   └── index.ts                                  # 本仓 barrel（消费端不用它）
+├── tokens/official-tokens.json  # 官方 token 清单（pinned 快照，护栏据此做存在性校验）
+├── scripts/gen-tokens.mjs       # 从 DSH checkout 重生成 token 清单（升级期）
+├── scripts/lib/paths.mjs        # DSH_CHECKOUT 解析（显式指定，无默认推导）
 ├── cli/add.ts           # add 实现（复制 + 前缀化 + CSS→TS 转换）
 ├── cli/index.ts         # CLI 入口
 └── tests/registry.spec.ts  # 自守护栏（registry 一致性 + token 纪律 + 前缀化）
@@ -92,6 +97,20 @@ npx dsh-ui-kit add button input tag --to path/to/plugin --prefix duk-
 ## 验证
 
 ```bash
-pnpm test        # registry 一致性 + token 纪律 + 前缀化（含 CSS 小数点不误伤的用例）
+pnpm test        # registry 一致性 + token 纪律 + token 存在性 + 前缀化（10 条）
 pnpm typecheck   # 组件源码类型检查
 ```
+
+## token 正确性的两道防线
+
+| 防线 | 抓什么 | 怎么抓 |
+|---|---|---|
+| **类别护栏** | 引用了不该引用的 token 层（static / specific）、字面颜色 | 正则扫 CSS（`tests/registry.spec.ts`） |
+| **存在性护栏** | token 名拼错、官方已删除、官方改名 | 对 `tokens/official-tokens.json`（pinned 快照）逐个查 |
+
+两者都不可省：类别对但名字错的情况（如 `--dsw-alias-label-prIMARY`）只会让**该条声明被
+静默丢弃**，界面少一个样式但没有任何报错——这是最隐蔽的一类失败。
+
+例外白名单（不在官方清单里但合法）：宿主上下文变量 `--dsh-frame-chrome-top` /
+`--dsh-frame-overlay-top`（宿主 AppFrame 注入，带 fallback）、组件自有变量
+`--dsh-segment-count` / `--dsh-segment-index`（SegmentedControl 在 inline style 里设置）。
