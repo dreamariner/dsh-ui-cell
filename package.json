@@ -1,0 +1,54 @@
+{
+  "name": "@dreamariner/dsh-ui-kit",
+  "description": "DSH 插件专用的 shadcn 式 UI 组件框架：组件源码复制进插件、类名带插件前缀、样式只引用 --dsw-alias-* token",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "dsh-ui-kit": "./lib/cli.mjs"
+  },
+  "files": [
+    "lib",
+    "src",
+    "registry.json",
+    "AGENTS.md",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "prepare": "tsdown",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "ui",
+    "components",
+    "shadcn",
+    "cordis",
+    "plugin"
+  ],
+  "author": "Jianan",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dreamariner/dsh-ui-kit.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "clsx": "^2.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsdown": "^0.22.2",
+    "typescript": "^5.9",
+    "vitest": "^5.0.3"
+  }
+}

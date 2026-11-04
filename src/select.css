@@ -1,0 +1,46 @@
+/* Select: native <select> 的 token 化外衣（kit 自有，规格对齐 Input.module.css）。 */
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 32px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.wrap:focus-within {
+  border-color: var(--dsw-alias-state-business-primary);
+}
+
+/* 原生 select 铺满包裹层并隐藏自身箭头（右侧改用宿主风格的 chevron）。 */
+.select {
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0 28px 0 8px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+}
+
+.select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.chevron {
+  position: absolute;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dsw-alias-label-tertiary);
+  pointer-events: none;
+}
