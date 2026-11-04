@@ -40,6 +40,7 @@
 //   DSH_CHECKOUT=<path> node scripts/vendor-tokens.mjs --check    # 只校验（也可 pnpm run vendor:check）
 
 import process from 'node:process'
+import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -101,9 +102,21 @@ const tokens = {
 /** 宿主上下文变量：不在主题清单里，由宿主的 AppFrame 注入（带 fallback）。 */
 const hostContextVariables = ['--dsh-frame-chrome-top', '--dsh-frame-overlay-top']
 
+// 基线锚从 checkout 派生（version 取根 package.json，commit 取 HEAD）：
+// 旧实现把两个锚写成手写字面量（version 走不存在的 package.json 字段的 fallback），
+// DSH 升级重跑 vendor 后 token 列表更新而锚原地不动，清单从此谎报来源且 --check 照样过
+//（2026-11-05 复审发现）。
+const rootPkg = JSON.parse(readFileSync(join(checkout, 'package.json'), 'utf8'))
+if (typeof rootPkg.version !== 'string' || rootPkg.version.length === 0) {
+  console.error(`[vendor-tokens] checkout 根 package.json 缺 version 字段，无法确定基线：${join(checkout, 'package.json')}`)
+  process.exit(1)
+}
+const dshVersion = rootPkg.version
+const dshCommit = execFileSync('git', ['-C', checkout, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
+
 const doc = {
-  dshVersion: JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')).dshVersion ?? '0.2.1-rc.3',
-  dshCommit: '1f81c047fc48fa190a683e469daa699857e9afe8',
+  dshVersion,
+  dshCommit,
   source: 'DSH packages/client/ui-theme/src/styles/*.css（整个目录，非个别文件）',
   note: '官方 token 定义快照（pinned）。用于校验 kit 组件引用的 token 是否真实存在——拼错或官方已删除的 token 会让样式静默失效（var() 解析失败 → 声明被丢弃），格式类护栏看不出来。DSH 升级时用 scripts/vendor-tokens.mjs 重新生成。',
   hostContextVariables,

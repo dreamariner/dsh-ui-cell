@@ -7,8 +7,6 @@
 //
 // 规范：颜色走 currentColor、aria-hidden、尺寸由 size prop 给（不写进组件名）。
 
-import type { ReactNode } from 'react'
-
 /** Shared props for every product icon component. */
 export interface IconProps {
   /** Square edge in px; defaults to the glyph's own drawn size. */
@@ -86,12 +84,3 @@ const IconSearchOutlineArtwork = ({ size = 16, className, strokeWidth }: Weighte
 export const IconSearchOutlineRegular = (props: IconProps) => (
   <IconSearchOutlineArtwork {...props} strokeWidth={ICON_REGULAR_STROKE} />
 )
-
-/** 通用图标槽位：把任意图标包进 16px 方框（按钮 leading icon 用）。 */
-export function IconSlot({ children, className }: { children: ReactNode; className?: string | undefined }) {
-  return (
-    <span className={className}>
-      {children}
-    </span>
-  )
-}

@@ -19,7 +19,6 @@ export {
   IconCloseOutlineRegular,
   IconDatabaseOutlineRegular,
   IconSearchOutlineRegular,
-  IconSlot,
   IconWarningOutlineRegular,
   type IconProps,
 } from './icons.tsx'

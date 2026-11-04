@@ -1,10 +1,9 @@
 {
-  "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "dsh-ui-kit",
   "homepage": "https://github.com/dreamariner/dsh-ui-kit",
   "dshVersion": "0.2.1-rc.3",
   "dshCommit": "1f81c047fc48fa190a683e469daa699857e9afe8",
-  "notes": "组件源自 DSH 官方 ui-primitives（practices.md  sanctioned 的复制路径），类名 duk- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。",
+  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duk- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。",
   "items": [
     {
       "name": "button",
@@ -12,6 +11,7 @@
       "status": "ready",
       "description": "按钮原子：primary / ghost / outline / toolbar 四变体，md / sm 两尺寸，icon 槽位，原生属性透传",
       "files": ["button.tsx", "button.css"],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Button.tsx"
     },
     {
@@ -20,6 +20,7 @@
       "status": "ready",
       "description": "单行输入原子：可选 leading icon，value/onChange 受控，min/max/type 等原生属性透传",
       "files": ["input.tsx", "input.css"],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Input.tsx"
     },
     {
@@ -28,6 +29,7 @@
       "status": "ready",
       "description": "只读胶囊标签：八色调（outline/solid/neutral/quiet/success/info/warning/danger），data-tone 变体机制",
       "files": ["tag.tsx", "tag.css"],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Tag.tsx"
     },
     {
@@ -36,6 +38,7 @@
       "status": "ready",
       "description": "分段控制器：WAI-ARIA tabs 键盘走查（Arrow/Home/End 环绕、跳过 disabled）、roving tabindex、滑动指示器",
       "files": ["segmented-control.tsx", "segmented-control.css"],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/SegmentedControl.tsx"
     },
     {
@@ -50,6 +53,7 @@
         "focus.ts",
         "keyboard-composition.ts"
       ],
+      "dependencies": ["icon"],
       "upstream": "packages/client/ui-primitives/src/Modal.tsx"
     },
     {
@@ -58,6 +62,7 @@
       "status": "ready",
       "description": "风险确认对话框：主操作在勾选确认前禁用，初始焦点落在勾选框",
       "files": ["risk-confirmation.tsx", "risk-confirmation.css"],
+      "dependencies": ["button", "modal", "icon"],
       "upstream": "packages/client/ui-primitives/src/RiskConfirmation.tsx"
     },
     {
@@ -66,6 +71,7 @@
       "status": "ready",
       "description": "原生 select 的 token 化外衣：保留原生语义与移动端 picker，外观对齐 Input",
       "files": ["select.tsx", "select.css"],
+      "dependencies": ["icon"],
       "upstream": null
     },
     {
@@ -74,6 +80,7 @@
       "status": "ready",
       "description": "多行输入：token 化边框与背景，尺寸由调用方给",
       "files": ["textarea.tsx", "textarea.css"],
+      "dependencies": [],
       "upstream": null
     },
     {
@@ -82,6 +89,7 @@
       "status": "ready",
       "description": "图标集（当前 5 个：database / warning / close / chevron-down / search），currentColor + aria-hidden",
       "files": ["icons.tsx"],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/icons/index.tsx"
     },
     {
@@ -90,6 +98,7 @@
       "status": "planned",
       "description": "视口自适应 placement 的悬浮提示（官方点名要保真的行为组件之一）",
       "files": [],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Tooltip.tsx"
     },
     {
@@ -98,6 +107,7 @@
       "status": "planned",
       "description": "带子菜单与键盘走查的菜单（依赖 useAnchoredPosition 等内部 hook，成本较高）",
       "files": [],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Menu.tsx"
     },
     {
@@ -106,6 +116,7 @@
       "status": "planned",
       "description": "受控开关：role=switch + aria-checked（官方点名要保真的行为）",
       "files": [],
+      "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Switch.tsx"
     }
   ]
