@@ -22,7 +22,7 @@ DSH 官方插件开发规范（`packages/preset/agent-preset/skills/cordis-plugi
 
 1. **样式只引用 `--dsw-alias-*` / `--dsw-radius-*` / `--dsw-elevation-*` / `--dsw-focus-ring-*`**：禁 `--dsw-static-*`（调色板原子色，官方换肤会重映射）、禁 `--dsw-specific-*`（场景级）、禁字面颜色（hex / rgb / 具名色）。官方规范原话是 alias 层是唯一稳定语义面。
 
-   ⚠ **「类别对」不等于「token 对」**：token 名拼错、或官方在某版本删了它，CSS 规范是**整条声明被静默丢弃**（var() 解析失败），样式不生效且**无任何报错**。故除了类别护栏，还有一条**存在性校验**：`tokens/official-tokens.json`（pinned 快照，官方 ui-theme 的 token 定义）里必须能查到每个 `var(--x)`。清单外的 token 只有两类合法例外：宿主上下文变量（`--dsh-frame-*`，宿主 AppFrame 注入）与组件自有变量（`--dsh-segment-*`，组件自己 inline 设置）。DSH 升级时跑 `scripts/gen-tokens.mjs` 重生成清单。
+   ⚠ **「类别对」不等于「token 对」**：token 名拼错、或官方在某版本删了它，CSS 规范是**整条声明被静默丢弃**（var() 解析失败），样式不生效且**无任何报错**。故除了类别护栏，还有一条**存在性校验**：`tokens/official-tokens.json`（pinned 快照，官方 ui-theme 的 token 定义）里必须能查到每个 `var(--x)`。清单外的 token 只有两类合法例外：宿主上下文变量（`--dsh-frame-*`，宿主 AppFrame 注入）与组件自有变量（`--dsh-segment-*`，组件自己 inline 设置）。DSH 升级时跑 `pnpm vendor` 重生成清单（范式同 `dreamariner/dsh-typert-protocol` 的 `vendor`/`vendor:check` 两段式）。
 2. **类名一律带插件前缀**：复制进插件后必须重命名（`.button` → `duk-button` 之类），否则与插件自身样式撞车。`dsh-ui-kit add` 负责这件事，不要手抄组件绕过。
 3. **行为保真清单**（官方点名要保的用户依赖行为，不得简化）：
    - Modal：焦点陷阱（Tab 环绕）、Escape 关闭、关闭后焦点归还触发控件、`data-modal-autofocus` 初始焦点
@@ -45,7 +45,7 @@ dsh-ui-kit/
 │   ├── use-modal-layer.ts、focus.ts、keyboard-composition.ts   # Modal 行为依赖
 │   └── index.ts                                  # 本仓 barrel（消费端不用它）
 ├── tokens/official-tokens.json  # 官方 token 清单（pinned 快照，护栏据此做存在性校验）
-├── scripts/gen-tokens.mjs       # 从 DSH checkout 重生成 token 清单（升级期）
+├── scripts/vendor-tokens.mjs    # 从 DSH checkout 同步 token 清单（升级期；vendor / vendor:check）
 ├── scripts/lib/paths.mjs        # DSH_CHECKOUT 解析（显式指定，无默认推导）
 ├── cli/add.ts           # add 实现（复制 + 前缀化 + CSS→TS 转换）
 ├── cli/index.ts         # CLI 入口
@@ -100,6 +100,21 @@ npx dsh-ui-kit add button input tag --to path/to/plugin --prefix duk-
 pnpm test        # registry 一致性 + token 纪律 + token 存在性 + 前缀化（10 条）
 pnpm typecheck   # 组件源码类型检查
 ```
+
+## 与上游同步（升级期动作）
+
+```bash
+DSH_CHECKOUT=<与 dshVersion 同版的 checkout> pnpm vendor          # 同步清单
+DSH_CHECKOUT=<...> pnpm vendor:check                               # 只校验
+```
+
+范式照 `dreamariner/dsh-typert-protocol` 的 `vendor-protocol.mjs`：同一套「同步 + 校验」
+两段式、checkout 显式指定零默认推导、`--check` 逐字节比对。差别是 protocol 同步**源码**
+（生成器要读声明面），本仓同步**token 名清单**（只需名字与分类）——故不拷文件、不改
+version、不动 LICENSE，出处记在清单的 `source` 字段与组件源码头注释。
+
+自守护栏里有一条「清单与上游逐字节一致」的检查：**checkout 在场时跑、不在场则跳过**
+（pinned 快照本就是为了「没有 checkout 也能工作」）。
 
 ## token 正确性的两道防线
 

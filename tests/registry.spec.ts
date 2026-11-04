@@ -102,6 +102,46 @@ describe('token 存在性（拼错 = 样式静默失效）', () => {
   it('官方清单本身非空且覆盖 alias 层（清单空了校验就形同虚设）', () => {
     expect(tokenInventory.tokens.alias.length).toBeGreaterThan(50)
     expect(KNOWN_TOKENS.size).toBeGreaterThan(80)
+    // ⚠ 分类不得整类为空：早期脚本只扫三个 css 文件，elevation/focus-ring/mask-blur
+    // 三类静默丢失 → 官方明明有的 token 被判「不存在」→ 存在性护栏误报。
+    // 故每类都要有下限，清单生成范围被改窄时立刻红。
+    expect(tokenInventory.tokens.radius.length, 'radius 分类为空——生成范围可能变窄了').toBeGreaterThan(3)
+    expect(tokenInventory.tokens.elevation.length, 'elevation 分类为空——生成范围可能变窄了').toBeGreaterThan(2)
+    expect(tokenInventory.tokens.focusRing.length, 'focusRing 分类为空——生成范围可能变窄了').toBeGreaterThan(0)
+    expect(tokenInventory.tokens.maskBlur.length, 'maskBlur 分类为空——生成范围可能变窄了').toBeGreaterThan(0)
+  })
+})
+
+describe('与上游同步（需要 DSH_CHECKOUT，缺省跳过）', () => {
+  // 范式同 dreamariner/dsh-typert-protocol 的 protocol-vendor.spec.ts：
+  // checkout 在场时校验 pinned 清单与上游**逐字节一致**（token 增删改名都要重新同步）；
+  // 不在场则跳过——pinned 快照本就是为了「没有 checkout 也能工作」。
+  const checkout = process.env.DSH_CHECKOUT?.replace(/\/$/, '')
+  const stylesDir = checkout ? join(checkout, 'packages', 'client', 'ui-theme', 'src', 'styles') : undefined
+  const upstreamPresent = stylesDir !== undefined && existsSync(stylesDir)
+
+  it.skipIf(!upstreamPresent)('token 清单与上游 checkout 逐字节一致', async () => {
+    const { execFileSync } = await import('node:child_process')
+    const out = execFileSync(
+      process.execPath,
+      [join(import.meta.dirname, '..', 'scripts', 'vendor-tokens.mjs'), '--check'],
+      {
+        cwd: join(import.meta.dirname, '..'),
+        encoding: 'utf8',
+        env: { ...process.env, DSH_CHECKOUT: checkout! },
+      },
+    )
+    expect(out).toContain('通过')
+  })
+
+  it('清单记录了来源与基线（DSH 升级时据此核对）', () => {
+    const manifest = JSON.parse(
+      readFileSync(join(import.meta.dirname, '..', 'tokens', 'official-tokens.json'), 'utf8'),
+    ) as { source: string; dshVersion: string; dshCommit: string; hostContextVariables: string[] }
+    expect(manifest.source).toContain('ui-theme')
+    expect(manifest.dshVersion).toMatch(/^0\.2\./)
+    expect(manifest.dshCommit).toMatch(/^[0-9a-f]{40}$/)
+    expect(manifest.hostContextVariables).toContain('--dsh-frame-chrome-top')
   })
 })
 
