@@ -1,4 +1,4 @@
-// dsh-ui-kit add：把组件源码复制进插件，并按插件前缀 + 组件名段重命名类名。
+// dsh-ui-cell add：把组件源码复制进插件，并按插件前缀 + 组件名段重命名类名。
 //
 // 为什么需要这一步（shadcn 的核心模型）：第三方 DSH 插件**不得** load 官方 client 包
 // （DSH practices.md 明文）， sanctioned 路径是把官方 primitive 的 markup / CSS / 行为
@@ -161,8 +161,8 @@ export function buildStyleModule(cssText: string, prefix: string, componentName:
   const names = cssClassNames(cssText)
   const table = names.map(name => `  '${name}': '${finalClassName(componentName, name, prefix)}',`).join('\n')
   const body = prefixCss(cssText, prefix, componentName)
-  return `// ${componentName} 样式（由 dsh-ui-kit add 生成，勿手改）。
-// 源：dsh-ui-kit/src/${componentName}.css @ ${prefix} 前缀 + 组件名段（keyframes 同规则改名）。
+  return `// ${componentName} 样式（由 dsh-ui-cell add 生成，勿手改）。
+// 源：dsh-ui-cell/src/${componentName}.css @ ${prefix} 前缀 + 组件名段（keyframes 同规则改名）。
 // 第三方插件的 client 构建无 CSS 管线，样式走运行时 <style> 注入（见插件的 panel-css 约定）。
 
 /** 类名表：键是原类名，值是加前缀与组件名段后的最终类名。 */
@@ -274,7 +274,7 @@ export function runCli(argv: string[]): number {
   let to = ''
   let prefix = 'duk-'
   let force = false
-  // 允许省略子命令词（`dsh-ui-kit add button` 与 `dsh-ui-kit button` 等价）
+  // 允许省略子命令词（`dsh-ui-cell add button` 与 `dsh-ui-cell button` 等价）
   const args = argv[0] === 'add' ? argv.slice(1) : argv
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i]!
@@ -282,14 +282,14 @@ export function runCli(argv: string[]): number {
     if (arg === '--prefix') { prefix = args[++i] ?? prefix; continue }
     if (arg === '--force') { force = true; continue }
     if (arg === '--help' || arg === '-h') {
-      console.log('用法：dsh-ui-kit add <component...> --to <pluginDir> [--prefix duk-] [--force]')
-      console.log('示例：dsh-ui-kit add button input --to packages/plugin-memory（组件依赖自动带上）')
+      console.log('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]')
+      console.log('示例：dsh-ui-cell add button input --to packages/plugin-memory（组件依赖自动带上）')
       return 0
     }
     names.push(arg)
   }
   if (names.length === 0) {
-    console.error('用法：dsh-ui-kit add <component...> --to <pluginDir> [--prefix duk-] [--force]')
+    console.error('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]')
     return 1
   }
   if (to === '') {
@@ -298,14 +298,14 @@ export function runCli(argv: string[]): number {
   }
   try {
     const result = addComponents(names, { to, prefix, force })
-    console.log(`[dsh-ui-kit] 已复制 ${result.added.length} 个文件到 ${join(resolve(to), 'src/client/ui')}`)
+    console.log(`[dsh-ui-cell] 已复制 ${result.added.length} 个文件到 ${join(resolve(to), 'src/client/ui')}`)
     for (const note of result.notes) console.log(`  · ${note}`)
     if (result.skipped.length > 0) {
-      console.log(`[dsh-ui-kit] 跳过（已存在）：${result.skipped.join(', ')}`)
+      console.log(`[dsh-ui-cell] 跳过（已存在）：${result.skipped.join(', ')}`)
     }
     return 0
   } catch (error) {
-    console.error(`[dsh-ui-kit] ${(error as Error).message}`)
+    console.error(`[dsh-ui-cell] ${(error as Error).message}`)
     return 1
   }
 }

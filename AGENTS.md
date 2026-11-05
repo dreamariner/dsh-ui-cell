@@ -1,7 +1,13 @@
-# dsh-ui-kit — DSH 插件专用的 UI 组件框架
+# dsh-ui-cell — DSH 插件专用的复制式 UI 组件源
 
-> shadcn 的分发模型（registry + copy CLI + 源码归插件）+ DSH 官方 primitives 作组件源。
-> 第三方 DSH 插件的 UI 组件**复制即用**，不依赖任何官方 client 包。
+> 名字即论点（cell = 细胞）：**复制即独立**。组件复制进插件后源码归插件所有，
+> 自带遗传物质（token 纪律、前缀命名空间、行为）离体存活，kit 与宿主升级互不影响。
+> 模型照 shadcn（registry + copy CLI + 源码归插件），组件源用 DSH 官方 primitives，
+> 第三方 DSH 插件**复制即用**，不依赖任何官方 client 包。
+
+> 生态划分：与 neil-ji/dsh-ui-kit（运行时组件库，npm `dsh-ui-kit`）无关；
+> 与 seed-forge/dsh-plugin-ui-components（插件外壳与契约层）层级互补。
+> 本仓曾用名 dsh-ui-kit，2026-11-06 因与上述运行时库同名而改（docs/issues/003）。
 
 ## 项目定位
 
@@ -9,9 +15,9 @@ DSH 官方插件开发规范（`packages/preset/agent-preset/skills/cordis-plugi
 
 这正是 shadcn 的核心模型（组件源码归你所有、复制而非依赖、token 化样式）。本仓把这套模型落到 DSH 上：
 
-| shadcn | dsh-ui-kit |
+| shadcn | dsh-ui-cell |
 |---|---|
-| `registry.json` + `shadcn add` | `registry.json` + `dsh-ui-kit add` |
+| `registry.json` + `shadcn add` | `registry.json` + `dsh-ui-cell add` |
 | Radix UI 行为库 | **DSH 官方 ui-primitives 源码**（宿主亲生的行为与 token） |
 | Tailwind 变量主题 | `--dsw-alias-*` 语义 token（宿主换肤自动跟随） |
 | 组件源码进你的仓库 | 同（`src/client/ui/`，源码归插件） |
@@ -23,7 +29,7 @@ DSH 官方插件开发规范（`packages/preset/agent-preset/skills/cordis-plugi
 1. **样式只引用 `--dsw-alias-*` / `--dsw-radius-*` / `--dsw-elevation-*` / `--dsw-focus-ring-*`**：禁 `--dsw-static-*`（调色板原子色，官方换肤会重映射）、禁 `--dsw-specific-*`（场景级）、禁字面颜色（hex / rgb / 具名色）。官方规范原话是 alias 层是唯一稳定语义面。
 
    ⚠ **「类别对」不等于「token 对」**：token 名拼错、或官方在某版本删了它，CSS 规范是**整条声明被静默丢弃**（var() 解析失败），样式不生效且**无任何报错**。故除了类别护栏，还有一条**存在性校验**：`tokens/official-tokens.json`（pinned 快照，官方 ui-theme 的 token 定义）里必须能查到每个 `var(--x)`。清单外的 token 只有两类合法例外：宿主上下文变量（`--dsh-frame-*`，宿主 AppFrame 注入）与组件自有变量（`--dsh-segment-*`，组件自己 inline 设置）。DSH 升级时跑 `pnpm vendor` 重生成清单（范式同 `dreamariner/dsh-typert-protocol` 的 `vendor`/`vendor:check` 两段式）。
-2. **类名一律带插件前缀 + 组件名段，且跨组件唯一**：复制进插件后必须重命名，否则与插件自身样式撞车。且最终类名必须**跨组件唯一**：消费端把全部组件样式拼进**同一个 `<style>`**，官方 CSS Modules 的 per-file 哈希隔离在这里不存在，只加插件前缀不够（input 与 select 都有 `.wrap`、button 与 input 都有 `.icon`，2026-11-05 复审实证二者互覆，按钮 icon 被染成 input 的 tertiary 色）。`dsh-ui-kit add` 负责这件事：与组件同名的根类免组件段（`.button` → `duk-button`），其余加组件名段（input 的 `.wrap` → `duk-input-wrap`）；`@keyframes` 名是文档级命名空间，同规则改名且定义与引用同步。不要手抄组件绕过。
+2. **类名一律带插件前缀 + 组件名段，且跨组件唯一**：复制进插件后必须重命名，否则与插件自身样式撞车。且最终类名必须**跨组件唯一**：消费端把全部组件样式拼进**同一个 `<style>`**，官方 CSS Modules 的 per-file 哈希隔离在这里不存在，只加插件前缀不够（input 与 select 都有 `.wrap`、button 与 input 都有 `.icon`，2026-11-05 复审实证二者互覆，按钮 icon 被染成 input 的 tertiary 色）。`dsh-ui-cell add` 负责这件事：与组件同名的根类免组件段（`.button` → `duk-button`），其余加组件名段（input 的 `.wrap` → `duk-input-wrap`）；`@keyframes` 名是文档级命名空间，同规则改名且定义与引用同步。不要手抄组件绕过。
 3. **行为保真清单**（官方点名要保的用户依赖行为，不得简化）：
    - Modal：焦点陷阱（Tab 环绕）、Escape 关闭、关闭后焦点归还触发控件、`data-modal-autofocus` 初始焦点
    - SegmentedControl：WAI-ARIA tabs 键盘走查（Arrow/Home/End 环绕、跳过 disabled）、roving tabindex、选中后焦点跟随
@@ -34,9 +40,9 @@ DSH 官方插件开发规范（`packages/preset/agent-preset/skills/cordis-plugi
 ## 目录结构
 
 ```
-dsh-ui-kit/
+dsh-ui-cell/
 ├── AGENTS.md            # 本文件
-├── package.json         # @dreamariner/dsh-ui-kit（bin: dsh-ui-kit）
+├── package.json         # @dreamariner/dsh-ui-cell（bin: dsh-ui-cell）
 ├── registry.json        # 组件清单（名字、状态、文件、dependencies 依赖闭包、上游出处、DSH 基线）
 ├── src/                 # 权威组件源码（tsx + css，类名为上游原名）
 │   ├── button.tsx/.css、input、tag、segmented-control、modal、risk-confirmation
@@ -56,7 +62,7 @@ dsh-ui-kit/
 
 ```bash
 # 把组件复制进插件（源码进插件自己的仓，提交后即与本仓解耦）
-npx dsh-ui-kit add button input tag --to path/to/plugin --prefix duk-
+npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duk-
 
 # 参数
 #   --to <pluginDir>   目标插件目录（其下自动建 src/client/ui/）

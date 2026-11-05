@@ -1,4 +1,4 @@
-// dsh-ui-kit 组件 barrel。
+// dsh-ui-cell 组件 barrel。
 //
 // ⚠ 这个 barrel 是**本仓内部**用的（消费端不会 import 它——add 复制的是单个组件文件）。
 // 消费端拿到的是插件自己的 src/client/ui/ 目录（源码归插件），彼此不共享运行时。

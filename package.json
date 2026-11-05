@@ -1,10 +1,10 @@
 {
-  "name": "@dreamariner/dsh-ui-kit",
+  "name": "@dreamariner/dsh-ui-cell",
   "description": "DSH 插件专用的 shadcn 式 UI 组件框架：组件源码复制进插件、类名带插件前缀、样式只引用 --dsw-alias-* token",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "bin": {
-    "dsh-ui-kit": "./lib/cli.mjs"
+    "dsh-ui-cell": "./lib/cli.mjs"
   },
   "files": [
     "lib",
@@ -34,7 +34,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dreamariner/dsh-ui-kit.git"
+    "url": "git+https://github.com/dreamariner/dsh-ui-cell.git"
   },
   "publishConfig": {
     "access": "public"

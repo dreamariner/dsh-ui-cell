@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// dsh-ui-kit :: vendor-tokens.mjs — 把 DSH 官方 token 定义同步成本仓的 pinned 清单
+// dsh-ui-cell :: vendor-tokens.mjs — 把 DSH 官方 token 定义同步成本仓的 pinned 清单
 //
 // 范式照 dreamariner/dsh-typert-protocol 的 vendor-protocol.mjs（同一套「同步 + 校验」
 // 两段式：vendor / vendor:check）。

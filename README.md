@@ -1,10 +1,12 @@
-# dsh-ui-kit
+# dsh-ui-cell
 
-**DSH 插件专用的 shadcn 式 UI 组件框架** — 组件源码复制进插件，类名带插件前缀，样式只引用 `--dsw-alias-*` token。
+**DSH 插件专用的复制式 UI 组件源（shadcn 式 registry）**。
+
+名字里的 cell 是认真的：**复制即独立**。组件被复制进插件后源码归插件所有，像细胞一样自带全部遗传物质（源码、token 纪律、前缀命名空间、行为）离体存活，kit 与宿主各自升级互不影响。
 
 ```
-npm i -D @dreamariner/dsh-ui-kit
-npx dsh-ui-kit add button input tag --to path/to/plugin
+npm i -D @dreamariner/dsh-ui-cell
+npx dsh-ui-cell add button input tag --to path/to/plugin
 ```
 
 ## 为什么
@@ -13,19 +15,25 @@ DSH 官方插件开发规范明文禁止第三方插件 load 官方 Harness Clie
 
 这正是 shadcn 的核心模型（组件源码归你所有、复制而非依赖、token 化样式）。本仓把这套模型落到 DSH 上：
 
-| shadcn | dsh-ui-kit |
+| shadcn | dsh-ui-cell |
 |---|---|
-| `registry.json` + `shadcn add` | `registry.json` + `dsh-ui-kit add` |
+| `registry.json` + `shadcn add` | `registry.json` + `dsh-ui-cell add` |
 | Radix UI 行为库 | **DSH 官方 ui-primitives 源码**（宿主亲生的行为与 token） |
 | Tailwind 变量主题 | `--dsw-alias-*` 语义 token（宿主换肤自动跟随） |
 | 组件源码进你的仓库 | 同（`src/client/ui/`，源码归插件） |
 
 **不引入 Tailwind、不引入 Radix**：第三方插件的 client 构建没有 CSS 管线（DSH 官方 client 预设的 lightningcss 通道对外插件不可用），Tailwind 的 preflight 还会泄漏到宿主页面。组件层直接用官方源码，无需重造。
 
+## 细胞的三条生存机制
+
+1. **遗传物质自足**：复制走的不只是 markup，还有行为（Modal 焦点陷阱/层级栈、SegmentedControl 键盘走查）、样式（转成 TS 字符串运行时注入）与命名空间（`duk-` 前缀 + 组件名段）
+2. **独立代谢**：源码归插件，官方与 kit 各自升级都影响不到已复制的组件；想吃到新版本时主动重新 `add --force`
+3. **分裂不排异**：add 时刻的转换器保证类名与 keyframes 跨组件、跨插件不撞车，token 只引用 alias 稳定面且逐一过存在性校验
+
 ## 用法
 
 ```bash
-dsh-ui-kit add <component...> --to <pluginDir> [--prefix duk-] [--force]
+dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]
 ```
 
 组件依赖自动解析闭包：`add risk-confirmation` 会同时复制 `button` / `modal` / `icon`（deps 先于本体），产物无悬空导入。
@@ -61,9 +69,14 @@ dsh-ui-kit add <component...> --to <pluginDir> [--prefix duk-] [--force]
 - **不改 DSH 内核**：组件源从 checkout 只读复制。
 - **基线锚**：`registry.json` 的 `dshVersion` / `dshCommit` 标注组件源基线（人工维护，DSH 升级时更新并按各条目 `upstream` 逐组件重 diff，改的是本仓 `src/`，消费者已复制走不受影响）；`tokens/official-tokens.json` 的同名字段由 `pnpm vendor` 从 checkout 自动派生（根 package.json 的 version + HEAD commit），不手改。
 
+## 生态划分（同名与近邻声明）
+
+- 与 **neil-ji/dsh-ui-kit**（npm `dsh-ui-kit`，运行时组件库）**无关**：那边是 `import` 使用的运行时依赖，这边是复制式源码分发，模型不同、代码无关。
+- 与 **seed-forge/dsh-plugin-ui-components**（插件外壳与交互契约层）**层级互补**：那边做 `PluginSurface` / `ApprovalGate` / `TabRegistry` 等插件骨架，这边做设计系统原子。
+
 ## 仓库
 
-- `registry.json` — 组件清单（名字、状态、文件、上游出处、DSH 基线）
+- `registry.json` — 组件清单（名字、状态、文件、dependencies 依赖闭包、上游出处、DSH 基线）
 - `src/` — 权威组件源码（tsx + css，类名保留上游原名便于 diff）
 - `cli/` — `add` 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析）
 - `tests/registry.spec.ts` — 自守护栏（registry 一致性 + token 纪律 + 存在性 + 命名空间唯一性 + 依赖闭包 + 前缀化）
