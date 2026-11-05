@@ -10,12 +10,15 @@
     "skipLibCheck": true,
     "types": [
       "node"
-    ]
+    ],
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "cli/**/*.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "docs/wiki/**/*.tsx",
+    "docs/wiki/**/*.ts"
   ]
 }

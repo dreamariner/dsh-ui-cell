@@ -50,6 +50,7 @@ dsh-ui-cell/
 │   ├── icons.tsx                                 # 官方 icons/ 的子集（5 个）
 │   ├── use-modal-layer.ts、focus.ts、keyboard-composition.ts   # Modal 行为依赖
 │   └── index.ts                                  # 本仓 barrel（消费端不用它）
+├── docs/wiki/             # 组件 Wiki（新手教程 + 自包含文档站 index.html；docs:build 重建）
 ├── tokens/official-tokens.json  # 官方 token 清单（pinned 快照，护栏据此做存在性校验；锚由 vendor 派生）
 ├── scripts/vendor-tokens.mjs    # 从 DSH checkout 同步 token 清单（升级期；vendor / vendor:check）
 ├── scripts/lib/paths.mjs        # DSH_CHECKOUT 解析（显式指定，无默认推导）

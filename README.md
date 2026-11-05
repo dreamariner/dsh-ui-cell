@@ -77,6 +77,7 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]
 - `registry.json` — 组件清单（名字、状态、文件、dependencies 依赖闭包、上游出处、DSH 基线）
 - `src/` — 权威组件源码（tsx + css，类名保留上游原名便于 diff）
 - `cli/` — `add` 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析）
+- `docs/wiki/` — 组件 Wiki（新手教程 + 可视文档站 index.html，组件用法与实时效果）
 - `tests/registry.spec.ts` — 自守护栏（registry 一致性 + token 纪律 + 存在性 + 命名空间唯一性 + 依赖闭包 + 前缀化）
 - `AGENTS.md` — 定位与红线（改本仓前先读）
 

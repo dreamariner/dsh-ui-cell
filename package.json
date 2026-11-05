@@ -19,7 +19,8 @@
     "vendor:check": "node scripts/vendor-tokens.mjs --check",
     "prepare": "tsdown",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "docs:build": "node scripts/build-docs.mjs"
   },
   "keywords": [
     "dsh",
@@ -47,6 +48,7 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "clsx": "^2.1.1",
+    "esbuild": "^0.28.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsdown": "^0.22.2",
