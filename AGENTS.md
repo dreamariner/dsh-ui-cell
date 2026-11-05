@@ -81,20 +81,16 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duk-
 
 ## 组件清单
 
-| 组件 | 状态 | 说明 | 上游出处 |
-|---|---|---|---|
-| button | ready | 四变体（primary/ghost/outline/toolbar）+ 两尺寸 + icon 槽位 | ui-primitives/Button.tsx |
-| input | ready | 单行输入 + leading icon | ui-primitives/Input.tsx |
-| tag | ready | 八色调，`data-tone` 变体机制 | ui-primitives/Tag.tsx |
-| segmented-control | ready | WAI-ARIA tabs 键盘走查 + 滑动指示器 | ui-primitives/SegmentedControl.tsx |
-| modal | ready | portal + 焦点陷阱 + Escape + 焦点归还 | ui-primitives/Modal.tsx |
-| risk-confirmation | ready | 风险确认（主操作需勾选后解锁） | ui-primitives/RiskConfirmation.tsx |
-| select | ready | 原生 select 的 token 化外衣 | kit 自有 |
-| textarea | ready | 多行输入 | kit 自有 |
-| icon | ready | 当前 5 个图标（currentColor + aria-hidden） | ui-primitives/icons/index.tsx |
-| tooltip | planned | 视口自适应 placement | ui-primitives/Tooltip.tsx |
-| menu | planned | 子菜单 + 键盘走查（依赖多个内部 hook） | ui-primitives/Menu.tsx |
-| switch | planned | role=switch + aria-checked | ui-primitives/Switch.tsx |
+**87 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`，每条带 upstream 出处或 kit 自有标注）：
+
+| 来源 | 数量 | 内容 |
+|---|---|---|
+| 官方保真复制 | 30 | 官方除品牌件与重依赖内容块的全部原子（含 icon 集 15 个，inline path 不依赖宿主 sprite） |
+| 官方轻量核心 | 6 | 内容块：json-tree / json-block / search-block / code-toolbar / diff-block / terminal-block；重依赖（diff/anser/shiki）以 kit 自写替身顶替（issue 004） |
+| kit 自有 | 41 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/…），样式全 DSH token、行为手写零依赖 |
+| 共享行为模块 | 10 | modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap |
+
+**未收录（issue 004 留档）**：官方品牌件；重依赖内容块（markdown 家族 / ReadBlock / WebBlock / QuotePreview / DetailDocument，micromark+mdast+shiki+KaTeX 与零依赖纪律冲突，待「内容块依赖分层」议题）。
 
 ## 维护
 
