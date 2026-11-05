@@ -645,6 +645,116 @@
       ],
       "dependencies": [],
       "upstream": null
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "卡片：Header/Title/Description/Content/Footer 复合（kit 自有，对齐 shadcn card）",
+      "files": [
+        "card.tsx",
+        "card.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "语义提示条：default/info/success/warning/danger 左边框变体（kit 自有，对齐 shadcn alert）",
+      "files": [
+        "alert.tsx",
+        "alert.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "折叠区：trigger + 条件渲染内容（kit 自有，对齐 shadcn collapsible）",
+      "files": [
+        "collapsible.tsx",
+        "collapsible.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "手风琴：single/multiple，grid-rows 高度动画（kit 自有，对齐 shadcn accordion）",
+      "files": [
+        "accordion.tsx",
+        "accordion.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "细滚动条容器：宿主 scrollbar token（kit 自有，对齐 shadcn scroll-area）",
+      "files": [
+        "scroll-area.tsx",
+        "scroll-area.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "语义表格原语：Table/Header/Body/Row/Head/Cell/Caption（kit 自有，对齐 shadcn table）",
+      "files": [
+        "table.tsx",
+        "table.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "轻数据表：列配置 + 表头排序（无表格库依赖）（kit 自有，对齐 shadcn data-table）",
+      "files": [
+        "data-table.tsx",
+        "data-table.css"
+      ],
+      "dependencies": [
+        "table"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "按下态按钮：aria-pressed，default/ghost 变体（kit 自有，对齐 shadcn toggle）",
+      "files": [
+        "toggle.tsx",
+        "toggle.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "切换组：single/multiple 按下态集合（kit 自有，对齐 shadcn toggle-group）",
+      "files": [
+        "toggle-group.tsx",
+        "toggle-group.css"
+      ],
+      "dependencies": [],
+      "upstream": null
     }
   ]
 }

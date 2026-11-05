@@ -1,0 +1,23 @@
+.scrollArea {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) transparent;
+}
+
+.scrollArea::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  border-radius: var(--dsw-radius-sm);
+  background: var(--dsw-alias-scrollbar-bg-l2);
+}
+
+.scrollArea::-webkit-scrollbar-thumb:hover {
+  background: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.scrollArea::-webkit-scrollbar-track {
+  background: transparent;
+}

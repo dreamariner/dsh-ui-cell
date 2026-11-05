@@ -1,0 +1,38 @@
+.headButton {
+  padding: 0;
+}
+
+.right {
+  text-align: right;
+}
+
+.sortButton {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.sortButton:hover {
+  color: var(--dsw-alias-label-primary);
+}
+
+.arrow {
+  font-size: 10px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.arrow[data-state='asc']::after { content: '↑'; }
+.arrow[data-state='desc']::after { content: '↓'; }
+
+.empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--dsw-alias-label-tertiary);
+}
