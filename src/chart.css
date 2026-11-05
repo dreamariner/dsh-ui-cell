@@ -1,0 +1,53 @@
+.barChart {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.barSlot {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 100%;
+  max-width: 28px;
+  border-radius: var(--dsw-radius-sm) var(--dsw-radius-sm) 0 0;
+  background: var(--dsw-alias-brand-primary);
+  opacity: 0.85;
+  transition: opacity 120ms ease;
+}
+
+.barSlot:hover .bar {
+  opacity: 1;
+}
+
+.barLabel {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--dsw-font-xs-13);
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.lineChart,
+.sparkline {
+  width: 100%;
+  overflow: visible;
+}
+
+.line {
+  fill: none;
+  stroke: var(--dsw-alias-brand-primary);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}

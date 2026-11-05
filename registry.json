@@ -890,6 +890,132 @@
       ],
       "dependencies": [],
       "upstream": null
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "滑杆：原生 range 的 token 化外衣（select 路线）（kit 自有，对齐 shadcn slider）",
+      "files": [
+        "slider.tsx",
+        "slider.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "单选组：原生 radio 语义 + 别名色圆点（kit 自有，对齐 shadcn radio-group）",
+      "files": [
+        "radio-group.tsx",
+        "radio-group.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "input-otp",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "验证码输入：单隐形 input + 格子可视化（kit 自有，对齐 shadcn input-otp）",
+      "files": [
+        "input-otp.tsx",
+        "input-otp.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "月历网格：受控月份 + 今日/选中态 + 禁用回调（kit 自有，对齐 shadcn calendar）",
+      "files": [
+        "calendar.tsx",
+        "calendar.css"
+      ],
+      "dependencies": [
+        "icon"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "日期选择：输入框 + Popover 月历（kit 自有，对齐 shadcn date-picker）",
+      "files": [
+        "date-picker.tsx",
+        "date-picker.css"
+      ],
+      "dependencies": [
+        "calendar",
+        "popover",
+        "icon"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "滑动画廊：scroll-snap + 页点（无轮播库）（kit 自有，对齐 shadcn carousel）",
+      "files": [
+        "carousel.tsx",
+        "carousel.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "双栏拖拽分割（水平）（kit 自有，对齐 shadcn resizable）",
+      "files": [
+        "resizable.tsx",
+        "resizable.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "侧栏壳：Header/Content/Footer + 收起态（kit 自有，对齐 shadcn sidebar）",
+      "files": [
+        "sidebar.tsx",
+        "sidebar.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "chart",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "极简图表：柱/线/迷你图（零依赖；shadcn chart 的 recharts 不引入）（kit 自有，对齐 shadcn chart）",
+      "files": [
+        "chart.tsx",
+        "chart.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "form",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "表单语义壳：提交期 pending 态（字段壳见 field）（kit 自有，对齐 shadcn form）",
+      "files": [
+        "form.tsx",
+        "form.css"
+      ],
+      "dependencies": [],
+      "upstream": null
     }
   ]
 }

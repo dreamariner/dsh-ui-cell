@@ -1,0 +1,64 @@
+.root {
+  position: relative;
+  display: inline-flex;
+  gap: 6px;
+  cursor: text;
+}
+
+.cell {
+  display: inline-flex;
+  width: 32px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-1);
+  font: var(--dsw-font-m-18);
+  font-variant-numeric: tabular-nums;
+  color: var(--dsw-alias-label-primary);
+}
+
+.cell[data-filled] {
+  border-color: var(--dsw-alias-border-l3);
+}
+
+.cell[data-active] {
+  border-color: var(--dsw-alias-state-business-primary);
+}
+
+.cell[data-active]::after {
+  content: '';
+  width: 1px;
+  height: 18px;
+  background: var(--dsw-alias-state-business-primary);
+  animation: otp-caret 1s steps(2) infinite;
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes otp-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell[data-active]::after { animation: none; }
+}

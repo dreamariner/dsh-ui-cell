@@ -1,0 +1,10 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form[data-pending] {
+  opacity: 0.6;
+  pointer-events: none;
+}
