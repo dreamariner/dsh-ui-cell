@@ -101,6 +101,7 @@ const tokens = {
   menuSurface: pick((t) => t.startsWith('--dsw-menu-')),
   shadow: pick((t) => t.startsWith('--dsw-shadow-')),
   specific: pick((t) => t.startsWith('--dsw-specific-')),
+  dsBase: pick((t) => t.startsWith('--ds-')),
   // ui-theme 在 styles 里定义的 --dsh-* 组件钩子（content/code 字号体系等），存在性校验需要认识
   dshTheme: pick((t) => t.startsWith('--dsh-')),
 }

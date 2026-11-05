@@ -448,6 +448,13 @@
       "--dsw-specific-sidebar-nav-item-active-accent",
       "--dsw-specific-tip"
     ],
+    "dsBase": [
+      "--ds-ease-in-out",
+      "--ds-font-family-code",
+      "--ds-transition-duration",
+      "--ds-transition-duration-fast",
+      "--ds-transition-duration-slow"
+    ],
     "dshTheme": [
       "--dsh-code-font-delta",
       "--dsh-content-font-delta",

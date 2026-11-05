@@ -66,6 +66,7 @@ describe('token 纪律（DSH 官方规范）', () => {
     ['tooltip.css', [/--dsw-static-/]],
     ['toast.css', [/--dsw-static-/]],
     ['hover-card.css', [/--dsw-specific-/, /#[0-9a-fA-F]{3,8}\b/]],
+    ['json-tree.css', [/#[0-9a-fA-F]{3,8}\b/, /\brgba?\(/]],
     ['image-lightbox.css', [/--dsw-specific-/]],
     ['user-message-bubble.css', [/--dsw-specific-/]],
     ['zoom-controls.css', [/#[0-9a-fA-F]{3,8}\b/]],
@@ -134,6 +135,8 @@ describe('token 存在性（拼错 = 样式静默失效）', () => {
           // --dsh-anchored-*：useAnchoredPosition 的钩子契约变量（setter 在行为模块里，
           // 消费方 css 只读），跨条目引用故按前缀放行
           if (/^--dsh-anchored-/.test(token)) continue
+          // --dsl-*：宿主页面级覆盖钩子（各页面按场景设值，primitives 消费侧全部带 fallback）
+          if (/^--dsl-/.test(token)) continue
           if (EXISTENCE_EXCEPTIONS.get(file)?.includes(token)) continue
           offenders.push(`${file}: ${token}`)
         }

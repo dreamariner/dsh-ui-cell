@@ -364,12 +364,12 @@
         "hover-card.tsx",
         "hover-card.css",
         "hover-card-group.tsx",
-        "clipboard.ts",
         "overlay-top-margin.ts"
       ],
       "dependencies": [
         "pointer-grace",
-        "overlay-top-margin"
+        "overlay-top-margin",
+        "clipboard"
       ],
       "upstream": "packages/client/ui-primitives/src/HoverCard.tsx"
     },
@@ -1016,6 +1016,135 @@
       ],
       "dependencies": [],
       "upstream": null
+    },
+    {
+      "name": "clipboard",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：writeClipboard（剪贴板写入，hover-card 与内容块共享）",
+      "files": [
+        "clipboard.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/clipboard.ts"
+    },
+    {
+      "name": "clipboard-copy",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：useClipboardCopy（复制后短暂反馈态，search-block/terminal-block 共享）",
+      "files": [
+        "use-clipboard-copy.ts"
+      ],
+      "dependencies": [
+        "clipboard"
+      ],
+      "upstream": "packages/client/ui-primitives/src/use-clipboard-copy.ts"
+    },
+    {
+      "name": "json-tree",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "JSON 树：折叠/复制/换行控制（官方 850 行保真复制）（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "files": [
+        "json-tree.tsx",
+        "json-tree.css"
+      ],
+      "dependencies": [
+        "icon",
+        "menu"
+      ],
+      "upstream": "packages/client/ui-primitives/src（对应 json-tree）"
+    },
+    {
+      "name": "json-block",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "折叠 JSON 块：大负载截断展示（官方保真复制）（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "files": [
+        "json-block.tsx",
+        "json-block.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src（对应 json-block）"
+    },
+    {
+      "name": "search-block",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "搜索结果块：命中高亮 + 头尾截断 + 复制（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "files": [
+        "search-block.tsx",
+        "search-block.css"
+      ],
+      "dependencies": [
+        "clipboard-copy",
+        "head-tail-cap"
+      ],
+      "upstream": "packages/client/ui-primitives/src（对应 search-block）"
+    },
+    {
+      "name": "code-toolbar",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "代码卡工具栏：语言/复制/换行（高亮检测轻量替身恒 false，自动降级）（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "files": [
+        "code-toolbar.tsx",
+        "code-card.css",
+        "code-highlighting-lite.ts"
+      ],
+      "dependencies": [
+        "icon",
+        "tooltip"
+      ],
+      "upstream": "packages/client/ui-primitives/src（对应 code-toolbar）"
+    },
+    {
+      "name": "diff-block",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "差异块：mini-diff（LCS）替身 diff 包，官方 markup（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "files": [
+        "diff-block.tsx",
+        "diff-block.css",
+        "mini-diff.ts"
+      ],
+      "dependencies": [
+        "code-toolbar",
+        "fold-toggle",
+        "clipboard"
+      ],
+      "upstream": "packages/client/ui-primitives/src（对应 diff-block）"
+    },
+    {
+      "name": "terminal-block",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "终端输出块：ansi-lite（SGR 子集）替身 anser，基础色落主题 token（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "files": [
+        "terminal-block.tsx",
+        "terminal-block.css",
+        "ansi-lite.ts"
+      ],
+      "dependencies": [
+        "clipboard-copy",
+        "pill",
+        "state-dot",
+        "command-text",
+        "head-tail-cap"
+      ],
+      "upstream": "packages/client/ui-primitives/src（对应 terminal-block）"
+    },
+    {
+      "name": "head-tail-cap",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：headTailCap（长输出头尾保留截断，search-block/terminal-block 共享）",
+      "files": [
+        "head-tail-cap.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/head-tail-cap.ts"
     }
   ]
 }
