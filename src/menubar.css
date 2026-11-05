@@ -1,0 +1,21 @@
+.menubar {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.entry {
+  padding: 4px 10px;
+  border: none;
+  border-radius: var(--dsw-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.entry:hover,
+.entry[data-open] {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-primary);
+}

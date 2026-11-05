@@ -131,6 +131,9 @@ describe('token 存在性（拼错 = 样式静默失效）', () => {
           if (known.has(token)) continue
           if (setInJs.has(token)) continue
           if (definedHere.has(token)) continue
+          // --dsh-anchored-*：useAnchoredPosition 的钩子契约变量（setter 在行为模块里，
+          // 消费方 css 只读），跨条目引用故按前缀放行
+          if (/^--dsh-anchored-/.test(token)) continue
           if (EXISTENCE_EXCEPTIONS.get(file)?.includes(token)) continue
           offenders.push(`${file}: ${token}`)
         }

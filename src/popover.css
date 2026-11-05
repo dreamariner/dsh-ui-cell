@@ -1,0 +1,25 @@
+.root {
+  display: inline-flex;
+}
+
+.trigger {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.content {
+  position: fixed;
+  z-index: 1100;
+  min-width: 160px;
+  max-width: min(360px, var(--dsh-anchored-max-width, 360px));
+  max-height: var(--dsh-anchored-max-height, 70vh);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: var(--dsw-shadow-lv2);
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-primary);
+}

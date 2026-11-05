@@ -130,11 +130,11 @@
         "tooltip.tsx",
         "tooltip.css",
         "tooltip-placement.ts",
-        "use-dismiss-on-outside-pointer.ts",
         "input-modality.ts"
       ],
       "dependencies": [
-        "shortcut-keys"
+        "shortcut-keys",
+        "dismiss-on-outside-pointer"
       ],
       "upstream": "packages/client/ui-primitives/src/Tooltip.tsx"
     },
@@ -149,18 +149,17 @@
         "menu-group.tsx",
         "menu-group.css",
         "menu-surface.tsx",
-        "menu-surface.css",
-        "use-anchored-position.ts"
+        "menu-surface.css"
       ],
       "dependencies": [
         "icon",
         "modal-layer",
         "pointer-grace",
-        "overlay-top-margin",
         "focus",
         "keyboard-composition",
         "shortcut-keys",
-        "tooltip"
+        "tooltip",
+        "anchored-position"
       ],
       "upstream": "packages/client/ui-primitives/src/Menu.tsx"
     },
@@ -752,6 +751,142 @@
       "files": [
         "toggle-group.tsx",
         "toggle-group.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "anchored-position",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：useAnchoredPosition（浮层锚定定位与视口约束，menu/tooltip/popover/combobox 共享）",
+      "files": [
+        "use-anchored-position.ts"
+      ],
+      "dependencies": [
+        "overlay-top-margin"
+      ],
+      "upstream": "packages/client/ui-primitives/src/useAnchoredPosition.ts"
+    },
+    {
+      "name": "dismiss-on-outside-pointer",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：useDismissOnOutsidePointer（外点关闭，支持 portal 面板）",
+      "files": [
+        "use-dismiss-on-outside-pointer.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/useDismissOnOutsidePointer.ts"
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "浮层面板：官方锚定钩子 + 外点关闭，body-portaled（kit 自有，对齐 shadcn popover）",
+      "files": [
+        "popover.tsx",
+        "popover.css"
+      ],
+      "dependencies": [
+        "anchored-position",
+        "dismiss-on-outside-pointer"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "可输入过滤下拉：combobox/listbox 语义 + 键盘走查（kit 自有，对齐 shadcn combobox）",
+      "files": [
+        "combobox.tsx",
+        "combobox.css"
+      ],
+      "dependencies": [
+        "anchored-position",
+        "dismiss-on-outside-pointer",
+        "icon"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "命令面板列表：输入过滤 + 键盘导航（可见性由调用方控制）（kit 自有，对齐 shadcn command）",
+      "files": [
+        "command.tsx",
+        "command.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "右键菜单：官方 Menu 的 contextual 指针模式封装（kit 自有，对齐 shadcn context-menu）",
+      "files": [
+        "context-menu.tsx",
+        "context-menu.css"
+      ],
+      "dependencies": [
+        "menu"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "menubar",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "顶栏菜单：点击展开 + 悬停切换（kit 自有，对齐 shadcn menubar）",
+      "files": [
+        "menubar.tsx",
+        "menubar.css"
+      ],
+      "dependencies": [
+        "menu"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "侧滑/底滑面板：portal + modal 层级栈；side bottom 即 drawer（kit 自有，对齐 shadcn sheet）",
+      "files": [
+        "sheet.tsx",
+        "sheet.css"
+      ],
+      "dependencies": [
+        "modal-layer",
+        "icon"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "顶部导航：链接 + 当前指示 + 可选官方 Menu 下拉（简化版）（kit 自有，对齐 shadcn navigation-menu）",
+      "files": [
+        "navigation-menu.tsx",
+        "navigation-menu.css"
+      ],
+      "dependencies": [
+        "menu"
+      ],
+      "upstream": null
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "分页：页码窗口 + ellipsis + 上下页（kit 自有，对齐 shadcn pagination）",
+      "files": [
+        "pagination.tsx",
+        "pagination.css"
       ],
       "dependencies": [],
       "upstream": null
