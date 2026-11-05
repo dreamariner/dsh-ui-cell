@@ -1,8 +1,8 @@
 {
   "name": "dsh-ui-cell",
   "homepage": "https://github.com/dreamariner/dsh-ui-cell",
-  "dshVersion": "0.2.1-rc.3",
-  "dshCommit": "1f81c047fc48fa190a683e469daa699857e9afe8",
+  "dshVersion": "0.2.2-rc.1",
+  "dshCommit": "66491b05e3f05ad35bcdd4f6cd7ed26041d9e3db",
   "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duk- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。",
   "items": [
     {

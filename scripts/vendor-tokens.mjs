@@ -100,7 +100,9 @@ const tokens = {
 }
 
 /** 宿主上下文变量：不在主题清单里，由宿主的 AppFrame 注入（带 fallback）。 */
-const hostContextVariables = ['--dsh-frame-chrome-top', '--dsh-frame-overlay-top']
+// --dsh-button-outline-color：宿主页面按场景覆盖 Button outline 描边色（带 fallback）；
+// --dsh-hairline-width：ui-theme 客户端按 DPR 注入的发丝线宽（styles.ts，带 fallback）。
+const hostContextVariables = ['--dsh-frame-chrome-top', '--dsh-frame-overlay-top', '--dsh-button-outline-color', '--dsh-hairline-width']
 
 // 基线锚从 checkout 派生（version 取根 package.json，commit 取 HEAD）：
 // 旧实现把两个锚写成手写字面量（version 走不存在的 package.json 字段的 fallback），

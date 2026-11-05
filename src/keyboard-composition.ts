@@ -1,5 +1,5 @@
 // Composition lifetime for local keyboard handlers, including a late closing keydown.
-// 来源：packages/client/ui-primitives/src/keyboard-composition.ts @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 来源：packages/client/ui-primitives/src/keyboard-composition.ts @ dsh v0.2.2-rc.1 (66491b05e3)
 
 /**
  * Observe composition until its closing key is released or consumed.

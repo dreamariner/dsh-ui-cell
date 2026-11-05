@@ -1,6 +1,9 @@
 // Icons: current-color product icons（源自 DSH 官方 ui-primitives 的 icons/ 子集）。
 //
-// 上游来源：packages/client/ui-primitives/src/icons/index.tsx @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 上游来源：packages/client/ui-primitives/src/icons/index.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// ⚠ 0.2.2 起官方图标改为文档级 sprite（<use href="#dsw-icon-*">，ui-theme 维护 symbol 表）。
+// kit 刻意**不跟**：插件可能独立于宿主 sprite 运行，inline path 才符合「复制即独立」；
+// 五个图标的 path 已与 artwork.ts 逐字节比对，零变化，以下 inline 实现继续有效。
 // 官方 icons/ 共 190 个图标（全量复制体积大、且多数用不上），本 kit 只带首批必需的几个，
 // 需要更多时按官方复制规范从 checkout 补：复制对应 const Icon*Artwork 函数体 +
 // Regular/Medium 两个导出，命名保持 Icon{Name}Outline{Regular|Medium}。

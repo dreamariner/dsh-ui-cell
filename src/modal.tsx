@@ -1,5 +1,5 @@
 // Modal: a centered, body-portaled modal over a blurred page mask.
-// 来源：packages/client/ui-primitives/src/Modal.tsx @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 来源：packages/client/ui-primitives/src/Modal.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // 行为保真：portal 渲染、Escape 关闭、焦点陷阱与焦点归还、mask 点击关闭、aria-modal 语义。
 
 import { useRef } from 'react'

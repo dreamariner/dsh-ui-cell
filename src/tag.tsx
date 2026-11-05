@@ -1,6 +1,6 @@
 // Tag: read-only capsule badge（源自 DSH 官方 ui-primitives，类名 duk- 化）。
 //
-// 上游来源：packages/client/ui-primitives/src/Tag.tsx @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 上游来源：packages/client/ui-primitives/src/Tag.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // 色调枚举与 data-tone 属性选择器机制照抄官方实现。
 
 import type { ReactNode } from 'react'

@@ -1,5 +1,5 @@
 // RiskConfirmation: controlled risk acknowledgement dialog.
-// 来源：packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 来源：packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // 主操作在调用方确认勾选前保持禁用；初始焦点落在勾选框（data-modal-autofocus）。
 
 import { Button } from './button.tsx'

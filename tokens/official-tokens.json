@@ -5,7 +5,9 @@
   "note": "官方 token 定义快照（pinned）。用于校验 kit 组件引用的 token 是否真实存在——拼错或官方已删除的 token 会让样式静默失效（var() 解析失败 → 声明被丢弃），格式类护栏看不出来。DSH 升级时用 scripts/vendor-tokens.mjs 重新生成。",
   "hostContextVariables": [
     "--dsh-frame-chrome-top",
-    "--dsh-frame-overlay-top"
+    "--dsh-frame-overlay-top",
+    "--dsh-button-outline-color",
+    "--dsh-hairline-width"
   ],
   "hostContextNote": "宿主 AppFrame 注入的上下文变量（packages/client/ui-layout/src/client/AppFrame.module.css），带 fallback 值；不是主题 token，不在官方清单里。",
   "tokens": {

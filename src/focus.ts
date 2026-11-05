@@ -1,9 +1,26 @@
 // Focus presentation for automatic entry and restoration.
-// 来源：packages/client/ui-primitives/src/focus.ts @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 来源：packages/client/ui-primitives/src/focus.ts @ dsh v0.2.2-rc.1 (66491b05e3)
+//
+// 行为保真：focusWithoutRing 键盘导航前不出 focus 环；0.2.2 起带移动端检测
+// （isMobileDevice，iOS/Android 识别含桌面模式 iPad），触屏设备上焦点行为分支不同。
 
-/** Focus presentation for automatic entry and restoration. */
 const releases = new WeakMap<HTMLElement, () => void>()
 const navigationKeys = new Set(['Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'])
+let mobileDevice: boolean | undefined
+
+/**
+ * Identify iOS and Android phones and tablets from the current browser's device information.
+ * MacIntel with multiple touch points identifies desktop-mode iPads.
+ * The first result is shared by all callers until the page reloads.
+ * @returns true for recognized mobile devices; false for other devices, including unrecognized UAs.
+ */
+export function isMobileDevice(): boolean {
+  if (mobileDevice !== undefined) return mobileDevice
+  const { userAgent, platform, maxTouchPoints } = navigator
+  mobileDevice = /Android|iPhone|iPad|iPod/i.test(userAgent)
+    || (platform === 'MacIntel' && maxTouchPoints > 1)
+  return mobileDevice
+}
 
 /**
  * Focus an automatic destination without a focus outline until keyboard navigation or blur.

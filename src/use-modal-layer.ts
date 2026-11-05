@@ -1,9 +1,10 @@
 // Shared modal keyboard ownership and focus lifetime.
-// 来源：packages/client/ui-primitives/src/useModalLayer.ts @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 来源：packages/client/ui-primitives/src/useModalLayer.ts @ dsh v0.2.2-rc.1 (66491b05e3)
 //
 // 行为保真（DSH 官方点名要保的用户依赖行为）：只有最上层 modal 拥有 Escape 与 Tab；
 // 初始焦点取 data-modal-autofocus 标记的控件（不用 React autoFocus，因为它在焦点捕获前就跑）；
-// 关闭时焦点还给触发控件；嵌套菜单（role=menu）拥有自己的 Escape 与遍历。
+// 关闭时焦点还给触发控件（0.2.2 起加守卫：仅当焦点仍留在保留的 dialog 内才归还，
+// 保留 owner 已选定的目标）；嵌套菜单（role=menu）拥有自己的 Escape 与遍历。
 
 import { useLayoutEffect, useRef } from 'react'
 import type { RefObject } from 'react'
@@ -26,7 +27,6 @@ export function closeTopModal(document: Document): void {
   const foreground = [...document.querySelectorAll(modalSelector)].at(-1)
   if (foreground === top.element) top.close()
 }
-
 /**
  * Whether an anchor belongs behind the current modal and must yield keyboard input.
  * @param anchor - local control owning the input handler.
@@ -52,9 +52,17 @@ const focusable = 'button:not(:disabled), input:not(:disabled), textarea:not(:di
  */
 export function useModalLayer(dialog: RefObject<HTMLElement | null>, open: boolean, onClose: () => void): void {
   const close = useRef(onClose)
+  const pendingRestore = useRef<HTMLElement | undefined>(undefined)
   close.current = onClose
   useLayoutEffect(() => {
+    const target = pendingRestore.current
+    pendingRestore.current = undefined
     const element = dialog.current
+    // Restore only focus left inside the retained dialog, preserving the owner's chosen target.
+    if (!open && element?.contains(element.ownerDocument.activeElement)
+      && target?.isConnected && !target.closest('[inert], [hidden]') && !isBehindModal(target)) {
+      focusWithoutRing(target, { preventScroll: true })
+    }
     if (!open || element === null) return
     const document = element.ownerDocument
     const composition = observeComposition(document)
@@ -97,7 +105,10 @@ export function useModalLayer(dialog: RefObject<HTMLElement | null>, open: boole
       if (stack.length === 0) layers.delete(document)
       if (wasTop) {
         const target = previous instanceof HTMLElement && previous.isConnected ? previous : stack.at(-1)?.element
-        if (target !== undefined) focusWithoutRing(target)
+        if (target !== undefined) {
+          pendingRestore.current = target
+          focusWithoutRing(target)
+        }
       }
     }
   }, [dialog, open])

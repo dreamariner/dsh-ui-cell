@@ -1,6 +1,6 @@
 // Input: single-line text input atom (源自 DSH 官方 ui-primitives，类名 duk- 化)。
 //
-// 上游来源：packages/client/ui-primitives/src/Input.tsx @ dsh v0.2.1-rc.3 (1f81c047fc)
+// 上游来源：packages/client/ui-primitives/src/Input.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、icon 槽位、原生属性透传与 ref 全部照抄官方实现。
 
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
