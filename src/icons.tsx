@@ -87,3 +87,35 @@ const IconSearchOutlineArtwork = ({ size = 16, className, strokeWidth }: Weighte
 export const IconSearchOutlineRegular = (props: IconProps) => (
   <IconSearchOutlineArtwork {...props} strokeWidth={ICON_REGULAR_STROKE} />
 )
+
+// ── 0.2.2-rc.1 补充（自官方 icons/artwork.ts 提取 inline path，Regular 权重）──
+
+/** Regular one-pixel check-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconCheckOutlineRegular = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="1" aria-hidden="true"><path d="M2.25 8.5L5.49732 11.7473C5.90519 12.1552 6.57263 12.1344 6.95426 11.7018L13.75 4" stroke="currentColor"></path></svg>
+)
+
+/** Regular one-pixel refresh-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconRefreshOutlineRegular = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="1" aria-hidden="true"><path d="M14.5001 8C14.5 9.28552 14.1188 10.5422 13.4045 11.611C12.6903 12.6799 11.6752 13.5129 10.4875 14.0049C9.29982 14.4968 7.99295 14.6255 6.73212 14.3747C5.4713 14.124 4.31314 13.505 3.4041 12.596C2.49514 11.687 1.87614 10.5288 1.62537 9.26798C1.37459 8.00716 1.50331 6.70028 1.99525 5.51261C2.48719 4.32494 3.32025 3.30981 4.3891 2.59557C5.45795 1.88134 6.71458 1.50008 8.0001 1.5C9.9001 1.5 11.7001 2.3 13.0001 3.6L14.5001 5.1" stroke="currentColor"></path><path d="M14.4999 1.5V5.1H10.8999" stroke="currentColor"></path></svg>
+)
+
+/** Regular one-pixel check-circle-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconCheckCircleOutlineRegular = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="1" aria-hidden="true"><path d="M12.5303 6.53027L8.80273 10.2578C8.54967 10.5109 8.31796 10.7439 8.10645 10.9141C7.88375 11.0932 7.616 11.2602 7.27344 11.3145C7.09229 11.3431 6.90771 11.3431 6.72656 11.3145C6.384 11.2602 6.11625 11.0932 5.89355 10.9141C5.68204 10.7439 5.45033 10.5109 5.19727 10.2578L3.46973 8.53027L4.53027 7.46973L6.25781 9.19727C6.53457 9.47402 6.70036 9.63859 6.83398 9.74609C6.95637 9.84453 6.98241 9.83644 6.96094 9.83301C6.98679 9.83709 7.01321 9.83709 7.03906 9.83301C7.01759 9.83644 7.04363 9.84453 7.16602 9.74609C7.29964 9.63859 7.46543 9.47402 7.74219 9.19727L11.4697 5.46973L12.5303 6.53027Z" fill="currentColor"></path><path d="M14.5996 8C14.5996 4.35492 11.6451 1.40039 8 1.40039C4.35492 1.40039 1.40039 4.35492 1.40039 8C1.40039 11.6451 4.35492 14.5996 8 14.5996C11.6451 14.5996 14.5996 11.6451 14.5996 8ZM15.9004 8C15.9004 12.363 12.363 15.9004 8 15.9004C3.63695 15.9004 0.0996094 12.363 0.0996094 8C0.0996094 3.63695 3.63695 0.0996094 8 0.0996094C12.363 0.0996094 15.9004 3.63695 15.9004 8Z" fill="currentColor"></path></svg>
+)
+
+/** Regular one-pixel loading-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconLoadingOutlineRegular = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="1" aria-hidden="true"><path d="M12.596 12.596C11.687 13.5049 10.5288 14.1239 9.26798 14.3747C8.00716 14.6255 6.70028 14.4968 5.51261 14.0048C4.32494 13.5129 3.30981 12.6798 2.59557 11.611C1.88134 10.5421 1.50008 9.2855 1.5 7.99998C1.50008 6.71446 1.88134 5.45783 2.59557 4.38898C3.30981 3.32013 4.32494 2.48707 5.51261 1.99513C6.70028 1.50319 8.00716 1.37447 9.26798 1.62524C10.5288 1.87602 11.687 2.49502 12.596 3.40398" stroke="currentColor"></path></svg>
+)
+
+/** Regular one-pixel chevron-up-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconChevronUpOutlineRegular = ({ size = 14, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="1" aria-hidden="true"><path d="M12 10L8.70711 6.70711C8.31658 6.31658 7.68342 6.31658 7.29289 6.70711L4 10" stroke="currentColor"></path></svg>
+)
+
+/** Regular one-pixel plus-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconPlusOutlineRegular = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="1" aria-hidden="true"><path d="M8 2V14" stroke="currentColor"></path><path d="M2 8H14" stroke="currentColor"></path></svg>
+)

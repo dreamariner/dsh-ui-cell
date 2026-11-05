@@ -94,7 +94,7 @@ export function cssClassNames(css: string): string[] {
   const seen = new Set<string>()
   // 去掉注释后再扫，避免注释里的类名被当真
   const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '')
-  const re = /(^|[\s>+~,(])(\.(-?[_a-zA-Z][\w-]*))/g
+  const re = /(^|[\s>+~,(]|(?<=[\w-]))(\.(-?[_a-zA-Z][\w-]*))/g
   let m: RegExpExecArray | null
   while ((m = re.exec(stripped)) !== null) {
     const name = m[3]!
@@ -122,7 +122,7 @@ export function prefixCss(css: string, prefix: string, componentName: string): s
     out = out.replace(/(?:animation|animation-name)\s*:[^;}]*;/g, (decl) => decl.replace(new RegExp(`\\b${name}\\b`), next))
   }
   // 类选择器前缀化（与 cssClassNames 同一套位置判定，两边永远一致）
-  out = out.replace(/(^|[\s>+~,(])(\.(-?[_a-zA-Z][\w-]*))/g, (_all, lead: string, _whole: string, name: string) => {
+  out = out.replace(/(^|[\s>+~,(]|(?<=[\w-]))(\.(-?[_a-zA-Z][\w-]*))/g, (_all, lead: string, _whole: string, name: string) => {
     return `${lead}.${rename(name)}`
   })
   return out.replace(/__KEEP__/g, '.')

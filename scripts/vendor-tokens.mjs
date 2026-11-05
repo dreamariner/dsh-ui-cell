@@ -88,6 +88,8 @@ for (const name of readdirSync(stylesDir).filter((f) => f.endsWith('.css'))) {
 const pick = (predicate) => [...all].filter(predicate).sort()
 
 const tokens = {
+  // static 类入清单供存在性校验（官方组件原样引用它们）；纪律护栏仍禁止 kit 手写样式使用。
+  static: pick((t) => t.startsWith('--dsw-static-')),
   alias: pick((t) => t.startsWith('--dsw-alias-')),
   radius: pick((t) => t.startsWith('--dsw-radius-')),
   elevation: pick((t) => t.includes('elevation')),
@@ -97,12 +99,16 @@ const tokens = {
   transition: pick((t) => t.startsWith('--ds-transition')),
   ease: pick((t) => t.startsWith('--ds-ease')),
   menuSurface: pick((t) => t.startsWith('--dsw-menu-')),
+  shadow: pick((t) => t.startsWith('--dsw-shadow-')),
+  specific: pick((t) => t.startsWith('--dsw-specific-')),
+  // ui-theme 在 styles 里定义的 --dsh-* 组件钩子（content/code 字号体系等），存在性校验需要认识
+  dshTheme: pick((t) => t.startsWith('--dsh-')),
 }
 
 /** 宿主上下文变量：不在主题清单里，由宿主的 AppFrame 注入（带 fallback）。 */
 // --dsh-button-outline-color：宿主页面按场景覆盖 Button outline 描边色（带 fallback）；
 // --dsh-hairline-width：ui-theme 客户端按 DPR 注入的发丝线宽（styles.ts，带 fallback）。
-const hostContextVariables = ['--dsh-frame-chrome-top', '--dsh-frame-overlay-top', '--dsh-button-outline-color', '--dsh-hairline-width']
+const hostContextVariables = ['--dsh-frame-chrome-top', '--dsh-frame-overlay-top', '--dsh-button-outline-color', '--dsh-hairline-width', '--dsh-content-font-size']
 
 // 基线锚从 checkout 派生（version 取根 package.json，commit 取 HEAD）：
 // 旧实现把两个锚写成手写字面量（version 走不存在的 package.json 字段的 fallback），

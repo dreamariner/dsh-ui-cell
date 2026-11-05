@@ -58,11 +58,23 @@ describe('registry 一致性', () => {
 })
 
 describe('token 纪律（DSH 官方规范）', () => {
-  it('CSS 只引用 alias / radius / elevation / focus-ring 等稳定 token 面', () => {
+  // 官方保真复制的组件原样使用了 static / specific / 字面色（tooltip/toast 用 static 调色板、
+  // hover-card 字面深底、zoom-controls light-dark 阴影等）。纪律的本意是拦「手写样式」别用
+  // 不稳定面；对逐字节保真的官方复制，保真优先，升级重 diff 时跟随官方。例外逐文件登记，
+  // 未登记的文件出现这些形态仍然要红。
+  const OFFICIAL_EXCEPTIONS = new Map<string, RegExp[]>([
+    ['tooltip.css', [/--dsw-static-/]],
+    ['toast.css', [/--dsw-static-/]],
+    ['hover-card.css', [/--dsw-specific-/, /#[0-9a-fA-F]{3,8}\b/]],
+    ['image-lightbox.css', [/--dsw-specific-/]],
+    ['user-message-bubble.css', [/--dsw-specific-/]],
+    ['zoom-controls.css', [/#[0-9a-fA-F]{3,8}\b/]],
+  ])
+
+  it('CSS 只引用 alias / radius / elevation / focus-ring 等稳定 token 面（官方复制件按登记例外）', () => {
     // 禁：--dsw-static-*（调色板原子色，官方换肤会重映射）、--dsw-specific-*（场景级）、
     // 字面颜色（hex / rgb / hsl / oklch 等必吃字面值的函数族 / 具名色）。
-    // color-mix( 不在禁列：tag.css 按官方同款写法用它把 alias token 与 transparent 混合，
-    // 参数是 token 而非字面色，一刀切会误报。
+    // color-mix( 不在禁列：tag.css 按官方同款写法用它把 alias token 与 transparent 混合。
     const forbidden = [
       /--dsw-static-/,
       /--dsw-specific-/,
@@ -77,16 +89,23 @@ describe('token 纪律（DSH 官方规范）', () => {
       for (const file of item.files) {
         if (!file.endsWith('.css')) continue
         const text = readFileSync(join(src, file), 'utf8')
+        const allowed = OFFICIAL_EXCEPTIONS.get(file) ?? []
         for (const re of forbidden) {
+          if (allowed.some((a) => a.source === re.source)) continue
           if (re.test(text)) offenders.push(`${file}: ${String(re)}`)
         }
       }
     }
-    expect(offenders, `CSS 引用了不该引用的 token / 字面颜色：\n${offenders.join('\n')}`).toEqual([])
+    expect(offenders, `CSS 引用了不该引用的 token / 字面颜色（官方复制件请在 OFFICIAL_EXCEPTIONS 登记并写明理由）：\n${offenders.join('\n')}`).toEqual([])
   })
 })
 
 describe('token 存在性（拼错 = 样式静默失效）', () => {
+  // 官方复制件的原样引用豁免（保真优先，带理由）：
+  // --dsl-command-whitespace：官方命名空间疑为 dsl 笔误的跨组件覆盖钩子，CommandText 消费侧带
+  // fallback（pre），定义方在 TerminalBlock/ui-tool；保真保留。
+  const EXISTENCE_EXCEPTIONS = new Map<string, string[]>([['command-text.css', ['--dsl-command-whitespace']]])
+
   it('组件引用的每个 var(--x) 都是官方清单里的 token（或宿主上下文变量）', () => {
     // CSS 规范：var() 解析失败 → 整条声明被静默丢弃 → 样式不生效且**无任何报错**。
     // 格式类护栏（禁 static/specific/字面色）看不出「token 名拼错」或「官方已删除」，
@@ -95,14 +114,24 @@ describe('token 存在性（拼错 = 样式静默失效）', () => {
     const offenders: string[] = []
     for (const item of registry.items) {
       if (item.status !== 'ready') continue
+      // 条目自身脚本文件里 inline 设置的变量（style/setProperty 的 '--x' 键）视为已知
+      const setInJs = new Set<string>()
+      for (const file of item.files) {
+        if (!/\.(tsx|ts)$/.test(file)) continue
+        const js = readFileSync(join(src, file), 'utf8')
+        for (const m of js.matchAll(/'(--[a-z0-9-]+)'/g)) setInJs.add(m[1]!)
+      }
       for (const file of item.files) {
         if (!file.endsWith('.css')) continue
         const text = readFileSync(join(src, file), 'utf8')
+        // 同文件内自定义属性定义（`--x:`）视为已知：组件局部变量（如 segmented-tabs 的 inset）
+        const definedHere = new Set([...text.matchAll(/(--[a-z0-9-]+)\s*:/g)].map((d) => d[1]!))
         for (const m of text.matchAll(/var\((--[a-z0-9-]+)/g)) {
           const token = m[1]!
-          // 组件自有变量（--dsh-segment-count 等，由组件自己设置）不在官方清单里
           if (known.has(token)) continue
-          if (/^--dsh-segment-/.test(token)) continue
+          if (setInJs.has(token)) continue
+          if (definedHere.has(token)) continue
+          if (EXISTENCE_EXCEPTIONS.get(file)?.includes(token)) continue
           offenders.push(`${file}: ${token}`)
         }
       }
@@ -128,6 +157,7 @@ describe('token 存在性（拼错 = 样式静默失效）', () => {
     expect(tokenInventory.tokens.elevation.length, 'elevation 分类为空——生成范围可能变窄了').toBeGreaterThan(2)
     expect(tokenInventory.tokens.focusRing.length, 'focusRing 分类为空——生成范围可能变窄了').toBeGreaterThan(0)
     expect(tokenInventory.tokens.maskBlur.length, 'maskBlur 分类为空——生成范围可能变窄了').toBeGreaterThan(0)
+    expect(tokenInventory.tokens.static?.length, 'static 分类为空——官方复制件的 static 引用会误判不存在').toBeGreaterThan(20)
   })
 })
 
@@ -231,17 +261,15 @@ describe('命名空间（消费端把全部组件样式拼进同一个 <style>�
     expect(module).not.toContain("'duk-button-primary': ")
   })
 
-  it('组件 CSS 无链式类选择器（.a.b 形态：cssClassNames 与 prefixCss 都不支持，进了也不改名）', () => {
-    const offenders: string[] = []
-    for (const item of registry.items) {
-      if (item.status !== 'ready') continue
-      for (const file of item.files) {
-        if (!file.endsWith('.css')) continue
-        const text = readFileSync(join(src, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
-        if (/\.[_a-zA-Z][\w-]*\.[_a-zA-Z][\w-]/.test(text)) offenders.push(file)
-      }
-    }
-    expect(offenders, `出现链式类选择器（转换器盲区，先改写 CSS 或扩展转换器）：\n${offenders.join('\n')}`).toEqual([])
+  it('链式类选择器（.a.b）逐段改名且进表（官方 menu/toast 在用，2026-11-06 起支持）', () => {
+    const css = '.list.compactList { color: red; }\n.icon.success { color: blue; }'
+    const module = buildStyleModule(css, 'duk-', 'menu')
+    expect(module).toContain('.duk-menu-list.duk-menu-compactList')
+    expect(module).toContain('.duk-menu-icon.duk-menu-success')
+    expect(module).toContain("'list': 'duk-menu-list'")
+    expect(module).toContain("'compactList': 'duk-menu-compactList'")
+    expect(module).toContain("'icon': 'duk-menu-icon'")
+    expect(module).toContain("'success': 'duk-menu-success'")
   })
 })
 

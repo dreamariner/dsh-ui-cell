@@ -1,11 +1,6 @@
-// Shared modal keyboard ownership and focus lifetime.
-// 来源：packages/client/ui-primitives/src/useModalLayer.ts @ dsh v0.2.2-rc.1 (66491b05e3)
-//
-// 行为保真（DSH 官方点名要保的用户依赖行为）：只有最上层 modal 拥有 Escape 与 Tab；
-// 初始焦点取 data-modal-autofocus 标记的控件（不用 React autoFocus，因为它在焦点捕获前就跑）；
-// 关闭时焦点还给触发控件（0.2.2 起加守卫：仅当焦点仍留在保留的 dialog 内才归还，
-// 保留 owner 已选定的目标）；嵌套菜单（role=menu）拥有自己的 Escape 与遍历。
-
+// use-modal-layer.ts：Menu 的行为依赖（官方 helper 保真复制）。
+// 上游来源：packages/client/ui-primitives/src/useModalLayer.ts @ dsh v0.2.2-rc.1 (66491b05e3)
+/** Shared modal keyboard ownership and focus lifetime. */
 import { useLayoutEffect, useRef } from 'react'
 import type { RefObject } from 'react'
 import { observeComposition } from './keyboard-composition.ts'

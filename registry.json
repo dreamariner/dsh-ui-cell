@@ -10,7 +10,10 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "按钮原子：primary / ghost / outline / toolbar 四变体，md / sm 两尺寸，icon 槽位，原生属性透传",
-      "files": ["button.tsx", "button.css"],
+      "files": [
+        "button.tsx",
+        "button.css"
+      ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Button.tsx"
     },
@@ -19,7 +22,10 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "单行输入原子：可选 leading icon，value/onChange 受控，min/max/type 等原生属性透传",
-      "files": ["input.tsx", "input.css"],
+      "files": [
+        "input.tsx",
+        "input.css"
+      ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Input.tsx"
     },
@@ -28,7 +34,10 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "只读胶囊标签：八色调（outline/solid/neutral/quiet/success/info/warning/danger），data-tone 变体机制",
-      "files": ["tag.tsx", "tag.css"],
+      "files": [
+        "tag.tsx",
+        "tag.css"
+      ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Tag.tsx"
     },
@@ -37,7 +46,10 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "分段控制器：WAI-ARIA tabs 键盘走查（Arrow/Home/End 环绕、跳过 disabled）、roving tabindex、滑动指示器",
-      "files": ["segmented-control.tsx", "segmented-control.css"],
+      "files": [
+        "segmented-control.tsx",
+        "segmented-control.css"
+      ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/SegmentedControl.tsx"
     },
@@ -48,12 +60,12 @@
       "description": "居中模态：portal 渲染、焦点陷阱、Escape 关闭、焦点归还、mask 点击关闭",
       "files": [
         "modal.tsx",
-        "modal.css",
-        "use-modal-layer.ts",
-        "focus.ts",
-        "keyboard-composition.ts"
+        "modal.css"
       ],
-      "dependencies": ["icon"],
+      "dependencies": [
+        "icon",
+        "modal-layer"
+      ],
       "upstream": "packages/client/ui-primitives/src/Modal.tsx"
     },
     {
@@ -61,8 +73,15 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "风险确认对话框：主操作在勾选确认前禁用，初始焦点落在勾选框",
-      "files": ["risk-confirmation.tsx", "risk-confirmation.css"],
-      "dependencies": ["button", "modal", "icon"],
+      "files": [
+        "risk-confirmation.tsx",
+        "risk-confirmation.css"
+      ],
+      "dependencies": [
+        "button",
+        "modal",
+        "icon"
+      ],
       "upstream": "packages/client/ui-primitives/src/RiskConfirmation.tsx"
     },
     {
@@ -70,8 +89,13 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "原生 select 的 token 化外衣：保留原生语义与移动端 picker，外观对齐 Input",
-      "files": ["select.tsx", "select.css"],
-      "dependencies": ["icon"],
+      "files": [
+        "select.tsx",
+        "select.css"
+      ],
+      "dependencies": [
+        "icon"
+      ],
       "upstream": null
     },
     {
@@ -79,7 +103,10 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "多行输入：token 化边框与背景，尺寸由调用方给",
-      "files": ["textarea.tsx", "textarea.css"],
+      "files": [
+        "textarea.tsx",
+        "textarea.css"
+      ],
       "dependencies": [],
       "upstream": null
     },
@@ -88,36 +115,392 @@
       "type": "registry:ui",
       "status": "ready",
       "description": "图标集（当前 5 个：database / warning / close / chevron-down / search），currentColor + aria-hidden",
-      "files": ["icons.tsx"],
+      "files": [
+        "icons.tsx"
+      ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/icons/index.tsx"
     },
     {
       "name": "tooltip",
       "type": "registry:ui",
-      "status": "planned",
+      "status": "ready",
       "description": "视口自适应 placement 的悬浮提示（官方点名要保真的行为组件之一）",
-      "files": [],
-      "dependencies": [],
+      "files": [
+        "tooltip.tsx",
+        "tooltip.css",
+        "tooltip-placement.ts",
+        "use-dismiss-on-outside-pointer.ts",
+        "input-modality.ts"
+      ],
+      "dependencies": [
+        "shortcut-keys"
+      ],
       "upstream": "packages/client/ui-primitives/src/Tooltip.tsx"
     },
     {
       "name": "menu",
       "type": "registry:ui",
-      "status": "planned",
+      "status": "ready",
       "description": "带子菜单与键盘走查的菜单（依赖 useAnchoredPosition 等内部 hook，成本较高）",
-      "files": [],
-      "dependencies": [],
+      "files": [
+        "menu.tsx",
+        "menu.css",
+        "menu-group.tsx",
+        "menu-group.css",
+        "menu-surface.tsx",
+        "menu-surface.css",
+        "use-anchored-position.ts"
+      ],
+      "dependencies": [
+        "icon",
+        "modal-layer",
+        "pointer-grace",
+        "overlay-top-margin",
+        "focus",
+        "keyboard-composition",
+        "shortcut-keys",
+        "tooltip"
+      ],
       "upstream": "packages/client/ui-primitives/src/Menu.tsx"
     },
     {
       "name": "switch",
       "type": "registry:ui",
-      "status": "planned",
+      "status": "ready",
       "description": "受控开关：role=switch + aria-checked（官方点名要保真的行为）",
-      "files": [],
+      "files": [
+        "switch.tsx",
+        "switch.css"
+      ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/Switch.tsx"
+    },
+    {
+      "name": "pill",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "视觉胶囊指示器：active 高亮与可选交互语义",
+      "files": [
+        "pill.tsx",
+        "pill.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/Pill.tsx"
+    },
+    {
+      "name": "state-dot",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "状态圆点：done/pending/error 等语义态，done 带 check 图标",
+      "files": [
+        "state-dot.tsx",
+        "state-dot.css"
+      ],
+      "dependencies": [
+        "icon"
+      ],
+      "upstream": "packages/client/ui-primitives/src/StateDot.tsx"
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "受控复选框：原生 input 语义 + token 化外观",
+      "files": [
+        "checkbox.tsx",
+        "checkbox.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/Checkbox.tsx"
+    },
+    {
+      "name": "disclosure-row",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "折叠行：chevron 展开态与 shimmer 加载态",
+      "files": [
+        "disclosure-row.tsx",
+        "disclosure-row.css"
+      ],
+      "dependencies": [
+        "icon",
+        "text-shimmer"
+      ],
+      "upstream": "packages/client/ui-primitives/src/DisclosureRow.tsx"
+    },
+    {
+      "name": "fold-toggle",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "折叠开关按钮（纯逻辑，无样式文件）",
+      "files": [
+        "fold-toggle.tsx"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/FoldToggle.tsx"
+    },
+    {
+      "name": "shortcut-keys",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "快捷键胶囊（⌘K 式按键展示）",
+      "files": [
+        "shortcut-keys.tsx",
+        "shortcut-keys.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/ShortcutKeys.tsx"
+    },
+    {
+      "name": "path-label",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "路径标签：目录前缀弱化 + 末段强调（path 工具内联自官方 workspace-path）",
+      "files": [
+        "path-label.tsx",
+        "path-label.css",
+        "path-parts.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/PathLabel.tsx"
+    },
+    {
+      "name": "config-field",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "设置表单字段行：label + 控件排版",
+      "files": [
+        "config-field.tsx",
+        "config-field.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/ConfigField.tsx"
+    },
+    {
+      "name": "connection-indicator",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "连接状态指示器：状态圆点 + 图标反馈",
+      "files": [
+        "connection-indicator.tsx",
+        "connection-indicator.css"
+      ],
+      "dependencies": [
+        "icon",
+        "state-dot"
+      ],
+      "upstream": "packages/client/ui-primitives/src/ConnectionIndicator.tsx"
+    },
+    {
+      "name": "text-shimmer",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "文本微光加载态（keyframes 动画）",
+      "files": [
+        "text-shimmer.tsx",
+        "text-shimmer.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/TextShimmer.tsx"
+    },
+    {
+      "name": "segmented-tabs",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "分段页签：Pill 组合的轻量 tabs",
+      "files": [
+        "segmented-tabs.tsx",
+        "segmented-tabs.css"
+      ],
+      "dependencies": [
+        "pill"
+      ],
+      "upstream": "packages/client/ui-primitives/src/SegmentedTabs.tsx"
+    },
+    {
+      "name": "command-text",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "命令文本（kbd 风格的路径/命令展示）",
+      "files": [
+        "command-text.tsx",
+        "command-text.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/CommandText.tsx"
+    },
+    {
+      "name": "inline-editor",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行内编辑器：就地编辑的输入态",
+      "files": [
+        "inline-editor.tsx",
+        "inline-editor.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/InlineEditor.tsx"
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "轻通知：portal 渲染的成功/失败反馈条",
+      "files": [
+        "toast.tsx",
+        "toast.css"
+      ],
+      "dependencies": [
+        "icon"
+      ],
+      "upstream": "packages/client/ui-primitives/src/Toast.tsx"
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "悬浮卡：portal + 指针宽限 + 复制反馈（含 Group 上下文）",
+      "files": [
+        "hover-card.tsx",
+        "hover-card.css",
+        "hover-card-group.tsx",
+        "clipboard.ts",
+        "overlay-top-margin.ts"
+      ],
+      "dependencies": [
+        "pointer-grace",
+        "overlay-top-margin"
+      ],
+      "upstream": "packages/client/ui-primitives/src/HoverCard.tsx"
+    },
+    {
+      "name": "image-lightbox",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "图片灯箱：portal 全屏预览",
+      "files": [
+        "image-lightbox.tsx",
+        "image-lightbox.css"
+      ],
+      "dependencies": [
+        "icon"
+      ],
+      "upstream": "packages/client/ui-primitives/src/ImageLightbox.tsx"
+    },
+    {
+      "name": "image-preview",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "图片预览：加载态与缩放呈现",
+      "files": [
+        "image-preview.tsx",
+        "image-preview.css"
+      ],
+      "dependencies": [
+        "icon"
+      ],
+      "upstream": "packages/client/ui-primitives/src/ImagePreview.tsx"
+    },
+    {
+      "name": "animated-rows",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "键控行动画：移动滑入与进出淡入淡出",
+      "files": [
+        "animated-rows.tsx",
+        "animated-rows.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/AnimatedRows.tsx"
+    },
+    {
+      "name": "user-message-bubble",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "用户消息气泡",
+      "files": [
+        "user-message-bubble.tsx",
+        "user-message-bubble.css"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/UserMessageBubble.tsx"
+    },
+    {
+      "name": "zoom-controls",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "缩放控制条：+/-/重置与缩放比菜单",
+      "files": [
+        "zoom-controls.tsx",
+        "zoom-controls.css",
+        "document-zoom.ts"
+      ],
+      "dependencies": [
+        "button",
+        "icon",
+        "menu",
+        "tooltip"
+      ],
+      "upstream": "packages/client/ui-primitives/src/ZoomControls.tsx"
+    },
+    {
+      "name": "focus",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：focusWithoutRing（键盘导航前不出 focus 环）+ 移动端检测",
+      "files": [
+        "focus.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/focus.ts"
+    },
+    {
+      "name": "keyboard-composition",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：observeComposition（IME 组合期守卫，弹层按键不误触）",
+      "files": [
+        "keyboard-composition.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/keyboard-composition.ts"
+    },
+    {
+      "name": "modal-layer",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：useModalLayer（modal 层级栈/焦点归还，modal 与 menu 共享）",
+      "files": [
+        "use-modal-layer.ts"
+      ],
+      "dependencies": [
+        "focus",
+        "keyboard-composition"
+      ],
+      "upstream": "packages/client/ui-primitives/src/useModalLayer.ts"
+    },
+    {
+      "name": "pointer-grace",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：usePointerGrace（指针在锚点与浮层间移动的宽限）",
+      "files": [
+        "pointer-grace.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/pointer-grace.ts"
+    },
+    {
+      "name": "overlay-top-margin",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：overlayTopMargin（浮层顶部让位宿主标题栏，hover-card 与 menu 共享）",
+      "files": [
+        "overlay-top-margin.ts"
+      ],
+      "dependencies": [],
+      "upstream": "packages/client/ui-primitives/src/overlay-top-margin.ts"
     }
   ]
 }
