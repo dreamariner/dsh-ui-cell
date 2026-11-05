@@ -229,13 +229,17 @@ function ZoomControlsSection() {
 <ZoomControls zoom={zoom} visible labels={labels} onZoom={setZoom}
   onActiveChange={() => {}} />`}>
       <div style={{ width: 380, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <ZoomControls
-          zoom={zoom}
-          visible
-          labels={{ controls: '缩放', menu: '缩放比例', out: '缩小', into: '放大', value: (percent: number) => percent + '%' }}
-          onZoom={(next) => setZoom(Number(next.toFixed(2)))}
-          onActiveChange={() => {}}
-        />
+        {/* panel 是 absolute 定位（bottom: 14px + 水平居中），需要一个定位祖先当锚定盒；
+            官方用法即放在带 position 的预览容器里，这里给一个 relative 锚定盒模拟预览画布 */}
+        <div style={{ position: 'relative', height: 110, borderRadius: 8, background: 'var(--dsw-alias-bg-layer-2)' }}>
+          <ZoomControls
+            zoom={zoom}
+            visible
+            labels={{ controls: '缩放', menu: '缩放比例', out: '缩小', into: '放大', value: (percent: number) => percent + '%' }}
+            onZoom={(next) => setZoom(Number(next.toFixed(2)))}
+            onActiveChange={() => {}}
+          />
+        </div>
         <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)' }}>当前 zoom：{zoom.toFixed(2)}</div>
       </div>
     </Demo>
