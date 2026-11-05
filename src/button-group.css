@@ -1,0 +1,13 @@
+.buttonGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.buttonGroup > * {
+  flex: none;
+}
+
+.buttonGroup > * + * {
+  margin-left: -0.5px;
+}

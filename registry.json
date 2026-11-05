@@ -501,6 +501,150 @@
       ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/overlay-top-margin.ts"
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "分隔线：横/竖两向，alias 边框色（kit 自有，对齐 shadcn separator）",
+      "files": [
+        "separator.tsx",
+        "separator.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "aspect-ratio",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "宽高比容器：子元素铺满 ratio 盒（kit 自有，对齐 shadcn aspect-ratio）",
+      "files": [
+        "aspect-ratio.tsx",
+        "aspect-ratio.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "表单标签（kit 自有，对齐 shadcn label）",
+      "files": [
+        "label.tsx",
+        "label.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "骨架屏：pulse 占位块（kit 自有，对齐 shadcn skeleton）",
+      "files": [
+        "skeleton.tsx",
+        "skeleton.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "进度条：受控 value 与 indeterminate 滑动（kit 自有，对齐 shadcn progress）",
+      "files": [
+        "progress.tsx",
+        "progress.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "加载环：纯 CSS 旋转，尊重 prefers-reduced-motion（kit 自有，对齐 shadcn spinner）",
+      "files": [
+        "spinner.tsx",
+        "spinner.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "头像：图片 + 首字母回退（kit 自有，对齐 shadcn avatar）",
+      "files": [
+        "avatar.tsx",
+        "avatar.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "面包屑：List/Item/Link/Page/Separator 复合（kit 自有，对齐 shadcn breadcrumb）",
+      "files": [
+        "breadcrumb.tsx",
+        "breadcrumb.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "button-group",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "按钮组容器（kit 自有，对齐 shadcn button-group）",
+      "files": [
+        "button-group.tsx",
+        "button-group.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "empty",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "空状态：Media/Title/Description/Content 复合（kit 自有，对齐 shadcn empty）",
+      "files": [
+        "empty.tsx",
+        "empty.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "列表项卡片：Media/Content/Title/Description/Actions 复合（kit 自有，对齐 shadcn item）",
+      "files": [
+        "item.tsx",
+        "item.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "表单字段壳：Label + 控件 + Description/Error（kit 自有，对齐 shadcn field）",
+      "files": [
+        "field.tsx",
+        "field.css"
+      ],
+      "dependencies": [],
+      "upstream": null
     }
   ]
 }

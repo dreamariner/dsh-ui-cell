@@ -1,0 +1,29 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.media {
+  display: flex;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.title {
+  font: var(--dsw-font-m-18);
+  color: var(--dsw-alias-label-primary);
+}
+
+.description {
+  margin: 0;
+  max-width: 360px;
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.content {
+  margin-top: 8px;
+}
