@@ -45,7 +45,7 @@ function JsonBlockSection() {
 <JsonBlock label="工具入参" payload={payload} defaultOpen />`}>
       <div style={{ width: 420 }}>
         <JsonBlock
-          label="luna_memory_search 入参"
+          label="memory_search 入参"
           payload={{ query: '深色主题', limit: 10, kind: 'semantic' }}
           defaultOpen
           truncatedLabel={(total) => '已截断，共 ' + total + ' 字符'}
@@ -154,7 +154,7 @@ function TerminalBlockSection() {
   return (
     <Demo id="terminal-block" title="TerminalBlock" wide code={`import { TerminalBlock } from '../ui/terminal-block.tsx'
 
-<TerminalBlock command="luna memory rebuild" cwd="/zero" exitCode={0}
+<TerminalBlock command="memory rebuild" cwd="/zero" exitCode={0}
   output="…ANSI 彩色输出（ansi-lite 解析）" />`}>
       <div style={{ width: 440 }}>
         <TerminalBlock
@@ -174,10 +174,10 @@ function TerminalBlockSection() {
             expandAria: (hidden) => '展开 ' + hidden + ' 行',
             expand: (hidden) => '展开 ' + hidden + ' 行',
           }}
-          command="luna memory rebuild --index"
+          command="memory rebuild --index"
           cwd="/Users/nan/zero"
           exitCode={0}
-          output={'\u001B[32m✓\u001B[0m 读取 902 条记忆\n\u001B[33m!\u001B[0m 3 条待确认已跳过\n\u001B[36m→\u001B[0m 索引重建完成，耗时 1.2s\n\u001B[1;34mluna\u001B[0m> 就绪'}
+          output={'\u001B[32m✓\u001B[0m 读取 902 条记忆\n\u001B[33m!\u001B[0m 3 条待确认已跳过\n\u001B[36m→\u001B[0m 索引重建完成，耗时 1.2s\n\u001B[1;34mdsh\u001B[0m> 就绪'}
         />
       </div>
     </Demo>

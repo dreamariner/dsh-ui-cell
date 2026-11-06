@@ -78,7 +78,7 @@ textarea / icon；3 个 planned：tooltip / menu / switch（行为组件，按�
 - [x] `add` 可用：复制 + 前缀化 + CSS→TS 转换，产出组件的跨文件 import 全部可解析
 - [x] `pnpm test` 7 条自守护栏全绿；`pnpm typecheck` 零错
 - [x] registry 登记基线（dshVersion 0.2.1-rc.3 / commit 1f81c047fc）与各组件 upstream 出处
-- [x] 首个消费者落地（luna-dsh plugin-memory，issue 033）：65 调用点迁移，官方 client 包依赖归零
+- [x] 首个消费者落地（姊妹插件仓的记忆插件）：65 调用点迁移，官方 client 包依赖归零
 - [x] README 与 AGENTS.md 写明用法、纪律、升级流程（逐组件按 upstream 重 diff）
 
 ## 进度日志
@@ -89,5 +89,5 @@ textarea / icon；3 个 planned：tooltip / menu / switch（行为组件，按�
 - 2026-11-04  jianan  实现完成：9 组件 + 3 辅助模块 + CLI + 护栏。实施中修正三处设计错误：
   ① 类名表键必须是原名（否则 `css[variant]` 动态索引断掉）；② 非样式文件保持原扩展名
   （辅助模块是 .ts 不是 .tsx）；③ `add` 允许省略子命令词。
-- 2026-11-04  jianan  首个消费者落地：luna-dsh plugin-memory 迁移 65 调用点 + 5 处裸表单
-  元素，官方 client 包依赖归零，实机验收通过（详见 luna-dsh issue 033）。
+- 2026-11-04  jianan  首个消费者落地：姊妹插件仓的记忆插件迁移 65 调用点 + 5 处裸表单
+  元素，官方 client 包依赖归零，实机验收通过（详见姊妹仓迁移验收记录）。

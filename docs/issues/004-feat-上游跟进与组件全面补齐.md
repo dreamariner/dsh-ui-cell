@@ -116,7 +116,7 @@ base 中无对应而未做的：aspect-ratio 已做；其余无。
 - [x] shadcn base 缺失组件全部补齐（41 kit 自有），样式全 DSH token、行为手写零依赖
 - [x] 内容块落地（6 保真轻量 + 3 替身模块），暂缓清单留档
 - [x] 19 条护栏全绿（含 checkout 在场时的「与上游逐字节一致」实测）+ typecheck 零错
-- [x] 消费端 luna-dsh 重新 add 受影响组件并重建
+- [x] 消费端插件仓重新 add 受影响组件并重建
 - [x] README / AGENTS 组件清单改为按来源分组（registry.json 为权威清单，文档不重复维护 87 行表）
 
 ## 提交链

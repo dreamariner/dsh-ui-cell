@@ -37,7 +37,7 @@ seed-forge/dsh-plugin-ui-components 占了 dsh+ui+components 词根）、`dsh-ui
 - `scripts/vendor-tokens.mjs`、`tests/registry.spec.ts`、`src/index.ts`、`cli/index.ts`：注释口径
 - `README`：细胞叙事开场 + 新增「生态划分」节（与 neil-ji 无关、与 seed-forge 层级互补）
 - `AGENTS.md`：标题定位、生态划分注记、旧名留痕
-- 消费端 luna-dsh：重新 add（`-css.ts` header 印章同步），033 进度注记
+- 消费端插件仓：重新 add（`-css.ts` header 印章同步），033 进度注记
 - zero：子模块目录与 `.gitmodules`（path/url）迁移 + 指针提交
 
 历史 issue（001/002）按仓规不追溯改写，其中的 dsh-ui-kit 均指改名前的本仓。

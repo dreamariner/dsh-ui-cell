@@ -43,7 +43,7 @@ function ComboboxSection() {
             { value: 'dark', label: '深色主题偏好' },
             { value: 'chinese', label: '简体中文回复' },
             { value: 'pilot', label: 'pilot 项目管理' },
-            { value: 'luna', label: 'Luna 概念生命' },
+            { value: 'demo', label: '演示项目' },
           ]}
         />
       </div>

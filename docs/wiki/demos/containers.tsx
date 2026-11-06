@@ -214,7 +214,7 @@ function EmptySection() {
         <Empty>
           <EmptyMedia><IconDatabaseOutlineRegular size={28} /></EmptyMedia>
           <EmptyTitle>还没有记忆</EmptyTitle>
-          <EmptyDescription>和 Luna 多聊几句，记忆会自动沉淀在这里。</EmptyDescription>
+          <EmptyDescription>和助手多聊几句，记忆会自动沉淀在这里。</EmptyDescription>
           <EmptyContent><button className="duk-button duk-button-outline duk-button-sm" type="button">了解记忆系统</button></EmptyContent>
         </Empty>
       </div>
@@ -304,7 +304,7 @@ function BreadcrumbSection() {
         <BreadcrumbList>
           <BreadcrumbItem><BreadcrumbLink href="#">zero</BreadcrumbLink></BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem><BreadcrumbLink href="#">谁是Luna</BreadcrumbLink></BreadcrumbItem>
+          <BreadcrumbItem><BreadcrumbLink href="#">知识库</BreadcrumbLink></BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem><BreadcrumbPage>记忆面板</BreadcrumbPage></BreadcrumbItem>
         </BreadcrumbList>
@@ -414,7 +414,7 @@ function SidebarSection() {
 
 <Sidebar header={…} footer={…}>导航内容</Sidebar>`}>
       <div style={{ width: 400, height: 180, display: 'flex' }}>
-        <Sidebar header={<div style={{ fontWeight: 600 }}>Luna</div>} footer={<div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)' }}>v0.2.1</div>}>
+        <Sidebar header={<div style={{ fontWeight: 600 }}>助手</div>} footer={<div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)' }}>v0.2.1</div>}>
           {['记忆', '技能', '日记'].map((label) => (
             <div key={label} style={{ padding: '6px 10px', borderRadius: 6, color: 'var(--dsw-alias-label-secondary)' }}>{label}</div>
           ))}

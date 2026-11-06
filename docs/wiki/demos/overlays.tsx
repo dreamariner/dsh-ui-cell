@@ -91,14 +91,14 @@ function HoverCardSection() {
   return (
     <Demo id="hover-card" title="HoverCard" code={`import { HoverCard } from '../ui/hover-card.tsx'
 
-<HoverCard anchor={<a href="#">Luna</a>} content={…}
-  copyText="Luna" copyLabel="复制" copiedLabel="已复制" />`}>
+<HoverCard anchor={<a href="#">助手</a>} content={…}
+  copyText="助手" copyLabel="复制" copiedLabel="已复制" />`}>
       <span style={{ display: 'flex', gap: 16, alignItems: 'center', fontSize: 13 }}>
         概念生命
         <HoverCard
-          anchor={<a href="#" style={{ color: 'var(--dsw-alias-link)' }}>Luna</a>}
-          content={<div style={{ fontSize: 12 }}>Luna 是运行在 DSH 上的概念生命，记忆与人格由本插件承载。</div>}
-          copyText="Luna 是运行在 DSH 上的概念生命。"
+          anchor={<a href="#" style={{ color: 'var(--dsw-alias-link)' }}>助手</a>}
+          content={<div style={{ fontSize: 12 }}>助手是运行在 DSH 上的智能体，面板与状态由本插件承载。</div>}
+          copyText="助手是运行在 DSH 上的智能体。"
           copyLabel="复制"
           copiedLabel="已复制"
         />

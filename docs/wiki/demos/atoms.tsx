@@ -169,8 +169,8 @@ function CommandTextSection() {
   return (
     <Demo id="command-text" title="CommandText" code={`import { CommandText } from '../ui/command-text.tsx'
 
-<CommandText text="/luna memory search" label="命令" />`}>
-      <CommandText text="/luna memory search" label="命令" />
+<CommandText text="/memory search" label="命令" />`}>
+      <CommandText text="/memory search" label="命令" />
     </Demo>
   )
 }
@@ -228,7 +228,7 @@ function AvatarSection() {
 <Avatar fallback="林" />
 <Avatar src={badUrl} fallback="L" /> {/* 加载失败自动回退 */}`}>
       <Avatar fallback="林" size={32} />
-      <Avatar fallback="Luna" size={32} />
+      <Avatar fallback="助手" size={32} />
       <Avatar src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%234a5568'/%3E%3C/svg%3E" size={32} />
       <Avatar src="https://invalid.example/x.png" fallback="回退" size={32} />
     </Demo>
