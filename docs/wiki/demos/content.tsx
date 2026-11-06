@@ -1,9 +1,10 @@
-// content：内容块演示（官方源 + 零依赖轻量核心）
+// content：内容块演示（官方保真复制 + content 档的 npm 重依赖）
 import { useState } from 'react'
 import { Demo, type DemoSection } from '../demo-kit.tsx'
 import {
   JsonTree, JsonBlock, SearchBlock, CodeToolbar, DiffBlock, TerminalBlock,
   ImagePreview, ImageLightbox, ZoomControls, Button,
+  CodeBlock, MarkdownText, ReadBlock, DetailDocument,
 } from '../../../src/index.ts'
 
 const CODE_TOOLBAR_LABELS = { codeLabel: '代码', wrapLabel: '换行', unwrapLabel: '不换行' }
@@ -246,6 +247,89 @@ function ZoomControlsSection() {
   )
 }
 
+/** Markdown 渲染：GFM + KaTeX + 代码块高亮（content 档：带 micromark/katex/shiki 依赖）。 */
+function MarkdownTextSection() {
+  const md = [
+    '# 标题与段落',
+    '',
+    '普通段落带 **粗体**、`行内代码` 与 [链接](https://example.com)。',
+    '',
+    '| 列 A | 列 B |',
+    '| --- | --- |',
+    '| 1 | 2 |',
+    '',
+    '- 任务一',
+    '- [x] 任务二',
+    '',
+    '行内公式 $a^2 + b^2 = c^2$。',
+  ].join('\n')
+  const labels = { code: { copyLabel: '复制', copiedLabel: '已复制' }, footnotes: '脚注' }
+  return (
+    <Demo id="markdown-text" title="MarkdownText" wide code={`import { MarkdownText } from '../ui/markdown-text.tsx'
+
+<MarkdownText text={md} labels={labels} />`}>
+      <div style={{ maxWidth: 620 }}>
+        <MarkdownText text={md} labels={labels} />
+      </div>
+    </Demo>
+  )
+}
+
+/** 代码块：shiki 语法高亮（content 档）。 */
+function CodeBlockSection() {
+  const code = 'export function main(): number {\n  const answer: number = 42\n  return answer\n}'
+  return (
+    <Demo id="code-block" title="CodeBlock" wide code={`import { CodeBlock } from '../ui/code-block.tsx'
+
+<CodeBlock code={code} lang="typescript" copyLabel="复制" copiedLabel="已复制" />`}>
+      <CodeBlock code={code} lang="typescript" copyLabel="复制" copiedLabel="已复制" />
+    </Demo>
+  )
+}
+
+/** 读文件结果卡片：行号槽 + 高亮 + 头尾折叠。 */
+function ReadBlockSection() {
+  const labels = {
+    codeLabel: '代码', wrapLabel: '换行', unwrapLabel: '不换行',
+    window: (shown: number, total: number) => `显示 ${shown} / ${total} 行`,
+    copy: '复制', copied: '已复制',
+    collapseAria: '收起', expandAria: (hidden: number) => `展开 ${hidden} 行`,
+    collapse: '收起', expand: (hidden: number) => `展开 ${hidden} 行`,
+  }
+  const lines = [
+    { number: 1, text: "import { createServer } from 'node:http'" },
+    { number: 2, text: '' },
+    { number: 3, text: 'const port = 60993' },
+    { number: 4, text: "createServer((req, res) => res.end('ok')).listen(port)" },
+  ]
+  return (
+    <Demo id="read-block" title="ReadBlock" wide code={`import { ReadBlock } from '../ui/read-block.tsx'
+
+<ReadBlock label="src/app.ts" lines={lines} totalLines={4} lang="typescript" labels={labels} />`}>
+      <ReadBlock label="src/app.ts" lines={lines} totalLines={4} lang="typescript" labels={labels} />
+    </Demo>
+  )
+}
+
+/** 长 Markdown 描述区块：loading / 文档 / 失败重试。 */
+function DetailDocumentSection() {
+  const labels = {
+    title: '文档', loading: '加载中…', retry: '重试',
+    markdown: { code: { copyLabel: '复制', copiedLabel: '已复制' }, footnotes: '脚注' },
+  }
+  return (
+    <Demo id="detail-document" title="DetailDocument" wide code={`import { DetailDocument } from '../ui/detail-document.tsx'
+
+<DetailDocument state={{ status: 'found', markdown: text }} labels={labels} onRetry={() => {}} />`}>
+      <DetailDocument
+        state={{ status: 'found', markdown: '# 说明\n\n这是一段较长的说明文字，用于展示 DetailDocument 的文档态。' }}
+        labels={labels}
+        onRetry={() => {}}
+      />
+    </Demo>
+  )
+}
+
 export const contentSections: DemoSection = {
   group: '内容块',
   items: [
@@ -258,6 +342,10 @@ export const contentSections: DemoSection = {
     { id: 'image-preview', title: 'ImagePreview' },
     { id: 'image-lightbox', title: 'ImageLightbox' },
     { id: 'zoom-controls', title: 'ZoomControls' },
+    { id: 'markdown-text', title: 'MarkdownText' },
+    { id: 'code-block', title: 'CodeBlock' },
+    { id: 'read-block', title: 'ReadBlock' },
+    { id: 'detail-document', title: 'DetailDocument' },
   ],
   node: (
     <>
@@ -270,6 +358,10 @@ export const contentSections: DemoSection = {
       <ImagePreviewSection />
       <ImageLightboxSection />
       <ZoomControlsSection />
+      <MarkdownTextSection />
+      <CodeBlockSection />
+      <ReadBlockSection />
+      <DetailDocumentSection />
     </>
   ),
 }

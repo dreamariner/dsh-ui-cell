@@ -2,7 +2,8 @@
 //
 // ⚠ 这个 barrel 是**本仓内部**用的（消费端不会 import 它——add 复制的是单个组件文件）。
 // 消费端拿到的是插件自己的 src/client/ui/ 目录（源码归插件），彼此不共享运行时。
-// 按 registry ready 条目全量导出（文档站与预览用），组件源变更时重跑生成脚本或手工同步。
+// 按 registry ready 条目全量导出（文档站与预览用），组件源变更时重跑
+// `node scripts/gen-barrel.mjs`。
 
 // ── button/button.tsx ──
 export { Button } from './button.tsx'
@@ -35,7 +36,7 @@ export { Textarea } from './textarea.tsx'
 export type { TextareaProps } from './textarea.tsx'
 
 // ── icon/icons.tsx ──
-export { ICON_REGULAR_STROKE, IconDatabaseOutlineRegular, IconWarningOutlineRegular, IconCloseOutlineRegular, IconChevronDownOutlineRegular, IconSearchOutlineRegular, IconCheckOutlineRegular, IconRefreshOutlineRegular, IconCheckCircleOutlineRegular, IconLoadingOutlineRegular, IconChevronUpOutlineRegular, IconPlusOutlineRegular, IconCopyOutlineRegular, IconWrapLinesOutlineRegular, IconNowrapFillRegular, IconWrapFillRegular } from './icons.tsx'
+export { ICON_REGULAR_STROKE, IconDatabaseOutlineRegular, IconWarningOutlineRegular, IconCloseOutlineRegular, IconChevronDownOutlineRegular, IconSearchOutlineRegular, IconCheckOutlineRegular, IconRefreshOutlineRegular, IconCheckCircleOutlineRegular, IconLoadingOutlineRegular, IconChevronUpOutlineRegular, IconPlusOutlineRegular, IconCopyOutlineRegular, IconWrapLinesOutlineRegular, IconNowrapFillRegular, IconWrapFillRegular, IconGlobeOutlineRegular, IconFileOutlineRegular } from './icons.tsx'
 export type { IconProps } from './icons.tsx'
 
 // ── tooltip/tooltip.tsx ──
@@ -131,6 +132,7 @@ export type { ImageLightboxLabels } from './image-lightbox.tsx'
 export { ImagePreview } from './image-preview.tsx'
 
 // ── animated-rows/animated-rows.tsx ──
+export { AnimatedRows } from './animated-rows.tsx'
 export type { AnimatedRowsProps } from './animated-rows.tsx'
 
 // ── user-message-bubble/user-message-bubble.tsx ──
@@ -332,26 +334,93 @@ export type { SearchBlockLineMatch, SearchFileGroup, SearchBlockLabels, SearchMa
 export { CodeToolbar } from './code-toolbar.tsx'
 export type { CodeToolbarLabels } from './code-toolbar.tsx'
 
-// ── code-toolbar/code-highlighting-lite.ts ──
-export { supportsHighlighting, languageForPath } from './code-highlighting-lite.ts'
+// ── code-highlighting/code-highlighting.ts ──
+export { grammarForHint, supportsHighlighting, languageForPath, highlightLines, highlightToHtml, useCodeHighlighter } from './code-highlighting.ts'
+export type { HighlightSpan } from './code-highlighting.ts'
+
+// ── code-block/code-block.tsx ──
+export { CodeBlock } from './code-block.tsx'
+export type { CodeBlockProps } from './code-block.tsx'
 
 // ── diff-block/diff-block.tsx ──
 export { DEFAULT_DIFF_MAX_LINES, diffTotals, DiffBlock } from './diff-block.tsx'
 export type { DiffHunk, DiffBlockProps, DiffBlockLabels } from './diff-block.tsx'
 
-// ── diff-block/mini-diff.ts ──
-export { structuredPatch } from './mini-diff.ts'
-export type { MiniDiffHunk, StructuredPatchOptions } from './mini-diff.ts'
+// ── diff-block/diff.ts ──
+export { structuredPatch } from './diff.ts'
+export type { PatchHunk, StructuredPatchOptions } from './diff.ts'
 
 // ── terminal-block/terminal-block.tsx ──
 export { DEFAULT_TERMINAL_MAX_LINES, TerminalBlock } from './terminal-block.tsx'
 export type { TerminalBlockLabels, TerminalBlockProps } from './terminal-block.tsx'
 
-// ── terminal-block/ansi-lite.ts ──
-export { parseAnsiLines } from './ansi-lite.ts'
-export type { AnsiSpan, AnsiLine } from './ansi-lite.ts'
+// ── terminal-block/ansi.ts ──
+export { parseAnsiLines } from './ansi.ts'
+export type { AnsiSpan, AnsiLine } from './ansi.ts'
 
 // ── head-tail-cap/head-tail-cap.ts ──
 export { headTailCap } from './head-tail-cap.ts'
 export type { HeadTailCap } from './head-tail-cap.ts'
+
+// ── markdown-text/markdown-text.tsx ──
+export { MarkdownText } from './markdown-text.tsx'
+
+// ── markdown-text/markdown-render.tsx ──
+export { createReferenceTargets, collectReferenceTargets, renderBlocks, wrapBlockChildren, renderFootnoteSection } from './markdown-render.tsx'
+export type { PositionedBlock, MarkdownCodeLabels, MarkdownLabels, ReferenceTargets, MarkdownPathImages, MarkdownFileMentions, MarkdownRenderContext } from './markdown-render.tsx'
+
+// ── markdown-text/markdown-parse.ts ──
+export { parseGfm, parseGfmWithMath } from './markdown-parse.ts'
+
+// ── markdown-text/markdown-katex.tsx ──
+export { renderTexToReact } from './markdown-katex.tsx'
+
+// ── markdown-text/markdown-file-link.ts ──
+export { isExplicitFilePath, parseFileLink } from './markdown-file-link.ts'
+
+// ── markdown-text/markdown-plain-text.ts ──
+export { extractMarkdownPlainText } from './markdown-plain-text.ts'
+export type { MarkdownPlainTextMode, MarkdownPlainTextOptions } from './markdown-plain-text.ts'
+
+// ── markdown-text/markdown-quote-text.ts ──
+export { formatQuoteText } from './markdown-quote-text.ts'
+
+// ── markdown-text/markdown-local-image-syntax.ts ──
+export { recoverLocalImages } from './markdown-local-image-syntax.ts'
+
+// ── markdown-text/markdown-windows-path-destinations.ts ──
+export { windowsPathDestinations } from './markdown-windows-path-destinations.ts'
+
+// ── markdown-text/markdown-cjk-friendly-strong.ts ──
+export { cjkFriendlyStrong } from './markdown-cjk-friendly-strong.ts'
+
+// ── markdown-text/markdown-math-compatibility.ts ──
+export { mathCompatibility } from './markdown-math-compatibility.ts'
+
+// ── markdown-text/markdown-delegate.tsx ──
+export { MarkdownDelegateProvider, useMarkdownDelegate } from './markdown-delegate.tsx'
+export type { MarkdownExternalLinkHandler, MarkdownMenuTarget, MarkdownDelegate, MarkdownDelegateProviderProps } from './markdown-delegate.tsx'
+
+// ── markdown-text/markdown-viewport-highlighting.ts ──
+export { useViewportHighlighting } from './markdown-viewport-highlighting.ts'
+
+// ── markdown-text/markdown-link-icon.tsx ──
+export { classifyLinkPath, LinkIconMedium } from './markdown-link-icon.tsx'
+export type { MarkdownLinkKind } from './markdown-link-icon.tsx'
+
+// ── read-block/read-block.tsx ──
+export { DEFAULT_READ_MAX_LINES, ReadBlock } from './read-block.tsx'
+export type { ReadBlockLine, ReadBlockProps, ReadBlockLabels } from './read-block.tsx'
+
+// ── web-block/web-block.tsx ──
+export { WebBlock } from './web-block.tsx'
+export type { WebSourceView, WebSearchBlockProps, WebFetchBlockProps, WebBlockProps, WebBlockLabels } from './web-block.tsx'
+
+// ── quote-preview/quote-preview.tsx ──
+export { QuotePreview } from './quote-preview.tsx'
+export type { QuotePreviewRemoval, QuotePreviewProps } from './quote-preview.tsx'
+
+// ── detail-document/detail-document.tsx ──
+export { detailDocumentState, useDetailDocumentLabels, DetailDocument } from './detail-document.tsx'
+export type { DetailDocumentState, DetailDocumentRead, DetailDocumentCopy, DetailDocumentLabels } from './detail-document.tsx'
 

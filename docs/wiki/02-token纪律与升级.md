@@ -27,7 +27,8 @@ DSH 官方把设计 token 分三层：
 清单外合法变量（护栏按前缀/同文件/JS inline 放行）：`--dsh-frame-*`（宿主标题栏）、
 `--dsh-hairline-width` / `--dsh-button-outline-color` / `--dsh-content-font-size`
 （宿主/主题运行时注入）、`--dsh-segment-*` / `--dsh-anchored-*` / `--dsh-menu-*`
-（组件 JS inline 设置）、`--dsl-*`（宿主页面级覆盖钩子，全部带 fallback）。
+（组件 JS inline 设置）、`--dsl-*`（宿主页面级覆盖钩子，全部带 fallback）、
+`--shiki-*`（语法高亮的第三方契约变量，值在 kit 自带的 shiki.css）。
 
 ## 三、命名空间：为什么类名要「前缀 + 组件名段」
 
@@ -41,6 +42,11 @@ button 与 input 都有 `.icon`，只加 `duk-` 前缀时 `.duk-wrap`/`.duk-icon
 - `@keyframes` 同规则（动画名是文档级命名空间）：`modalEnter` → `duk-modal-modalEnter`
 - 护栏断言「全组件最终类名跨组件唯一」——命名空间这个不变量由测试守着
 
+**`:global(...)` 是例外**（2026-11-06 起）：官方 markdown CSS 用 `:global(.katex)` /
+`:global(.md-code-block)` / `:global(.line)` 声明**不参与哈希**的第三方契约类名。
+改名就失配（katex 自己的 CSS、shiki 主题、宿主钩子都对不上），故 `:global(...)` 内
+既不改名也不进类名表。
+
 ## 四、DSH 升级流程（升级行动清单）
 
 ```bash
@@ -51,6 +57,8 @@ DSH_CHECKOUT=<新 checkout> pnpm vendor        # 重生成；--check 只校验
 pnpm test                                     # 含「清单与上游逐字节一致」（checkout 在场时实跑）
 # 3. 逐组件重 diff（registry.json 的 upstream 字段指向官方源文件）
 #    把官方改动搬进 src/（仅头注释与导入路径是 kit 侧约定，其余保真）
+#    markdown 家族可用 scripts/import-markdown-family.mjs 做机械搬运，
+#    但语义裁剪（流式臂 / DraggableImage / LinkIcon）仍要手工过一遍
 # 4. 更新 registry.json 的 dshVersion / dshCommit
 # 5. 版本号 +1、构建、提交、推 GitHub
 # 6. 消费端：pnpm add --force 重新复制想跟进的组件（不跟也不坏，见下）
@@ -60,10 +68,12 @@ pnpm test                                     # 含「清单与上游逐字节�
 视觉/行为漂移只会「旧」，按实机验收的观感决定是否跟进。三层各自独立决策：
 官方 → kit（事件驱动）→ 消费者（想吃到修复时重新 add --force）。
 
-## 五、例外与替身（何时「不保真」是正当的）
+## 五、例外与裁剪（何时「不保真」是正当的）
 
 - **官方复制件例外**：官方自己用 static/字面色的，登记进 `OFFICIAL_EXCEPTIONS` 保真保留
-- **零依赖替身**：内容块的重依赖（diff / anser / shiki）用 kit 自写核心顶替
-  （mini-diff / ansi-lite / 高亮检测降级），行为形状与官方契约一致，头注写明来源
-- **暂缓件**：markdown 家族等（micromark+mdast+shiki+KaTeX 依赖族）与零运行时依赖
-  纪律冲突，暂缓留档于 issue 004，重启条件是真实需求 + 「内容块依赖分层」议题
+- **内容块的 DSH 私有耦合裁剪**（issue 005）：官方 markdown 家族里的流式增量解析、
+  DraggableImage（DSH workspace 的 file-drag 耦合）、官方 LinkIcon（simple-icons 运行时依赖）、
+  品牌件（FileTypeIcon / SiteGlyph）——第三方插件用不上或代价不成比例，裁掉并写明理由。
+  裁剪边界不是遗漏，登记在 issue 005
+- **依赖分层**：内容块层的重依赖（micromark 家族 / shiki / katex / diff / anser）**不再用
+  零依赖替身顶替**，改由消费端自己装；原子层仍是零重依赖。详见 [03-依赖分层.md](./03-依赖分层.md)

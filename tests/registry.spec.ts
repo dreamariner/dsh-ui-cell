@@ -1,3 +1,5 @@
+// @vitest-environment node
+// （registry 护栏是纯静态检查，不需要 DOM；markdown 渲染测试在 jsdom 里跑）
 // dsh-ui-cell 的自守护栏（防模板腐烂）。
 //
 // 五条纪律，每条都对应一类真实事故：
@@ -15,7 +17,7 @@ import { existsSync, readFileSync, readdirSync, rmSync, mkdtempSync } from 'node
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { addComponents, buildStyleModule, cssClassNames, loadRegistry, prefixCss, srcDir } from '../cli/add.ts'
+import { addComponents, buildStyleModule, cssClassNames, loadRegistry, prefixCss, resolveDependencies, srcDir } from '../cli/add.ts'
 
 /** 官方 token 清单（pinned 快照，由 scripts/vendor-tokens.mjs 从 DSH checkout 生成）。 */
 const tokenInventory = JSON.parse(
@@ -70,6 +72,14 @@ describe('token 纪律（DSH 官方规范）', () => {
     ['image-lightbox.css', [/--dsw-specific-/]],
     ['user-message-bubble.css', [/--dsw-specific-/]],
     ['zoom-controls.css', [/#[0-9a-fA-F]{3,8}\b/]],
+    // shiki.css：官方 ui-theme 的同一份文件、同一批 hex（语法高亮自己的调色板，
+    // 不是 DSH 主题色）；背景/前景仍别名到 alias token。保真保留。
+    ['shiki.css', [/#[0-9a-fA-F]{3,8}\b/]],
+    // code-block.css：官方 CodeBlock.module.css 原样（`background-color: rgb(255 255 255 / 0)`
+    // 是「透明」的写法，不是颜色值）。保真保留。
+    ['code-block.css', [/\brgba?\(/]],
+    // markdown-text.css：官方 MarkdownText.module.css 原样（同样的 rgba 写法）。保真保留。
+    ['markdown-text.css', [/\brgba?\(/]],
   ])
 
   it('CSS 只引用 alias / radius / elevation / focus-ring 等稳定 token 面（官方复制件按登记例外）', () => {
@@ -328,6 +338,159 @@ describe('依赖闭包（单加一个组件必须产出可独立编译的完整�
       rmSync(dir, { recursive: true, force: true })
     }
   })
+
+  // 2026-11-06：原先这条护栏只跑 risk-confirmation 一个条目，漏掉了
+  // code-toolbar / diff-block 的跨条目 css 引用（`import cardCss from './code-card.css'`），
+  // 复制出去就是悬空导入（消费端只有 code-card-css.ts）。改为**逐个 ready 条目**全跑。
+  it('每个 ready 条目单加，产物都无悬空导入（跨条目 css 引用也要能落地）', () => {
+    const dangling: string[] = []
+    for (const item of registry.items) {
+      if (item.status !== 'ready') continue
+      const dir = mkdtempSync(join(tmpdir(), 'uikit-item-'))
+      try {
+        addComponents([item.name], { to: dir })
+        const uiDir = join(dir, 'src', 'client', 'ui')
+        const files = new Set(readdirSync(uiDir))
+        for (const file of files) {
+          const text = readFileSync(join(uiDir, file), 'utf8')
+          for (const m of text.matchAll(/from\s+'(\.[^']+)'/g)) {
+            const target = m[1]!.replace(/^\.\//, '')
+            if (!files.has(target)) dangling.push(`${item.name}: ${file} → ${m[1]}`)
+          }
+        }
+      } finally {
+        rmSync(dir, { recursive: true, force: true })
+      }
+    }
+    expect(dangling, `单加即坏（悬空导入）：\n${dangling.join('\n')}`).toEqual([])
+  })
+})
+
+describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', () => {
+  /**
+   * 基础依赖：所有组件都在用、且消费端必然自带（react / clsx / react-dom）。
+   * 它们由 kit 的文档统一交代（wiki 01：「运行时依赖只有 react + clsx」），
+   * **不**逐条目声明——否则 87 个条目要重复写三遍，且改版本要改 87 处。
+   * npmDependencies 只管「条目特有」的重依赖。
+   */
+  const BASELINE_DEPS = new Set(['react', 'react-dom', 'clsx'])
+
+  /**
+   * 条目源码里的**裸 npm import**（不是相对路径、不是 node: 内置、不是基础依赖）。
+   * 这些包必须被条目声明在 npmDependencies 里：add 复制的是源码，
+   * 消费端装不上就编译不过（而且是消费端编译时才炸，kit 自己看不出来）。
+   */
+  function bareNpmImports(item: { files: string[] }): Set<string> {
+    const out = new Set<string>()
+    for (const file of item.files) {
+      if (!/\.(tsx|ts)$/.test(file)) continue
+      const text = readFileSync(join(src, file), 'utf8')
+      for (const m of text.matchAll(/from\s+'([^']+)'/g)) {
+        const spec = m[1]!
+        if (spec.startsWith('.') || spec.startsWith('node:')) continue
+        // 取包名（@scope/name 的第二段）
+        const pkg = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0]!
+        if (BASELINE_DEPS.has(pkg)) continue
+        out.add(pkg)
+      }
+    }
+    return out
+  }
+
+  it('条目声明的 npmDependencies 与源码里的裸 import 双向一致', () => {
+    const bad: string[] = []
+    for (const item of registry.items) {
+      if (item.status !== 'ready') continue
+      const used = bareNpmImports(item)
+      const declared = new Set(Object.keys(item.npmDependencies ?? {}))
+      // 类型包的解析方式：`import type { Root } from 'mdast'` 实际要装的是 @types/mdast
+      const satisfied = (pkg: string) => declared.has(pkg) || declared.has(`@types/${pkg}`)
+      const missing = [...used].filter(p => !satisfied(p)).sort()
+      // 反向：声明的 @types/X 若源码 import 了 X，算已用上（类型包的对应关系）
+      const extra = [...declared].filter(p => !used.has(p) && !used.has(p.replace(/^@types\//, ''))).sort()
+      if (missing.length > 0) bad.push(`${item.name}: 源码用了但没声明 [${missing.join(', ')}]`)
+      if (extra.length > 0) bad.push(`${item.name}: 声明了但源码没用 [${extra.join(', ')}]`)
+    }
+    expect(bad, `npmDependencies 声明与源码不符（消费端装不上就编译不过）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('content 档的依赖闭包里必须有 npm 依赖（可以由依赖传递，不必自己直接 import）', () => {
+    // code-toolbar / code-block 自己不 import shiki，是经 code-highlighting 传递的，
+    // 所以判据是**闭包**，不是条目自身。
+    const bad: string[] = []
+    for (const item of registry.items) {
+      if (item.status !== 'ready' || item.tier !== 'content') continue
+      const closure = resolveDependencies([item.name], registry)
+      const hasAny = closure.some(name => {
+        const dep = registry.items.find(i => i.name === name)
+        return Object.keys(dep?.npmDependencies ?? {}).length > 0
+      })
+      if (!hasAny) bad.push(item.name)
+    }
+    expect(bad, `content 档的闭包里没有任何 npm 依赖（带依赖的档位不能是空壳）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('atom 档（默认）不得声明 npm 依赖（原子层保持零重依赖）', () => {
+    const bad = registry.items
+      .filter(i => i.status === 'ready' && (i.tier ?? 'atom') === 'atom')
+      .filter(i => Object.keys(i.npmDependencies ?? {}).length > 0)
+      .map(i => i.name)
+    expect(bad, `atom 档却声明了 npm 依赖（要么升 content 档，要么去掉）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  /**
+   * 原样注入通道（rawStyles）的两条纪律（2026-11-06，issue 005 收尾）：
+   *
+   *   a) raw 样式模块**没有组件 tsx 引用它**（它的类名表是空的，组件用不上），
+   *      消费端是「显式 import { styles } 拼进 <style> 注入器」的模式，
+   *      所以这类文件天然是**孤儿**——消费端不知道要拼它，漏了就静默丢样式
+   *      （公式不排版 / 代码高亮没颜色，零报错）。故 add 的 note 必须点名它。
+   *   b) registry 的 rawStyles 登记不能漏：漏登记 = 该文件被当普通样式前缀化，
+   *      第三方契约类名（.katex / --shiki-*）被改名失配。
+   */
+  it('raw 样式模块在 add 的 note 里被点名（消费端是孤儿，漏拼就静默丢样式）', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'uikit-raw-'))
+    try {
+      const result = addComponents(['markdown-text'], { to: dir })
+      const uiDir = join(dir, 'src', 'client', 'ui')
+      // 每个 raw 样式产物文件都要在 note 里出现
+      const rawOutputs = registry.items
+        .filter(i => i.status === 'ready')
+        .flatMap(i => (i.rawStyles ?? []).map(f => ({ item: i.name, file: f })))
+        .filter(({ item, file }) => {
+          const closure = resolveDependencies(['markdown-text'], registry)
+          if (!closure.includes(item)) return false
+          return existsSync(join(uiDir, file.replace(/\.css$/, '-css.ts')))
+        })
+      expect(rawOutputs.length, 'markdown-text 闭包里应有 raw 样式（katex.css）').toBeGreaterThan(0)
+      const notes = result.notes.join('\n')
+      const missing = rawOutputs
+        .map(({ file }) => file.replace(/\.css$/, '-css.ts'))
+        .filter(name => !notes.includes(name))
+      expect(missing, `raw 样式模块没在 add 的 note 里点名（消费端会漏拼）：\n${missing.join('\n')}`).toEqual([])
+    } finally {
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('rawStyles 登记的每个文件都真实存在（登记漏项 = 被当普通样式前缀化）', () => {
+    const bad: string[] = []
+    for (const item of registry.items) {
+      for (const file of item.rawStyles ?? []) {
+        if (!existsSync(join(src, file))) bad.push(`${item.name}: ${file}`)
+        // raw 文件必须在本条目的 files 里，否则 add 不会复制它
+        if (!item.files.includes(file)) bad.push(`${item.name}: ${file}（未列入 files）`)
+      }
+    }
+    expect(bad, `rawStyles 登记与实际文件不符：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('raw 样式模块不产出类名表（第三方契约类名不能改名）', () => {
+    const module = buildStyleModule('.katex { display: inline-block; }', 'duk-', 'katex', true)
+    expect(module).toContain('export const css: Record<string, string> = {}')
+    expect(module).toContain('.katex')
+    expect(module).not.toContain('duk-katex')
+  })
 })
 
 describe('类名前缀化', () => {
@@ -339,5 +502,31 @@ describe('类名前缀化', () => {
     expect(out).toContain('/* .ghost 是注释里的样子 */')
     expect(out).toContain('.duk-button')
     expect(out).not.toContain('.duk-ghost')
+  })
+
+  // 2026-11-06：官方 markdown 家族有 11 处 `:global(...)`（`.katex` / `.md-code-block` /
+  // `.line` 等），它们是第三方契约（katex 自己的 CSS、shiki 主题、宿主钩子），
+  // 改名就失配 → 既不进类名表也不改名。
+  it(':global(...) 内的类名不改名也不进类名表（第三方契约）', () => {
+    const css = [
+      '.markdown :global(.katex-display) { display: block; }',
+      '.tableScroll:global(.md-table-wide):focus-visible { outline: 1px solid red; }',
+      '.numbered :where(pre) code > :global(.line)::before { content: "1"; }',
+      '.markdown { color: red; }',
+    ].join('\n')
+    // 不进表
+    expect(cssClassNames(css)).toEqual(['markdown', 'tableScroll', 'numbered'])
+    const out = prefixCss(css, 'duk-', 'markdown-text')
+    // :global 内的类名原样保留
+    expect(out).toContain(':global(.katex-display)')
+    expect(out).toContain(':global(.md-table-wide)')
+    expect(out).toContain(':global(.line)')
+    expect(out).not.toContain('duk-markdown-text-katex')
+    expect(out).not.toContain('duk-markdown-text-md-table-wide')
+    expect(out).not.toContain('duk-markdown-text-line')
+    // 本组件自己的类名照常改名
+    expect(out).toContain('.duk-markdown-text-markdown')
+    expect(out).toContain('.duk-markdown-text-tableScroll')
+    expect(out).toContain('.duk-markdown-text-numbered')
   })
 })

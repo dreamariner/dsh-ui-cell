@@ -8,7 +8,8 @@ shadcn 式的新手教程 + 可视组件文档站。
 |---|---|
 | **组件文档站**（用法 + 实时效果 + 暗色切换） | [`index.html`](./index.html)（自包含单文件，双击打开即可；重建：`DSH_CHECKOUT=<checkout> pnpm docs:build`） |
 | **新手教程**（从安装到跑起第一个面板） | [01-新手教程.md](./01-新手教程.md) |
-| **token 纪律与升级**（三道闸 + 上游同步流程） | [02-token纪律与升级.md](./02-token纪律与升级.md) |
+| **token 纪律与升级**（两道闸 + 上游同步流程） | [02-token纪律与升级.md](./02-token纪律与升级.md) |
+| **依赖分层**（atom/content 两档 + add 的依赖交接 + bundle 影响） | [03-依赖分层.md](./03-依赖分层.md) |
 
 ## 站点的三个「真」
 
@@ -25,7 +26,8 @@ docs/wiki/
 ├── README.md            # 本文件
 ├── index.html           # 组件文档站（生成物，勿手改；pnpm docs:build 重建）
 ├── 01-新手教程.md        # shadcn 式上手教程
-├── 02-token纪律与升级.md  # 三道闸 + DSH 升级同步流程
+├── 02-token纪律与升级.md  # 两道闸 + 命名空间 + DSH 升级同步流程
+├── 03-依赖分层.md        # atom/content 两档 + add 的依赖交接 + bundle 影响
 ├── demo.tsx             # 站点 shell（侧栏 + 快速开始 + 组装各分类）
 ├── demo-kit.tsx         # Demo 原语（用法 + 效果 + 代码三段式）
 └── demos/               # 五个分类的演示源（atoms/containers/overlays/inputs/content）

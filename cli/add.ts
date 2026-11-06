@@ -34,6 +34,25 @@ export interface RegistryItem {
   files: string[]
   /** 组件间依赖（add 时自动解析闭包，deps 先于本体复制）。 */
   dependencies?: string[]
+  /**
+   * 依赖档位（2026-11-06 起，issue 005）：
+   *   `atom`   —— 零重依赖（默认）。按钮 / 输入 / 弹层这类原子件，只用 react + clsx。
+   *   `content`—— 带 npm 重依赖（markdown 家族 / diff / anser / shiki）。装了就占 bundle。
+   * 缺省视为 `atom`。
+   */
+  tier?: 'atom' | 'content'
+  /**
+   * 该条目引入的 npm 运行时依赖（包名 → 版本范围）。
+   * add 时与消费端 package.json 对比，缺失的报给使用者（`--with-deps` 才写文件）。
+   */
+  npmDependencies?: Record<string, string>
+  /**
+   * 走「原样注入」通道的样式文件（**不加类名前缀**）。
+   *
+   * 用于第三方契约的样式：katex 的 .katex / .katex-display 是 katex 自己吐的类名，
+   * 改名就与它吐出的 HTML 对不上。普通组件样式不在此列（照常加前缀 + 组件名段）。
+   */
+  rawStyles?: string[]
   upstream: string | null
 }
 
@@ -51,6 +70,11 @@ export interface AddOptions {
   prefix?: string
   /** 覆盖已存在的文件。 */
   force?: boolean
+  /**
+   * 把缺失的 npm 依赖写进消费端 package.json 的 dependencies。
+   * 默认**不写**（改消费端仓库是有副作用的动作，必须显式）。
+   */
+  withDeps?: boolean
 }
 
 export interface AddResult {
@@ -60,6 +84,11 @@ export interface AddResult {
   files: string[]
   /** 需要人工接线的地方（提示信息）。 */
   notes: string[]
+  /**
+   * 本次闭包引入、消费端缺失的 npm 依赖（包名 → 版本范围）。
+   * 消费端必须自己装上，否则产物编译不过（源码里的裸 import 找不到包）。
+   */
+  missingDeps: Record<string, string>
 }
 
 /** 本仓根目录（cli/ 的上一级）。 */
@@ -84,16 +113,45 @@ export function finalClassName(componentName: string, name: string, prefix: stri
 }
 
 /**
+ * CSS 里的 `:global(...)`：官方 CSS Modules 用来声明**不参与哈希**的全局类名
+ * （markdown 家族有 11 处，如 `:global(.katex)` / `:global(.md-code-block)` /
+ * `:global(.line)`）。这些是第三方契约（katex 自己的 CSS、shiki 主题、宿主钩子），
+ * **改名就失配**。故：`:global(...)` 内的类名既不进类名表也不改名。
+ */
+const GLOBAL_BLOCK = /:global\(([^)]*)\)/g
+
+/**
+ * 把 `:global(...)` 段整体保护起来（占位 → 还原）。
+ *
+ * 占位符必须**不含单词字符**：类名扫描的正则是 `\.([_a-zA-Z][\w-]*)`，
+ * 占位符若含字母数字就会跟相邻类名粘连（`.tableScroll:global(.x)` 被扫成
+ * `tableScroll__GLOBAL_0__`）。用私用区字符占位：既不参与类名扫描，
+ * 又**保持相邻关系**（不能换成带空格的占位——`.a :global(.b)` 与 `.a:global(.b)`
+ * 是不同选择器语义：前者是后代，后者是复合）。
+ */
+const GLOBAL_SLOT = (i: number) => `\uE000${i}\uE001`
+
+function protectGlobals(css: string): { text: string; restore: (s: string) => string } {
+  const saved: string[] = []
+  const text = css.replace(GLOBAL_BLOCK, (whole) => {
+    saved.push(whole)
+    return GLOBAL_SLOT(saved.length - 1)
+  })
+  return { text, restore: (s) => s.replace(/\uE000(\d+)\uE001/g, (_all, i) => saved[Number(i)] ?? '') }
+}
+
+/**
  * 从 CSS 文本里抽出所有类选择器名（`.foo`），按出现顺序去重。
  * 与 prefixCss 同一套「选择器位置」判定：只认前面是开头 / 空白 / 组合器 / 逗号 / 括号的
  * `.foo`（链式类 `.a.b` 的 `.b` 两边都不认——护栏另有断言禁止这种形态进组件 CSS）。
  * 只扫选择器位置，不看注释与属性值（官方 CSS 里没有这种情况，保守处理）。
+ * `:global(...)` 内的类名不进表（第三方契约，不归本组件所有）。
  */
 export function cssClassNames(css: string): string[] {
   const names: string[] = []
   const seen = new Set<string>()
   // 去掉注释后再扫，避免注释里的类名被当真
-  const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '')
+  const stripped = protectGlobals(css.replace(/\/\*[\s\S]*?\*\//g, '')).text
   const re = /(^|[\s>+~,(]|(?<=[\w-]))(\.(-?[_a-zA-Z][\w-]*))/g
   let m: RegExpExecArray | null
   while ((m = re.exec(stripped)) !== null) {
@@ -108,11 +166,15 @@ export function cssClassNames(css: string): string[] {
 /**
  * CSS 改写：类选择器加前缀 + 组件名段；@keyframes 定义与 animation 引用同步改名。
  * 只替换类选择器位置（前面不是标识符字符），避免误伤 `0.5px` 之类。
+ * `:global(...)` 内的类名原样保留（第三方契约，改名即失配）。
  */
 export function prefixCss(css: string, prefix: string, componentName: string): string {
   const rename = (name: string) => finalClassName(componentName, name, prefix)
   // 注释保护：注释里的 .foo 不是选择器（先暂存，最后还原）
   let out = css.replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/\.(-?[_a-zA-Z][\w-]*)/g, '__KEEP__$1'))
+  // :global 保护：第三方契约类名不改名（katex / shiki / 宿主钩子）
+  const globals = protectGlobals(out)
+  out = globals.text
   // keyframes：名字是文档级命名空间，定义与引用必须同步改名
   const keyframes = new Set<string>()
   for (const m of out.matchAll(/@keyframes\s+([_a-zA-Z][\w-]*)/g)) keyframes.add(m[1]!)
@@ -125,7 +187,8 @@ export function prefixCss(css: string, prefix: string, componentName: string): s
   out = out.replace(/(^|[\s>+~,(]|(?<=[\w-]))(\.(-?[_a-zA-Z][\w-]*))/g, (_all, lead: string, _whole: string, name: string) => {
     return `${lead}.${rename(name)}`
   })
-  return out.replace(/__KEEP__/g, '.')
+  out = out.replace(/__KEEP__/g, '.')
+  return globals.restore(out)
 }
 
 /**
@@ -157,7 +220,20 @@ export function dynamicCssAccesses(tsx: string): string[] {
  *   - `css`：类名表（键 = 原类名，值 = 最终类名），兼容 css['x'] 与 css.x 两种访问
  *   - `styles`：样式文本（可直接 <style> 注入）
  */
-export function buildStyleModule(cssText: string, prefix: string, componentName: string): string {
+export function buildStyleModule(cssText: string, prefix: string, componentName: string, raw = false): string {
+  // 原样注入通道：不加前缀、不出类名表（第三方契约的类名不能动）
+  if (raw) {
+    return `// ${componentName} 样式（由 dsh-ui-cell add 生成，勿手改）。
+// 源：dsh-ui-cell/src/${componentName}.css @ **原样注入**（第三方契约的类名不能加前缀）。
+
+/** 样式文本（注入 <style> 用）。 */
+export const styles = ${JSON.stringify(cssText)}
+
+/** 原样注入的文件没有类名表（空表，避免误用）。 */
+export const css: Record<string, string> = {}
+
+`
+  }
   const names = cssClassNames(cssText)
   const table = names.map(name => `  '${name}': '${finalClassName(componentName, name, prefix)}',`).join('\n')
   const body = prefixCss(cssText, prefix, componentName)
@@ -175,10 +251,29 @@ export const styles = ${JSON.stringify(body)}
 `
 }
 
-/** 把 tsx 里的 `import css from './x.css'` 改成 `import { css } from './x-css.ts'`。 */
-export function rewriteCssImport(tsx: string, cssFileBase: string): string {
-  const re = new RegExp(`import\\s+css\\s+from\\s+['"]\\./${cssFileBase}\\.css['"]`)
-  return tsx.replace(re, `import { css } from './${cssFileBase}-css.ts'`)
+/**
+ * 把 tsx 里的 css 导入改成生成模块的导入。
+ *
+ * 为什么要泛化（2026-11-06 修）：官方 CSS Modules 的用法不止一种形态——
+ *   `import css from './x.css'`（本组件自己的样式）
+ *   `import cardCss from './code-card.css'`（**另一个条目**的样式，diff-block 就这么用）
+ * 而生成的模块导出的是 `css`（类名表）。原来只认 `import css from` + 只查本条目的 css，
+ * 结果 code-toolbar / diff-block 复制出去就是**悬空导入**（消费端只有 code-card-css.ts，
+ * 源码却 import './code-card.css'）。
+ *
+ * 现在按「被复制的 css 文件集合」判定：只要 `./<base>.css` 在集合里就改写。
+ * 标识符保持不变（`import { css as cardCss } from './code-card-css.ts'`），
+ * 于是 `cardCss.foo` 这类用法零改动。
+ */
+export function rewriteCssImports(tsx: string, cssBases: ReadonlySet<string>): string {
+  return tsx.replace(
+    /import\s+([A-Za-z_$][\w$]*)\s+from\s+['"]\.\/([\w-]+)\.css['"]/g,
+    (all, ident: string, base: string) => {
+      if (!cssBases.has(base)) return all
+      const spec = ident === 'css' ? 'css' : `css as ${ident}`
+      return `import { ${spec} } from './${base}-css.ts'`
+    },
+  )
 }
 
 /**
@@ -207,6 +302,70 @@ export function resolveDependencies(names: string[], registry: Registry): string
   return ordered
 }
 
+/**
+ * 收集闭包内所有条目声明的 npm 依赖（包名 → 版本范围）。
+ * 同名包版本不一致时把两个范围都列出来（消费端要能同时满足才算装对了）。
+ */
+export function collectNpmDependencies(names: string[], registry: Registry): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const name of names) {
+    const item = registry.items.find(i => i.name === name)
+    if (!item) continue
+    for (const [pkg, range] of Object.entries(item.npmDependencies ?? {})) {
+      const prev = out[pkg]
+      if (prev === undefined) { out[pkg] = range; continue }
+      if (prev !== range) out[pkg] = `${prev} | ${range}`
+    }
+  }
+  return out
+}
+
+/** 消费端 package.json 里已声明的依赖（dependencies + devDependencies + peerDependencies）。 */
+function consumerDeclaredDeps(pluginRoot: string): Record<string, string> {
+  const pkgPath = join(resolve(pluginRoot), 'package.json')
+  if (!existsSync(pkgPath)) return {}
+  try {
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as {
+      dependencies?: Record<string, string>
+      devDependencies?: Record<string, string>
+      peerDependencies?: Record<string, string>
+    }
+    return { ...pkg.dependencies, ...pkg.devDependencies, ...pkg.peerDependencies }
+  } catch {
+    return {}
+  }
+}
+
+/**
+ * 依赖交接（2026-11-06 起，issue 005）：add 复制过去的是**源码**，
+ * 源码里的裸 npm import（`import { structuredPatch } from 'diff'`）在消费端
+ * 必须能解析到包。所以 add 要告诉消费端「少了这些包」。
+ *
+ * 默认只提示不写文件（改消费端仓库是有副作用的动作）；`--with-deps` 才写进
+ * 消费端 package.json 的 dependencies。
+ */
+function handoffNpmDependencies(
+  pluginRoot: string,
+  wanted: Record<string, string>,
+  write: boolean,
+): { missing: Record<string, string>; wrote: boolean } {
+  const declared = consumerDeclaredDeps(pluginRoot)
+  const missing: Record<string, string> = {}
+  for (const [pkg, range] of Object.entries(wanted)) {
+    if (declared[pkg] === undefined) missing[pkg] = range
+  }
+  if (!write || Object.keys(missing).length === 0) return { missing, wrote: false }
+
+  const pkgPath = join(resolve(pluginRoot), 'package.json')
+  if (!existsSync(pkgPath)) return { missing, wrote: false }
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as Record<string, unknown>
+  const deps = { ...((pkg.dependencies as Record<string, string>) ?? {}) }
+  for (const [name, range] of Object.entries(missing)) deps[name] = range
+  pkg.dependencies = deps
+  writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
+  return { missing, wrote: true }
+}
+
 /** 执行 add：复制组件文件（含依赖闭包）到目标插件目录。 */
 export function addComponents(
   names: string[],
@@ -219,11 +378,22 @@ export function addComponents(
   const added: string[] = []
   const skipped: string[] = []
   const notes: string[] = []
+  // 原样注入的样式模块（第三方契约类名）：它们没有组件 tsx 引用，
+  // 消费端要自己 import styles 拼进注入器，漏了就丢样式（公式不排版 / 高亮没颜色）。
+  const rawStyleModules: string[] = []
 
   const expanded = resolveDependencies(names, registry)
   const auto = expanded.filter(name => !names.includes(name))
   if (auto.length > 0) {
     notes.push(`依赖闭包自动带上：${auto.join(', ')}（被请求组件的导入需要它们）`)
+  }
+
+  // 全闭包的 css 文件集合（跨条目）：css 导入改写按它判定，
+  // 否则 diff-block 引用 code-toolbar 的 code-card.css 会变悬空导入。
+  const cssBases = new Set<string>()
+  for (const name of expanded) {
+    const item = registry.items.find(i => i.name === name)!
+    for (const file of item.files) if (file.endsWith('.css')) cssBases.add(file.replace(/\.css$/, ''))
   }
 
   mkdirSync(targetUi, { recursive: true })
@@ -246,14 +416,15 @@ export function addComponents(
       }
       if (isCss) {
         const cssText = readFileSync(source, 'utf8')
-        writeFileSync(target, buildStyleModule(cssText, prefix, base))
+        // 原样注入通道（registry 的 rawStyles）：第三方契约的类名不能加前缀
+        const raw = (item.rawStyles ?? []).includes(file)
+        writeFileSync(target, buildStyleModule(cssText, prefix, base, raw))
+        if (raw) rawStyleModules.push(targetName)
       } else {
         let text = readFileSync(source, 'utf8')
-        // 组件内部的 css 引用改前缀；css import 改指生成的 -css.ts
+        // 组件内部的 css 引用改前缀；css import 改指生成的 -css.ts（跨条目也认）
         text = prefixTsxCssAccess(text, prefix)
-        if (item.files.includes(`${base}.css`)) {
-          text = rewriteCssImport(text, base)
-        }
+        text = rewriteCssImports(text, cssBases)
         // 相对导入的模块名保持上游名（靠目录隔离，不加前缀）
         writeFileSync(target, text)
       }
@@ -264,8 +435,21 @@ export function addComponents(
     notes.push(`已存在未覆盖（要覆盖加 --force）：${skipped.join(', ')}`)
   }
   notes.push(`样式注入：在插件入口把各组件的 styles 拼进已有的 <style> 注入器（本仓插件见 src/client/panel/panel-css.ts 的 PANEL_CSS 模式）。`)
+  if (rawStyleModules.length > 0) {
+    notes.push(`原样注入的样式模块（第三方契约类名，不加前缀）：${rawStyleModules.join(', ')} —— 它们没有组件引用，要自己 import { styles } 一起拼进注入器，漏了会丢样式（公式不排版 / 代码高亮没颜色）。`)
+  }
   notes.push(`类名前缀：${prefix} + 组件名段（官方规范要求复制后重命名类名以免与插件自身样式相撞；keyframes 同规则改名）。`)
-  return { added, skipped, files: readdirSync(targetUi).sort(), notes }
+
+  // 依赖交接：内容块层组件带 npm 重依赖，消费端得自己装上（否则源码里的裸 import 编译不过）
+  const wanted = collectNpmDependencies(expanded, registry)
+  const handoff = handoffNpmDependencies(options.to, wanted, options.withDeps === true)
+  if (Object.keys(handoff.missing).length > 0) {
+    const list = Object.entries(handoff.missing).map(([pkg, range]) => `${pkg}@${range}`).join(' ')
+    notes.push(handoff.wrote
+      ? `已写入消费端 package.json 的 dependencies：${list}（记得跑一次安装）`
+      : `消费端缺这些 npm 依赖（复制过去的是源码，裸 import 要能解析到包）：${list}；装：pnpm add ${list.split(' ').map(x => x.split('@')[0]).join(' ')}；或 add 时加 --with-deps 直接写进 package.json`)
+  }
+  return { added, skipped, files: readdirSync(targetUi).sort(), notes, missingDeps: handoff.missing }
 }
 
 /** CLI 入口。 */
@@ -274,6 +458,7 @@ export function runCli(argv: string[]): number {
   let to = ''
   let prefix = 'duk-'
   let force = false
+  let withDeps = false
   // 允许省略子命令词（`dsh-ui-cell add button` 与 `dsh-ui-cell button` 等价）
   const args = argv[0] === 'add' ? argv.slice(1) : argv
   for (let i = 0; i < args.length; i += 1) {
@@ -281,15 +466,17 @@ export function runCli(argv: string[]): number {
     if (arg === '--to') { to = args[++i] ?? ''; continue }
     if (arg === '--prefix') { prefix = args[++i] ?? prefix; continue }
     if (arg === '--force') { force = true; continue }
+    if (arg === '--with-deps') { withDeps = true; continue }
     if (arg === '--help' || arg === '-h') {
-      console.log('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]')
+      console.log('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force] [--with-deps]')
       console.log('示例：dsh-ui-cell add button input --to packages/plugin-memory（组件依赖自动带上）')
+      console.log('  --with-deps  把缺失的 npm 依赖直接写进消费端 package.json 的 dependencies（默认只提示）')
       return 0
     }
     names.push(arg)
   }
   if (names.length === 0) {
-    console.error('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]')
+    console.error('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force] [--with-deps]')
     return 1
   }
   if (to === '') {
@@ -297,7 +484,7 @@ export function runCli(argv: string[]): number {
     return 1
   }
   try {
-    const result = addComponents(names, { to, prefix, force })
+    const result = addComponents(names, { to, prefix, force, withDeps })
     console.log(`[dsh-ui-cell] 已复制 ${result.added.length} 个文件到 ${join(resolve(to), 'src/client/ui')}`)
     for (const note of result.notes) console.log(`  · ${note}`)
     if (result.skipped.length > 0) {

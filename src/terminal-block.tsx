@@ -2,7 +2,7 @@
 // 上游来源：packages/client/ui-primitives/src/TerminalBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 import { useCallback, useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { parseAnsiLines, type AnsiLine } from './ansi-lite.ts'
+import { parseAnsiLines, type AnsiLine } from './ansi.ts'
 import { headTailCap } from './head-tail-cap.ts'
 import { useClipboardCopy } from './use-clipboard-copy.ts'
 import { Pill } from './pill.tsx'

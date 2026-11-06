@@ -53,10 +53,12 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]
 |---|---|---|
 | 官方保真复制 | 30 | 官方除品牌件与重依赖内容块的全部原子：button / input / tag / segmented-control / modal / risk-confirmation / tooltip / menu / switch / pill / state-dot / checkbox / disclosure-row / toast / hover-card / image-lightbox / zoom-controls / …（icon 集 15 个，inline path，不依赖宿主 sprite） |
 | 官方轻量核心 | 6 | 内容块：json-tree / json-block / search-block / code-toolbar / diff-block / terminal-block。官方源保真复制，重依赖（diff / anser / shiki）以 kit 自写替身顶替（mini-diff / ansi-lite / 高亮检测降级），见 issue 004 |
-| kit 自有 | 41 | shadcn base 功能对齐、样式全部 DSH token、行为手写零依赖：card / alert / accordion / popover / combobox / command / table / data-table / sheet（含 drawer 形态）/ calendar / date-picker / slider / radio-group / carousel / sidebar / chart（极简柱线图）/ form / … |
+| kit 自有 | 41 | shadcn base 功能对齐、样式全部 DSH token、行为手写：card / alert / accordion / popover / combobox / command / table / data-table / sheet（含 drawer 形态）/ calendar / date-picker / slider / radio-group / carousel / sidebar / chart（极简柱线图）/ form / … |
 | 共享行为模块 | 10 | 官方行为件独立成条目供多组件共享：modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap |
 
-**未收录（issue 004 留档）**：官方品牌件（BrandWordmark / FishLogo / SiteGlyph / artwork / 专用 Icon）；重依赖内容块（markdown 家族 / ReadBlock / WebBlock / QuotePreview / DetailDocument，依赖 micromark+mdast+shiki+KaTeX 兆级依赖族，与零运行时依赖纪律冲突，待「内容块依赖分层」议题）。
+**未收录（issue 005 留档）**：官方品牌件（BrandWordmark / FishLogo / SiteGlyph / artwork / 专用 Icon）。
+
+**依赖分层（issue 005 起）**：条目分两档 —— `atom`（默认，零重依赖）与 `content`（带 npm 重依赖）。markdown 家族 / ReadBlock / WebBlock / QuotePreview / DetailDocument 已落地（见 issue 005）；内容块层的重依赖由消费端自己装（add 时会报出缺哪些包，或用 `--with-deps` 直接写进 package.json）。
 
 ## 纪律
 

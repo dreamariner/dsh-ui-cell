@@ -40,6 +40,26 @@ export const IconDatabaseOutlineRegular = (props: IconProps) => (
   <IconDatabaseOutlineArtwork {...props} strokeWidth={ICON_REGULAR_STROKE} />
 )
 
+/**
+ * 通用 globe 图标（markdown 链接用）。
+ * 上游来源：packages/client/ui-primitives/src/icons/shared-artwork.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+ */
+const IconGlobeOutlineArtwork = ({ size = 16, className, strokeWidth }: WeightedIconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth={strokeWidth}>
+    <path d="M7.99986 14.0887C11.3626 14.0887 14.0886 11.3627 14.0886 7.99998C14.0886 4.63727 11.3626 1.91125 7.99986 1.91125C4.63715 1.91125 1.91113 4.63727 1.91113 7.99998C1.91113 11.3627 4.63715 14.0887 7.99986 14.0887Z" stroke="currentColor" />
+    <path d="M2.34619 8H13.6538" stroke="currentColor" strokeLinecap="square" />
+    <path d="M7.99976 14.0889C9.23509 14.0889 10.1743 11.3629 10.1743 8.00006C10.1743 4.63739 9.23509 1.91138 7.99976 1.91138" stroke="currentColor" />
+    <path d="M7.99973 14.0889C6.76445 14.0889 5.8252 11.3629 5.8252 8.00006C5.8252 4.63739 6.76445 1.91138 7.99973 1.91138" stroke="currentColor" />
+  </svg>
+)
+
+/** 文件图标（markdown 文件引用用；kit 自绘，与官方 FileTypeIcon 的品牌件无关）。 */
+const IconFileOutlineArtwork = ({ size = 16, className, strokeWidth }: WeightedIconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth={strokeWidth}>
+    <path d="M9 1.5H4.5C3.67157 1.5 3 2.17157 3 3V13C3 13.8284 3.67157 14.5 4.5 14.5H11.5C12.3284 14.5 13 13.8284 13 13V5.5L9 1.5Z" stroke="currentColor" strokeLinejoin="round" />
+    <path d="M9 1.5V5.5H13" stroke="currentColor" strokeLinejoin="round" />
+  </svg>
+)
 const IconWarningOutlineArtwork = ({ size = 16, className, strokeWidth }: WeightedIconProps) => (
   <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth={strokeWidth}>
     <path d="M8 14.5C11.5899 14.5 14.5 11.5899 14.5 8C14.5 4.41015 11.5899 1.5 8 1.5C4.41015 1.5 1.5 4.41015 1.5 8C1.5 11.5899 4.41015 14.5 8 14.5Z" stroke="currentColor" />
@@ -140,4 +160,14 @@ export const IconNowrapFillRegular = ({ size = 16, className }: IconProps) => (
 /** wrap-fill artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
 export const IconWrapFillRegular = ({ size = 16, className }: IconProps) => (
   <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><path d="M10.9999 8C10.9999 6.89543 10.1046 6 9 6H4.5V5H9C10.6568 5 11.9999 6.34315 11.9999 8C11.9999 9.65685 10.6568 11 9 11H6.20703L6.85351 11.6465L6.14648 12.3535L4.64652 10.8536C4.45126 10.6583 4.45126 10.3417 4.64652 10.1464L6.14648 8.64648L6.85351 9.35352L6.20703 10H9C10.1046 10 10.9999 9.10457 10.9999 8Z" fill="currentColor"></path><path d="M2 15H1V1H2V15Z" fill="currentColor"></path><path d="M15 15H14V1H15V15Z" fill="currentColor"></path></svg>
+)
+
+/** 通用 globe 图标（markdown 链接前缀用）。 */
+export const IconGlobeOutlineRegular = (props: IconProps) => (
+  <IconGlobeOutlineArtwork {...props} strokeWidth={ICON_REGULAR_STROKE} />
+)
+
+/** 文件图标（markdown 文件引用前缀用）。 */
+export const IconFileOutlineRegular = (props: IconProps) => (
+  <IconFileOutlineArtwork {...props} strokeWidth={ICON_REGULAR_STROKE} />
 )

@@ -1087,44 +1087,88 @@
       "name": "code-toolbar",
       "type": "registry:ui",
       "status": "ready",
-      "description": "代码卡工具栏：语言/复制/换行（高亮检测轻量替身恒 false，自动降级）（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "description": "代码卡工具栏：语言/复制/换行（语言名随高亮能力显示真实语言）（内容块；官方源保真复制）",
+      "tier": "content",
       "files": [
         "code-toolbar.tsx",
-        "code-card.css",
-        "code-highlighting-lite.ts"
+        "code-card.css"
       ],
       "dependencies": [
         "icon",
-        "tooltip"
+        "tooltip",
+        "code-highlighting"
       ],
       "upstream": "packages/client/ui-primitives/src（对应 code-toolbar）"
+    },
+    {
+      "name": "code-highlighting",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：语法高亮内核（shiki JS 正则引擎 + css-variables 主题，静态 10 种常用语法）",
+      "tier": "content",
+      "files": [
+        "code-highlighting.ts",
+        "shiki.css"
+      ],
+      "dependencies": [],
+      "npmDependencies": {
+        "shiki": "4.4.3",
+        "@shikijs/langs": "4.4.3"
+      },
+      "upstream": "packages/client/ui-primitives/src/markdown/highlight.ts @ dsh v0.2.2-rc.1（kit 自有：静态语法集，不带懒加载与流式会话）",
+      "rawStyles": [
+        "shiki.css"
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "代码块正文渲染：shiki 高亮 + 行号槽 + 复制头栏（官方 markup，流式臂不做）",
+      "tier": "content",
+      "files": [
+        "code-block.tsx",
+        "code-block.css"
+      ],
+      "dependencies": [
+        "code-toolbar",
+        "code-highlighting",
+        "clipboard"
+      ],
+      "upstream": "packages/client/ui-primitives/src/markdown/CodeBlock.tsx @ dsh v0.2.2-rc.1"
     },
     {
       "name": "diff-block",
       "type": "registry:ui",
       "status": "ready",
-      "description": "差异块：mini-diff（LCS）替身 diff 包，官方 markup（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "description": "差异块：npm diff 的 structuredPatch（Myers 算法）+ kit 的编辑预算守卫，官方 markup（内容块；官方源保真复制）",
+      "tier": "content",
       "files": [
         "diff-block.tsx",
         "diff-block.css",
-        "mini-diff.ts"
+        "diff.ts"
       ],
       "dependencies": [
         "code-toolbar",
+        "code-highlighting",
         "fold-toggle",
         "clipboard"
       ],
+      "npmDependencies": {
+        "diff": "^9.0.0"
+      },
       "upstream": "packages/client/ui-primitives/src（对应 diff-block）"
     },
     {
       "name": "terminal-block",
       "type": "registry:ui",
       "status": "ready",
-      "description": "终端输出块：ansi-lite（SGR 子集）替身 anser，基础色落主题 token（内容块；官方源保真复制 + 零依赖轻量核心）",
+      "description": "终端输出块：官方 ansi.ts 保真复制（解析内核 npm anser），基础色落主题 token（内容块；官方源保真复制）",
+      "tier": "content",
       "files": [
         "terminal-block.tsx",
         "terminal-block.css",
-        "ansi-lite.ts"
+        "ansi.ts"
       ],
       "dependencies": [
         "clipboard-copy",
@@ -1133,6 +1177,9 @@
         "command-text",
         "head-tail-cap"
       ],
+      "npmDependencies": {
+        "anser": "^2.3.5"
+      },
       "upstream": "packages/client/ui-primitives/src（对应 terminal-block）"
     },
     {
@@ -1145,6 +1192,127 @@
       ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/head-tail-cap.ts"
+    },
+    {
+      "name": "markdown-text",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "Markdown 渲染器：GFM（表格/任务列表/删除线）+ KaTeX 数学 + 代码块 + 脚注（settled 全量渲染，不做流式臂）",
+      "tier": "content",
+      "files": [
+        "markdown-text.tsx",
+        "markdown-text.css",
+        "markdown-render.tsx",
+        "markdown-parse.ts",
+        "markdown-katex.tsx",
+        "markdown-file-link.ts",
+        "markdown-plain-text.ts",
+        "markdown-quote-text.ts",
+        "markdown-local-image-syntax.ts",
+        "markdown-windows-path-destinations.ts",
+        "markdown-cjk-friendly-strong.ts",
+        "markdown-math-compatibility.ts",
+        "markdown-delegate.tsx",
+        "markdown-viewport-highlighting.ts",
+        "markdown-link-icon.tsx",
+        "katex.css"
+      ],
+      "dependencies": [
+        "code-block",
+        "code-toolbar",
+        "code-highlighting",
+        "hover-card",
+        "image-lightbox",
+        "image-preview",
+        "icon"
+      ],
+      "npmDependencies": {
+        "katex": "^0.18.7",
+        "mdast-util-from-markdown": "^2.0.3",
+        "mdast-util-gfm": "^3.1.0",
+        "mdast-util-math": "^3.0.0",
+        "micromark-extension-gfm": "^3.0.0",
+        "micromark-extension-math": "^3.1.0",
+        "micromark-core-commonmark": "^2.0.3",
+        "micromark-util-character": "^2.1.1",
+        "micromark-util-classify-character": "^2.0.1",
+        "micromark-util-symbol": "^2.0.1",
+        "micromark-util-sanitize-uri": "^2.0.1",
+        "micromark-factory-space": "^2.0.1",
+        "micromark-util-decode-string": "^2.0.1",
+        "@types/mdast": "^4.0.0",
+        "micromark-util-types": "^2.0.0"
+      },
+      "upstream": "packages/client/ui-primitives/src/markdown/（kit 保真复制；裁流式臂 / DraggableImage / 官方 LinkIcon；KaTeX CSS 文本化）",
+      "rawStyles": [
+        "katex.css"
+      ]
+    },
+    {
+      "name": "read-block",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "读文件结果卡片：行号槽 + 高亮 + 头尾折叠（官方 markup）",
+      "tier": "content",
+      "files": [
+        "read-block.tsx",
+        "read-block.css"
+      ],
+      "dependencies": [
+        "code-toolbar",
+        "code-highlighting",
+        "fold-toggle",
+        "clipboard",
+        "markdown-text"
+      ],
+      "upstream": "packages/client/ui-primitives/src/ReadBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)"
+    },
+    {
+      "name": "web-block",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "web_search / web_fetch 检索卡片：答案走 MarkdownText 渲染（官方 markup）",
+      "tier": "content",
+      "files": [
+        "web-block.tsx",
+        "web-block.css"
+      ],
+      "dependencies": [
+        "markdown-text"
+      ],
+      "upstream": "packages/client/ui-primitives/src/WebBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)"
+    },
+    {
+      "name": "quote-preview",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "紧凑引文预览：裁剪时才弹 HoverCard（官方 markup）",
+      "files": [
+        "quote-preview.tsx",
+        "quote-preview.css"
+      ],
+      "dependencies": [
+        "icon",
+        "hover-card"
+      ],
+      "upstream": "packages/client/ui-primitives/src/QuotePreview.tsx @ dsh v0.2.2-rc.1 (66491b05e3)"
+    },
+    {
+      "name": "detail-document",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "长 Markdown 描述区块：loading / 文档 / 失败重试（官方 markup）",
+      "tier": "content",
+      "files": [
+        "detail-document.tsx",
+        "detail-document.css"
+      ],
+      "dependencies": [
+        "button",
+        "markdown-text",
+        "state-dot"
+      ],
+      "upstream": "packages/client/ui-primitives/src/DetailDocument.tsx @ dsh v0.2.2-rc.1 (66491b05e3)"
     }
   ]
 }

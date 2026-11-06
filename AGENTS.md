@@ -88,10 +88,12 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duk-
 |---|---|---|
 | 官方保真复制 | 30 | 官方除品牌件与重依赖内容块的全部原子（含 icon 集 15 个，inline path 不依赖宿主 sprite） |
 | 官方轻量核心 | 6 | 内容块：json-tree / json-block / search-block / code-toolbar / diff-block / terminal-block；重依赖（diff/anser/shiki）以 kit 自写替身顶替（issue 004） |
-| kit 自有 | 41 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/…），样式全 DSH token、行为手写零依赖 |
+| kit 自有 | 41 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/…），样式全 DSH token、行为手写 |
 | 共享行为模块 | 10 | modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap |
 
-**未收录（issue 004 留档）**：官方品牌件；重依赖内容块（markdown 家族 / ReadBlock / WebBlock / QuotePreview / DetailDocument，micromark+mdast+shiki+KaTeX 与零依赖纪律冲突，待「内容块依赖分层」议题）。
+**未收录（issue 005 留档）**：官方品牌件（BrandWordmark / FishLogo / SiteGlyph / artwork / 专用 Icon）。
+
+**依赖分层（issue 005 起）**：条目分两档 —— `atom`（默认，零重依赖，只用 react + clsx）与 `content`（带 npm 重依赖：markdown 家族 / diff / anser / shiki）。markdown 家族已于 issue 005 落地（裁流式臂 / DraggableImage / 官方 LinkIcon）。
 
 ## 维护
 

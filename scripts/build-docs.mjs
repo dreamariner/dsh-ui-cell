@@ -59,7 +59,14 @@ for (const item of registry.items) {
   for (const file of item.files) {
     if (!file.endsWith('.css')) continue
     const cssText = readFileSync(join(KIT, 'src', file), 'utf8')
-    kitStyles.push(`/* ===== ${item.name}/${file} ===== */\n` + prefixCss(cssText, 'duk-', item.name))
+    // 原样注入通道（registry 的 rawStyles）：第三方契约的类名不能前缀
+    // （katex 的 .katex / .katex-display 是 katex 自己吐的类名，改了就对不上）
+    const raw = (item.rawStyles ?? []).includes(file)
+    // 前缀的组件名用**文件名**（去 .css），不是条目名：两者可以不同
+    // （code-card.css 属于 code-toolbar 条目），而 CLI 的 buildStyleModule 与
+    // tsx 里的 css.xxx 访问都按文件名算 —— 这里必须一致，否则类名对不上、样式失效。
+    const base = file.replace(/\.css$/, '')
+    kitStyles.push(`/* ===== ${item.name}/${file} ===== */\n` + (raw ? cssText : prefixCss(cssText, 'duk-', base)))
   }
 }
 const combinedKitCss = kitStyles.join('\n')

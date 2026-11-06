@@ -2,11 +2,11 @@
 // 上游来源：packages/client/ui-primitives/src/DiffBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 import { useCallback, useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { structuredPatch } from './mini-diff.ts'
+import { structuredPatch } from './diff.ts'
 import { FoldToggle } from './fold-toggle.tsx'
 import { writeClipboard } from './clipboard.ts'
 import { CodeToolbar, type CodeToolbarLabels } from './code-toolbar.tsx'
-import { languageForPath } from './code-highlighting-lite.ts'
+import { languageForPath } from './code-highlighting.ts'
 import cardCss from './code-card.css'
 import css from './diff-block.css'
 

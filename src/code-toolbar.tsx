@@ -5,7 +5,7 @@ import {
   IconCheckOutlineRegular, IconCopyOutlineRegular, IconNowrapFillRegular, IconWrapFillRegular,
 } from './icons.tsx'
 import { Tooltip } from './tooltip.tsx'
-import { supportsHighlighting } from './code-highlighting-lite.ts'
+import { supportsHighlighting } from './code-highlighting.ts'
 import css from './code-card.css'
 
 /** Localized language fallback and wrapping actions supplied by the card owner. */
