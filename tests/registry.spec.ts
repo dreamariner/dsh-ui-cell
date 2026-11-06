@@ -17,7 +17,8 @@ import { existsSync, readFileSync, readdirSync, rmSync, mkdtempSync } from 'node
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { addComponents, buildStyleModule, cssClassNames, loadRegistry, prefixCss, resolveDependencies, srcDir } from '../cli/add.ts'
+import { addComponents, buildStyleModule, collectNpmDependencies, cssClassNames, installCommand, loadRegistry, prefixCss, resolveDependencies, srcDir } from '../cli/add.ts'
+import type { Registry, RegistryItem } from '../cli/add.ts'
 
 /** 官方 token 清单（pinned 快照，由 scripts/vendor-tokens.mjs 从 DSH checkout 生成）。 */
 const tokenInventory = JSON.parse(
@@ -56,6 +57,19 @@ describe('registry 一致性', () => {
   it('条目名唯一', () => {
     const names = registry.items.map(i => i.name)
     expect(new Set(names).size).toBe(names.length)
+  })
+
+  it('每个源文件只归属一个条目（跨条目共享走 dependencies；重复列 files 会让 add 报假性已存在）', () => {
+    const owner = new Map<string, string>()
+    const bad: string[] = []
+    for (const item of registry.items) {
+      for (const file of item.files) {
+        const prev = owner.get(file)
+        if (prev === undefined) owner.set(file, item.name)
+        else bad.push(`${file}：${prev} 与 ${item.name} 都列进 files（共享件应独立成条目，经 dependencies 引用）`)
+      }
+    }
+    expect(bad, `源文件被多个条目声明（2026-11-06 审计：hover-card 曾自带 overlay-top-margin.ts，与同名共享条目重复，单次 add 会报「已存在未覆盖」误导消费端）：\n${bad.join('\n')}`).toEqual([])
   })
 })
 
@@ -370,7 +384,7 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
   /**
    * 基础依赖：所有组件都在用、且消费端必然自带（react / clsx / react-dom）。
    * 它们由 kit 的文档统一交代（wiki 01：「运行时依赖只有 react + clsx」），
-   * **不**逐条目声明——否则 87 个条目要重复写三遍，且改版本要改 87 处。
+   * **不**逐条目声明，否则 94 个条目要重复写三遍，且改版本要改 94 处。
    * npmDependencies 只管「条目特有」的重依赖。
    */
   const BASELINE_DEPS = new Set(['react', 'react-dom', 'clsx'])
@@ -436,6 +450,60 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
       .filter(i => Object.keys(i.npmDependencies ?? {}).length > 0)
       .map(i => i.name)
     expect(bad, `atom 档却声明了 npm 依赖（要么升 content 档，要么去掉）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('npmDependencies 同包跨条目版本范围一致（冲突会让 add 报错、--with-deps 写出装不上的范围）', () => {
+    const seen = new Map<string, { range: string; via: string }>()
+    const bad: string[] = []
+    for (const item of registry.items) {
+      for (const [pkg, range] of Object.entries(item.npmDependencies ?? {})) {
+        const prev = seen.get(pkg)
+        if (prev && prev.range !== range) bad.push(`${pkg}：${prev.via} 声明 ${prev.range}，${item.name} 声明 ${range}`)
+        else if (!prev) seen.set(pkg, { range, via: item.name })
+      }
+    }
+    expect(bad, `同包被声明了不同版本范围（消费端无法同时满足，须统一）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('缺失依赖的安装建议保留 scoped 包（对 pkg@range 串 split("@") 的截断回归，006）', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'uikit-inst-'))
+    try {
+      const result = addComponents(['code-block'], { to: dir })
+      const note = result.notes.find(n => n.includes('装：'))
+      expect(note, 'code-block 闭包缺 shiki 系依赖，note 里应有安装建议').toBeDefined()
+      const cmd = note!.split('装：')[1]!.split('；')[0]!
+      expect(cmd, `安装命令里 scoped 包被截断：${cmd}`).toContain('@shikijs/langs@4.4.3')
+    } finally {
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('同包版本范围冲突直接报错（不静默产出装不上的范围，006）', () => {
+    const item = (name: string, range: string): RegistryItem => ({
+      name, type: 'registry:ui', status: 'ready', description: '', files: [], upstream: null,
+      npmDependencies: { diff: range },
+    })
+    const fake: Registry = {
+      name: 'fake', dshVersion: '0', dshCommit: '0',
+      items: [item('a', '^9.0.0'), item('b', '^8.0.0')],
+    }
+    expect(() => collectNpmDependencies(['a', 'b'], fake)).toThrow(/两个版本范围/)
+  })
+
+  it('安装建议由「包名 → 范围」表直接生成（installCommand 与 note 同源，006）', () => {
+    const cmd = installCommand({ shiki: '4.4.3', '@shikijs/langs': '4.4.3', '@types/mdast': '^4.0.0' })
+    expect(cmd).toBe('pnpm add shiki@4.4.3 @shikijs/langs@4.4.3 @types/mdast@^4.0.0')
+  })
+
+  it('单次 add 内同名产物静默去重，不报假性已存在（006）', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'uikit-dedup-'))
+    try {
+      const result = addComponents(['hover-card'], { to: dir })
+      expect(result.skipped, 'hover-card 闭包内不应有任何重复产物').toEqual([])
+      expect(result.notes.join('\n')).not.toContain('已存在未覆盖')
+    } finally {
+      rmSync(dir, { recursive: true, force: true })
+    }
   })
 
   /**

@@ -51,7 +51,7 @@ related: [004, luna-dsh#033, dsh-ledger#002, dsh-pilot#002, media-platforms-cent
 |---|---|---|
 | `mini-diff`（LCS 手写） | npm `diff` 的 structuredPatch + kit 的预算守卫做外层 | 前导 context 回填用 `lastIndexOf` 找重复行 → 位置取错 |
 | `ansi-lite`（SGR 子集） | **官方 `ansi.ts` 保真复制** + npm `anser` | 256 色调色板按灰阶近似；truecolor 输出 `rgb(rgb(r,g,b))` → 浏览器整条丢弃 |
-| `code-highlighting-lite`（恒 false） | kit 自有高亮内核 + shiki（JS 正则引擎 + css-variables 主题 + **静态 10 种常用语法**） | 代码块永远无高亮、语言名永不显示 |
+| `code-highlighting-lite`（恒 false） | kit 自有高亮内核 + shiki（JS 正则引擎 + css-variables 主题 + **静态 8 种常用语法**；006 勘误：原文误记 10 种） | 代码块永远无高亮、语言名永不显示 |
 
 顺带补了 `code-block` 组件（官方 `markdown/CodeBlock.tsx`）：kit 原先只有工具栏，
 没有代码正文渲染器，换真 shiki 也看不见高亮。
@@ -73,7 +73,7 @@ related: [004, luna-dsh#033, dsh-ledger#002, dsh-pilot#002, media-platforms-cent
 改为随组件带 `katex-css.ts`（字体 URL 指向 jsdelivr CDN；离线环境公式降级但结构可读）。
 
 **shiki 静态语法集**：官方靠 dynamic import 懒加载 ~40 个语言，依赖宿主 package-local
-chunk 登记机制（那是宿主自建包才有的基础设施），第三方插件不依赖它 → 静态打包 10 种常用语法。
+chunk 登记机制（那是宿主自建包才有的基础设施），第三方插件不依赖它 → 静态打包 8 种常用语法（006 勘误：原文误记 10 种）。
 
 ### ④ 顺带修的两个现存 bug
 
@@ -121,7 +121,7 @@ DSH 官方自己锁 React 18（`ui-primitives` 依赖 `react: ^18.2.0`）所以�
 
 ## 结果
 
-- registry 87 → **94 条目**（atom 89 / content 5）
+- registry 87 → **94 条目**（atom 85 / content 9；006 勘误：原文误记 atom 89 / content 5，漏数了 content 档的 code-toolbar / code-block / code-highlighting / read-block / web-block / detail-document）
 - 护栏 19 → **27 条**（新增：`:global` 不改名 / npm 依赖双向匹配 / content 档闭包有依赖 /
   atom 档无依赖 / 全条目悬空导入 / raw 样式被 note 点名 / rawStyles 登记与文件一致 /
   raw 样式不产出类名表）+ **8 条 markdown 渲染回归**（真实 shiki 高亮、KaTeX、

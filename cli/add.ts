@@ -142,8 +142,9 @@ function protectGlobals(css: string): { text: string; restore: (s: string) => st
 
 /**
  * 从 CSS 文本里抽出所有类选择器名（`.foo`），按出现顺序去重。
- * 与 prefixCss 同一套「选择器位置」判定：只认前面是开头 / 空白 / 组合器 / 逗号 / 括号的
- * `.foo`（链式类 `.a.b` 的 `.b` 两边都不认——护栏另有断言禁止这种形态进组件 CSS）。
+ * 与 prefixCss 同一套「选择器位置」判定：认前面是开头 / 空白 / 组合器 / 逗号 / 括号的
+ * `.foo`，也认链式类 `.a.b` 的每一段（lookbehind 分支；官方 menu / toast 在用，
+ * 护栏断言链式类逐段改名且进表）。
  * 只扫选择器位置，不看注释与属性值（官方 CSS 里没有这种情况，保守处理）。
  * `:global(...)` 内的类名不进表（第三方契约，不归本组件所有）。
  */
@@ -197,28 +198,8 @@ export function prefixCss(css: string, prefix: string, componentName: string): s
  *   - 静态：`css.button` → 表['button'] = 'duk-button'
  *   - 动态：`css[variant]`（官方 Button 的 variant ∈ primary|ghost|outline|toolbar、
  *     size ∈ md|sm）→ 表['primary'] = 'duk-button-primary'
- * 若把表的键也改名，动态索引就断了（variant 的值是原名）——这正是本实现
- * 不改写 css.xxx 访问的原因。
- */
-export function prefixTsxCssAccess(tsx: string, prefix: string): string {
-  void prefix
-  return tsx
-}
-
-/** tsx 里 `css[<expr>]` 的动态访问（expr 为标识符或字符串）。 */
-export function dynamicCssAccesses(tsx: string): string[] {
-  const out: string[] = []
-  const re = /\bcss\[([^\]]+)\]/g
-  let m: RegExpExecArray | null
-  while ((m = re.exec(tsx)) !== null) out.push(m[1]!.trim())
-  return out
-}
-
-/**
- * 生成组件的样式模块：把 .css 转成 `<name>-css.ts`。
- * 导出：
- *   - `css`：类名表（键 = 原类名，值 = 最终类名），兼容 css['x'] 与 css.x 两种访问
- *   - `styles`：样式文本（可直接 <style> 注入）
+ * 若把表的键也改名，动态索引就断了（variant 的值是原名），这正是没有
+ * 「tsx 改写」步骤的原因（历史接口 prefixTsxCssAccess 已删，006）。
  */
 export function buildStyleModule(cssText: string, prefix: string, componentName: string, raw = false): string {
   // 原样注入通道：不加前缀、不出类名表（第三方契约的类名不能动）
@@ -304,7 +285,9 @@ export function resolveDependencies(names: string[], registry: Registry): string
 
 /**
  * 收集闭包内所有条目声明的 npm 依赖（包名 → 版本范围）。
- * 同名包版本不一致时把两个范围都列出来（消费端要能同时满足才算装对了）。
+ * 同名包被声明了不同版本范围时直接报错：那要么是 registry 维护事故
+ * （护栏「npmDependencies 同包跨条目范围一致」也会拦），要么就要把装不上的
+ * 范围交给消费端（`a | b` 不是合法 semver），两者都该在最前面爆出来。
  */
 export function collectNpmDependencies(names: string[], registry: Registry): Record<string, string> {
   const out: Record<string, string> = {}
@@ -314,7 +297,9 @@ export function collectNpmDependencies(names: string[], registry: Registry): Rec
     for (const [pkg, range] of Object.entries(item.npmDependencies ?? {})) {
       const prev = out[pkg]
       if (prev === undefined) { out[pkg] = range; continue }
-      if (prev !== range) out[pkg] = `${prev} | ${range}`
+      if (prev !== range) {
+        throw new Error(`registry 冲突：包 ${pkg} 被声明了两个版本范围（${prev} 与 ${range}，后者经 ${name}）。请统一 registry 里该包的范围`)
+      }
     }
   }
   return out
@@ -366,6 +351,15 @@ function handoffNpmDependencies(
   return { missing, wrote: true }
 }
 
+/**
+ * 缺失依赖的安装命令（note 里给人照抄的那条）。
+ * 必须由「包名 → 范围」表直接拼：对 `pkg@range` 串做 `split('@')[0]` 反解包名
+ * 会把 scoped 包（@shikijs/langs、@types/mdast）截成空串（2026-11-06 审计实证）。
+ */
+export function installCommand(missing: Record<string, string>): string {
+  return `pnpm add ${Object.entries(missing).map(([pkg, range]) => `${pkg}@${range}`).join(' ')}`
+}
+
 /** 执行 add：复制组件文件（含依赖闭包）到目标插件目录。 */
 export function addComponents(
   names: string[],
@@ -381,6 +375,9 @@ export function addComponents(
   // 原样注入的样式模块（第三方契约类名）：它们没有组件 tsx 引用，
   // 消费端要自己 import styles 拼进注入器，漏了就丢样式（公式不排版 / 高亮没颜色）。
   const rawStyleModules: string[] = []
+  // 本轮已写过的目标文件（同源文件同内容，重复命中静默去重，
+  // 别把「本轮重复」误报成「消费端已有文件」）
+  const written = new Set<string>()
 
   const expanded = resolveDependencies(names, registry)
   const auto = expanded.filter(name => !names.includes(name))
@@ -410,6 +407,7 @@ export function addComponents(
       // 非样式文件保持原扩展名：组件是 .tsx，辅助模块（focus.ts 等）是 .ts
       const targetName = isCss ? `${base}-css.ts` : file
       const target = join(targetUi, targetName)
+      if (written.has(target)) continue
       if (existsSync(target) && !options.force) {
         skipped.push(`${name}/${targetName}`)
         continue
@@ -422,19 +420,20 @@ export function addComponents(
         if (raw) rawStyleModules.push(targetName)
       } else {
         let text = readFileSync(source, 'utf8')
-        // 组件内部的 css 引用改前缀；css import 改指生成的 -css.ts（跨条目也认）
-        text = prefixTsxCssAccess(text, prefix)
+        // css import 改指生成的 -css.ts（跨条目也认）；tsx 的 css.xxx 访问无需改写
+        // （类名表以原类名为键，见 buildStyleModule 的注释）
         text = rewriteCssImports(text, cssBases)
         // 相对导入的模块名保持上游名（靠目录隔离，不加前缀）
         writeFileSync(target, text)
       }
+      written.add(target)
       added.push(`${name}/${targetName}`)
     }
   }
   if (skipped.length > 0 && !options.force) {
     notes.push(`已存在未覆盖（要覆盖加 --force）：${skipped.join(', ')}`)
   }
-  notes.push(`样式注入：在插件入口把各组件的 styles 拼进已有的 <style> 注入器（本仓插件见 src/client/panel/panel-css.ts 的 PANEL_CSS 模式）。`)
+  notes.push(`样式注入：在插件入口把各组件的 styles 拼进已有的 <style> 注入器（消费端可自建一个样式聚合模块统一管理，模式见 README）。`)
   if (rawStyleModules.length > 0) {
     notes.push(`原样注入的样式模块（第三方契约类名，不加前缀）：${rawStyleModules.join(', ')} —— 它们没有组件引用，要自己 import { styles } 一起拼进注入器，漏了会丢样式（公式不排版 / 代码高亮没颜色）。`)
   }
@@ -447,7 +446,7 @@ export function addComponents(
     const list = Object.entries(handoff.missing).map(([pkg, range]) => `${pkg}@${range}`).join(' ')
     notes.push(handoff.wrote
       ? `已写入消费端 package.json 的 dependencies：${list}（记得跑一次安装）`
-      : `消费端缺这些 npm 依赖（复制过去的是源码，裸 import 要能解析到包）：${list}；装：pnpm add ${list.split(' ').map(x => x.split('@')[0]).join(' ')}；或 add 时加 --with-deps 直接写进 package.json`)
+      : `消费端缺这些 npm 依赖（复制过去的是源码，裸 import 要能解析到包）：${list}；装：${installCommand(handoff.missing)}；或 add 时加 --with-deps 直接写进 package.json`)
   }
   return { added, skipped, files: readdirSync(targetUi).sort(), notes, missingDeps: handoff.missing }
 }

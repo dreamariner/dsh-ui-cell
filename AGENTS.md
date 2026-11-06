@@ -47,16 +47,20 @@ dsh-ui-cell/
 ├── src/                 # 权威组件源码（tsx + css，类名为上游原名）
 │   ├── button.tsx/.css、input、tag、segmented-control、modal、risk-confirmation
 │   ├── select.tsx/.css、textarea.tsx/.css        # kit 自有（官方无对应原子）
+│   ├── markdown-*.ts(x)、read-block、web-block、quote-preview、detail-document、
+│   │   code-block、code-highlighting、ansi.ts、diff.ts   # 内容块层（content 档，带 npm 重依赖）
 │   ├── icons.tsx                                 # 官方 icons/ 的子集（5 个）
 │   ├── use-modal-layer.ts、focus.ts、keyboard-composition.ts   # Modal 行为依赖
 │   └── index.ts                                  # 本仓 barrel（消费端不用它）
 ├── docs/wiki/             # 组件 Wiki（新手教程 + 自包含文档站 index.html；docs:build 重建）
 ├── tokens/official-tokens.json  # 官方 token 清单（pinned 快照，护栏据此做存在性校验；锚由 vendor 派生）
 ├── scripts/vendor-tokens.mjs    # 从 DSH checkout 同步 token 清单（升级期；vendor / vendor:check）
+├── scripts/import-markdown-family.mjs  # markdown 家族的机械搬运脚本（升级期；语义裁剪仍需手工）
+├── scripts/build-docs.mjs       # 文档站重建（docs:build；token 从 checkout 拼装）
 ├── scripts/lib/paths.mjs        # DSH_CHECKOUT 解析（显式指定，无默认推导）
-├── cli/add.ts           # add 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析）
+├── cli/add.ts           # add 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析 + 依赖分层交接[tier/npmDependencies/rawStyles 原样注入]）
 ├── cli/index.ts         # CLI 入口
-└── tests/registry.spec.ts  # 自守护栏（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 前缀化）
+└── tests/               # 自守护栏：registry.spec.ts（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接）+ markdown.spec.tsx（渲染回归）
 ```
 
 ## 用法
@@ -82,12 +86,12 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duk-
 
 ## 组件清单
 
-**87 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`，每条带 upstream 出处或 kit 自有标注）：
+**94 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`，每条带 upstream 出处或 kit 自有标注）：
 
 | 来源 | 数量 | 内容 |
 |---|---|---|
-| 官方保真复制 | 30 | 官方除品牌件与重依赖内容块的全部原子（含 icon 集 15 个，inline path 不依赖宿主 sprite） |
-| 官方轻量核心 | 6 | 内容块：json-tree / json-block / search-block / code-toolbar / diff-block / terminal-block；重依赖（diff/anser/shiki）以 kit 自写替身顶替（issue 004） |
+| 官方保真复制 | 37 | 官方除品牌件的全部原子（含 icon 集 15 个，inline path 不依赖宿主 sprite）+ markdown 家族 5（markdown-text / read-block / web-block / quote-preview / detail-document，裁剪版见 issue 005）+ code-block + code-highlighting（契约对齐的 kit 自写内核） |
+| 官方内容块 | 6 | json-tree / json-block / search-block（零依赖）+ code-toolbar / diff-block / terminal-block（issue 005 起带真实依赖 diff / anser / shiki） |
 | kit 自有 | 41 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/…），样式全 DSH token、行为手写 |
 | 共享行为模块 | 10 | modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap |
 
@@ -97,14 +101,14 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duk-
 
 ## 维护
 
-- **加组件**：从 DSH checkout 复制对应 `.tsx` + `.module.css` 到 `src/`（保留上游类名原样，便于日后 diff），在 `registry.json` 登记（含 `upstream` 出处），并把对其他组件的相对导入如实填进条目的 `dependencies`（add 靠它解析闭包；护栏会校验声明与实际导入一致，Modal 的 `use-modal-layer` / `focus` / `keyboard-composition` 是同条目内文件，不需要进 dependencies）。
+- **加组件**：从 DSH checkout 复制对应 `.tsx` + `.module.css` 到 `src/`（保留上游类名原样，便于日后 diff），在 `registry.json` 登记（含 `upstream` 出处），并把对其他组件的相对导入如实填进条目的 `dependencies`（add 靠它解析闭包；护栏会校验声明与实际导入一致，Modal 的 `use-modal-layer` / `focus` / `keyboard-composition` 是同条目内文件，不需要进 dependencies；反过来，已是独立条目的共享件不要再列进条目 files，护栏「文件归属唯一」会拦）。
 - **加图标**：从官方 `icons/index.tsx` 复制对应 `Icon*Artwork` 函数体 + Regular 导出，保持 `Icon{Name}OutlineRegular` 命名与 currentColor 契约。
 - **DSH 升级**：更新 `registry.json` 的 `dshVersion` / `dshCommit`，逐组件按 `upstream` 重 diff，把改动同步到 `src/`（**改的是 `src/`，不是消费者**——消费者已经复制走，不会被上游变更影响）。
 
 ## 验证
 
 ```bash
-pnpm test        # registry 一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 前缀化（19 条）
+pnpm test        # registry 护栏（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接）+ markdown 渲染回归（41 条，其中 1 条需 DSH_CHECKOUT 在场才跑）
 pnpm typecheck   # 组件源码类型检查
 ```
 

@@ -10,10 +10,10 @@
 // 现在：**算法内核交给 npm diff，kit 只保留自己那层预算守卫**（见下），
 // 输出契约不变（{ hunks }），故 diff-block 的调用点零改动。
 //
-// 为什么还要留守卫：npm diff 的 structuredPatch 没有 maxEditLength 选项
-// （那是 diffLines 的内部参数），而 kit 的调用方靠「超预算 → 返回 undefined →
-// 整段替换成一个 hunk」来兜住超大 diff（不然一个 5000 行的 diff 会把 UI 撑爆）。
-// 故守卫留在 kit 这层：预算按**编辑行数**算，与替身时期的口径一致。
+// 为什么还要留守卫：npm diff 的 structuredPatch 自 5.1 起也有 maxEditLength
+// （006 勘误：原注说它没有该选项，不对），但 kit 的预算口径是「hunk 内编辑行数、
+// 超限返回 undefined 由调用方整段回退」，与替身时期及调用方的既有语义一致。
+// 守卫留在 kit 这层做外层，不依赖 npm diff 内部对超限的处置细节。
 
 import { structuredPatch as npmStructuredPatch } from 'diff'
 

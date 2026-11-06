@@ -363,8 +363,7 @@
       "files": [
         "hover-card.tsx",
         "hover-card.css",
-        "hover-card-group.tsx",
-        "overlay-top-margin.ts"
+        "hover-card-group.tsx"
       ],
       "dependencies": [
         "pointer-grace",

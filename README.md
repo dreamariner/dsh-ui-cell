@@ -47,12 +47,12 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]
 
 ## 组件
 
-**87 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`；每条带 `upstream` 出处或 `kit 自有` 标注）：
+**94 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`；每条带 `upstream` 出处或 `kit 自有` 标注）：
 
 | 来源 | 数量 | 内容 |
 |---|---|---|
-| 官方保真复制 | 30 | 官方除品牌件与重依赖内容块的全部原子：button / input / tag / segmented-control / modal / risk-confirmation / tooltip / menu / switch / pill / state-dot / checkbox / disclosure-row / toast / hover-card / image-lightbox / zoom-controls / …（icon 集 15 个，inline path，不依赖宿主 sprite） |
-| 官方轻量核心 | 6 | 内容块：json-tree / json-block / search-block / code-toolbar / diff-block / terminal-block。官方源保真复制，重依赖（diff / anser / shiki）以 kit 自写替身顶替（mini-diff / ansi-lite / 高亮检测降级），见 issue 004 |
+| 官方保真复制 | 37 | 官方除品牌件的全部原子：button / input / tag / segmented-control / modal / risk-confirmation / tooltip / menu / switch / pill / state-dot / checkbox / disclosure-row / toast / hover-card / image-lightbox / zoom-controls / …（icon 集 15 个，inline path，不依赖宿主 sprite）+ markdown 家族 5（markdown-text / read-block / web-block / quote-preview / detail-document，裁剪版见 issue 005）+ code-block + code-highlighting（契约对齐的 kit 自写内核） |
+| 官方内容块 | 6 | json-tree / json-block / search-block（零依赖）+ code-toolbar / diff-block / terminal-block（issue 005 起带真实依赖 diff / anser / shiki） |
 | kit 自有 | 41 | shadcn base 功能对齐、样式全部 DSH token、行为手写：card / alert / accordion / popover / combobox / command / table / data-table / sheet（含 drawer 形态）/ calendar / date-picker / slider / radio-group / carousel / sidebar / chart（极简柱线图）/ form / … |
 | 共享行为模块 | 10 | 官方行为件独立成条目供多组件共享：modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap |
 
@@ -78,9 +78,9 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force]
 
 - `registry.json` — 组件清单（名字、状态、文件、dependencies 依赖闭包、上游出处、DSH 基线）
 - `src/` — 权威组件源码（tsx + css，类名保留上游原名便于 diff）
-- `cli/` — `add` 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析）
+- `cli/` — `add` 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析 + 依赖分层交接[tier/npmDependencies/rawStyles 原样注入]）
 - `docs/wiki/` — 组件 Wiki（新手教程 + 可视文档站 index.html，组件用法与实时效果）
-- `tests/registry.spec.ts` — 自守护栏（registry 一致性 + token 纪律 + 存在性 + 命名空间唯一性 + 依赖闭包 + 前缀化）
+- `tests/` — 自守护栏：`registry.spec.ts`（registry 一致性 + token 纪律 + 存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接）与 `markdown.spec.tsx`（内容块渲染回归）
 - `AGENTS.md` — 定位与红线（改本仓前先读）
 
 ## 许可

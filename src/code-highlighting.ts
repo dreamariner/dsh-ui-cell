@@ -17,7 +17,7 @@
 //   useCodeHighlighter(lang) → (code) => HighlightSpan[][] | undefined
 //
 // 与官方的两处有意差异：
-//   1. 语法集是静态的（10 种常用），不是懒加载的 40 种；不认识的语言一律 plain text。
+//   1. 语法集是静态的（8 种常用，js 家族共用 ts 语法），不是懒加载的 40 种；不认识的语言一律 plain text。
 //   2. 不含官方的 Go 语法补丁（patchGoGrammar 绑死 @shikijs/langs 4.4.3 的语法结构，
 //      是升级即失效的地雷；kit 不带 Go 语法，补丁自然不需要）。
 //
