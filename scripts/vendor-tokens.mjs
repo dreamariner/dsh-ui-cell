@@ -11,7 +11,7 @@
 // 样式不生效、**没有任何报错**。纯格式类护栏（禁 static/specific/字面色）看不出这种错。
 //
 // 故把官方 token 定义（ui-theme 的 design-platform.css / base.css / onboarding.css）
-// 抽成一份 pinned 清单，护栏据此做**存在性校验**：kit 引用的每个 token 必须在这份清单里
+// 抽成一份 pinned 清单，护栏据此做**存在性校验**：本仓 引用的每个 token 必须在这份清单里
 // （或属于宿主上下文变量 / 组件自有变量）。
 //
 // ## 唯一事实源
@@ -88,7 +88,7 @@ for (const name of readdirSync(stylesDir).filter((f) => f.endsWith('.css'))) {
 const pick = (predicate) => [...all].filter(predicate).sort()
 
 const tokens = {
-  // static 类入清单供存在性校验（官方组件原样引用它们）；纪律护栏仍禁止 kit 手写样式使用。
+  // static 类入清单供存在性校验（官方组件原样引用它们）；纪律护栏仍禁止 本仓 手写样式使用。
   static: pick((t) => t.startsWith('--dsw-static-')),
   alias: pick((t) => t.startsWith('--dsw-alias-')),
   radius: pick((t) => t.startsWith('--dsw-radius-')),
@@ -127,7 +127,7 @@ const doc = {
   dshVersion,
   dshCommit,
   source: 'DSH packages/client/ui-theme/src/styles/*.css（整个目录，非个别文件）',
-  note: '官方 token 定义快照（pinned）。用于校验 kit 组件引用的 token 是否真实存在——拼错或官方已删除的 token 会让样式静默失效（var() 解析失败 → 声明被丢弃），格式类护栏看不出来。DSH 升级时用 scripts/vendor-tokens.mjs 重新生成。',
+  note: '官方 token 定义快照（pinned）。用于校验 本仓组件引用的 token 是否真实存在——拼错或官方已删除的 token 会让样式静默失效（var() 解析失败 → 声明被丢弃），格式类护栏看不出来。DSH 升级时用 scripts/vendor-tokens.mjs 重新生成。',
   hostContextVariables,
   hostContextNote: '宿主 AppFrame 注入的上下文变量（packages/client/ui-layout/src/client/AppFrame.module.css），带 fallback 值；不是主题 token，不在官方清单里。',
   tokens: Object.fromEntries(Object.entries(tokens).filter(([, v]) => v.length > 0)),

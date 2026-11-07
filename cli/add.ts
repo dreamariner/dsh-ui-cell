@@ -9,8 +9,8 @@
 //      隔离靠 per-file 哈希；复制进插件后样式会拼进**同一个 <style>**，哈希隔离不复存在，
 //      只加一个插件前缀不够（input 与 select 都有 .wrap，button 与 input 都有 .icon，
 //      2026-11-05 复审实证二者跨组件互覆）。故最终类名 = `prefix + 组件名段 + 类名`
-//      （与组件同名的根类免组件段：.button → duk-button；.wrap → duk-input-wrap /
-//      duk-select-wrap），跨组件绝不重名。
+//      （与组件同名的根类免组件段：.button → duc-button；.wrap → duc-input-wrap /
+//      duc-select-wrap），跨组件绝不重名。
 //   2. **@keyframes 改名**：动画名是**文档级**命名空间（官方 CSS Modules 同样对 keyframes
 //      做哈希）。定义与 animation / animation-name 引用同步改名，漏一边 = 动画静默失效。
 //   3. **CSS → TS 字符串**：第三方插件的 client 构建**没有 CSS 管线**（DSH 官方 client
@@ -66,7 +66,7 @@ export interface Registry {
 export interface AddOptions {
   /** 目标插件目录（其下会创建 src/client/ui/）。 */
   to: string
-  /** 类名前缀，默认 'duk-'。 */
+  /** 类名前缀，默认 'duc-'。 */
   prefix?: string
   /** 覆盖已存在的文件。 */
   force?: boolean
@@ -92,20 +92,20 @@ export interface AddResult {
 }
 
 /** 本仓根目录（cli/ 的上一级）。 */
-export const kitRoot = resolve(fileURLToPath(new URL('..', import.meta.url)))
+export const cellRoot = resolve(fileURLToPath(new URL('..', import.meta.url)))
 
-export function loadRegistry(root = kitRoot): Registry {
+export function loadRegistry(root = cellRoot): Registry {
   return JSON.parse(readFileSync(join(root, 'registry.json'), 'utf8')) as Registry
 }
 
 /** 组件源码目录。 */
-export function srcDir(root = kitRoot): string {
+export function srcDir(root = cellRoot): string {
   return join(root, 'src')
 }
 
 /**
- * 最终类名：与组件同名的根类免组件段（.button → duk-button），
- * 其余加组件名段（input 的 .wrap → duk-input-wrap）。
+ * 最终类名：与组件同名的根类免组件段（.button → duc-button），
+ * 其余加组件名段（input 的 .wrap → duc-input-wrap）。
  * 类名表与 CSS 改写必须共用本函数，两边才永远一致。
  */
 export function finalClassName(componentName: string, name: string, prefix: string): string {
@@ -195,9 +195,9 @@ export function prefixCss(css: string, prefix: string, componentName: string): s
 /**
  * 类名表机制（关键设计）：生成的 `css` 对象**以原类名为键、最终类名为值**。
  * 于是 tsx 里的两种访问都天然正确，且**不需要改写 tsx 的类名访问**：
- *   - 静态：`css.button` → 表['button'] = 'duk-button'
+ *   - 静态：`css.button` → 表['button'] = 'duc-button'
  *   - 动态：`css[variant]`（官方 Button 的 variant ∈ primary|ghost|outline|toolbar、
- *     size ∈ md|sm）→ 表['primary'] = 'duk-button-primary'
+ *     size ∈ md|sm）→ 表['primary'] = 'duc-button-primary'
  * 若把表的键也改名，动态索引就断了（variant 的值是原名），这正是没有
  * 「tsx 改写」步骤的原因（历史接口 prefixTsxCssAccess 已删，006）。
  */
@@ -364,10 +364,10 @@ export function installCommand(missing: Record<string, string>): string {
 export function addComponents(
   names: string[],
   options: AddOptions,
-  root = kitRoot,
+  root = cellRoot,
 ): AddResult {
   const registry = loadRegistry(root)
-  const prefix = options.prefix ?? 'duk-'
+  const prefix = options.prefix ?? 'duc-'
   const targetUi = join(resolve(options.to), 'src', 'client', 'ui')
   const added: string[] = []
   const skipped: string[] = []
@@ -455,7 +455,7 @@ export function addComponents(
 export function runCli(argv: string[]): number {
   const names: string[] = []
   let to = ''
-  let prefix = 'duk-'
+  let prefix = 'duc-'
   let force = false
   let withDeps = false
   // 允许省略子命令词（`dsh-ui-cell add button` 与 `dsh-ui-cell button` 等价）
@@ -467,7 +467,7 @@ export function runCli(argv: string[]): number {
     if (arg === '--force') { force = true; continue }
     if (arg === '--with-deps') { withDeps = true; continue }
     if (arg === '--help' || arg === '-h') {
-      console.log('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force] [--with-deps]')
+      console.log('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force] [--with-deps]')
       console.log('示例：dsh-ui-cell add button input --to packages/plugin-memory（组件依赖自动带上）')
       console.log('  --with-deps  把缺失的 npm 依赖直接写进消费端 package.json 的 dependencies（默认只提示）')
       return 0
@@ -475,7 +475,7 @@ export function runCli(argv: string[]): number {
     names.push(arg)
   }
   if (names.length === 0) {
-    console.error('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duk-] [--force] [--with-deps]')
+    console.error('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force] [--with-deps]')
     return 1
   }
   if (to === '') {

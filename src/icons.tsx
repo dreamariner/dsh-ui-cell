@@ -2,9 +2,9 @@
 //
 // 上游来源：packages/client/ui-primitives/src/icons/index.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // ⚠ 0.2.2 起官方图标改为文档级 sprite（<use href="#dsw-icon-*">，ui-theme 维护 symbol 表）。
-// kit 刻意**不跟**：插件可能独立于宿主 sprite 运行，inline path 才符合「复制即独立」；
+// 本仓刻意**不跟**：插件可能独立于宿主 sprite 运行，inline path 才符合「复制即独立」；
 // 五个图标的 path 已与 artwork.ts 逐字节比对，零变化，以下 inline 实现继续有效。
-// 官方 icons/ 共 190 个图标（全量复制体积大、且多数用不上），本 kit 只带首批必需的几个，
+// 官方 icons/ 共 190 个图标（全量复制体积大、且多数用不上），本仓只带首批必需的几个，
 // 需要更多时按官方复制规范从 checkout 补：复制对应 const Icon*Artwork 函数体 +
 // Regular/Medium 两个导出，命名保持 Icon{Name}Outline{Regular|Medium}。
 //
@@ -53,7 +53,7 @@ const IconGlobeOutlineArtwork = ({ size = 16, className, strokeWidth }: Weighted
   </svg>
 )
 
-/** 文件图标（markdown 文件引用用；kit 自绘，与官方 FileTypeIcon 的品牌件无关）。 */
+/** 文件图标（markdown 文件引用用；本仓自绘，与官方 FileTypeIcon 的品牌件无关）。 */
 const IconFileOutlineArtwork = ({ size = 16, className, strokeWidth }: WeightedIconProps) => (
   <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth={strokeWidth}>
     <path d="M9 1.5H4.5C3.67157 1.5 3 2.17157 3 3V13C3 13.8284 3.67157 14.5 4.5 14.5H11.5C12.3284 14.5 13 13.8284 13 13V5.5L9 1.5Z" stroke="currentColor" strokeLinejoin="round" />

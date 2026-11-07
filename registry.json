@@ -3,7 +3,7 @@
   "homepage": "https://github.com/dreamariner/dsh-ui-cell",
   "dshVersion": "0.2.2-rc.1",
   "dshCommit": "66491b05e3f05ad35bcdd4f6cd7ed26041d9e3db",
-  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duk- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。",
+  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。",
   "items": [
     {
       "name": "button",
@@ -504,7 +504,7 @@
       "name": "separator",
       "type": "registry:ui",
       "status": "ready",
-      "description": "分隔线：横/竖两向，alias 边框色（kit 自有，对齐 shadcn separator）",
+      "description": "分隔线：横/竖两向，alias 边框色（本仓自有，对齐 shadcn separator）",
       "files": [
         "separator.tsx",
         "separator.css"
@@ -516,7 +516,7 @@
       "name": "aspect-ratio",
       "type": "registry:ui",
       "status": "ready",
-      "description": "宽高比容器：子元素铺满 ratio 盒（kit 自有，对齐 shadcn aspect-ratio）",
+      "description": "宽高比容器：子元素铺满 ratio 盒（本仓自有，对齐 shadcn aspect-ratio）",
       "files": [
         "aspect-ratio.tsx",
         "aspect-ratio.css"
@@ -528,7 +528,7 @@
       "name": "label",
       "type": "registry:ui",
       "status": "ready",
-      "description": "表单标签（kit 自有，对齐 shadcn label）",
+      "description": "表单标签（本仓自有，对齐 shadcn label）",
       "files": [
         "label.tsx",
         "label.css"
@@ -540,7 +540,7 @@
       "name": "skeleton",
       "type": "registry:ui",
       "status": "ready",
-      "description": "骨架屏：pulse 占位块（kit 自有，对齐 shadcn skeleton）",
+      "description": "骨架屏：pulse 占位块（本仓自有，对齐 shadcn skeleton）",
       "files": [
         "skeleton.tsx",
         "skeleton.css"
@@ -552,7 +552,7 @@
       "name": "progress",
       "type": "registry:ui",
       "status": "ready",
-      "description": "进度条：受控 value 与 indeterminate 滑动（kit 自有，对齐 shadcn progress）",
+      "description": "进度条：受控 value 与 indeterminate 滑动（本仓自有，对齐 shadcn progress）",
       "files": [
         "progress.tsx",
         "progress.css"
@@ -564,7 +564,7 @@
       "name": "spinner",
       "type": "registry:ui",
       "status": "ready",
-      "description": "加载环：纯 CSS 旋转，尊重 prefers-reduced-motion（kit 自有，对齐 shadcn spinner）",
+      "description": "加载环：纯 CSS 旋转，尊重 prefers-reduced-motion（本仓自有，对齐 shadcn spinner）",
       "files": [
         "spinner.tsx",
         "spinner.css"
@@ -576,7 +576,7 @@
       "name": "avatar",
       "type": "registry:ui",
       "status": "ready",
-      "description": "头像：图片 + 首字母回退（kit 自有，对齐 shadcn avatar）",
+      "description": "头像：图片 + 首字母回退（本仓自有，对齐 shadcn avatar）",
       "files": [
         "avatar.tsx",
         "avatar.css"
@@ -588,7 +588,7 @@
       "name": "breadcrumb",
       "type": "registry:ui",
       "status": "ready",
-      "description": "面包屑：List/Item/Link/Page/Separator 复合（kit 自有，对齐 shadcn breadcrumb）",
+      "description": "面包屑：List/Item/Link/Page/Separator 复合（本仓自有，对齐 shadcn breadcrumb）",
       "files": [
         "breadcrumb.tsx",
         "breadcrumb.css"
@@ -600,7 +600,7 @@
       "name": "button-group",
       "type": "registry:ui",
       "status": "ready",
-      "description": "按钮组容器（kit 自有，对齐 shadcn button-group）",
+      "description": "按钮组容器（本仓自有，对齐 shadcn button-group）",
       "files": [
         "button-group.tsx",
         "button-group.css"
@@ -612,7 +612,7 @@
       "name": "empty",
       "type": "registry:ui",
       "status": "ready",
-      "description": "空状态：Media/Title/Description/Content 复合（kit 自有，对齐 shadcn empty）",
+      "description": "空状态：Media/Title/Description/Content 复合（本仓自有，对齐 shadcn empty）",
       "files": [
         "empty.tsx",
         "empty.css"
@@ -624,7 +624,7 @@
       "name": "item",
       "type": "registry:ui",
       "status": "ready",
-      "description": "列表项卡片：Media/Content/Title/Description/Actions 复合（kit 自有，对齐 shadcn item）",
+      "description": "列表项卡片：Media/Content/Title/Description/Actions 复合（本仓自有，对齐 shadcn item）",
       "files": [
         "item.tsx",
         "item.css"
@@ -636,7 +636,7 @@
       "name": "field",
       "type": "registry:ui",
       "status": "ready",
-      "description": "表单字段壳：Label + 控件 + Description/Error（kit 自有，对齐 shadcn field）",
+      "description": "表单字段壳：Label + 控件 + Description/Error（本仓自有，对齐 shadcn field）",
       "files": [
         "field.tsx",
         "field.css"
@@ -648,7 +648,7 @@
       "name": "card",
       "type": "registry:ui",
       "status": "ready",
-      "description": "卡片：Header/Title/Description/Content/Footer 复合（kit 自有，对齐 shadcn card）",
+      "description": "卡片：Header/Title/Description/Content/Footer 复合（本仓自有，对齐 shadcn card）",
       "files": [
         "card.tsx",
         "card.css"
@@ -660,7 +660,7 @@
       "name": "alert",
       "type": "registry:ui",
       "status": "ready",
-      "description": "语义提示条：default/info/success/warning/danger 左边框变体（kit 自有，对齐 shadcn alert）",
+      "description": "语义提示条：default/info/success/warning/danger 左边框变体（本仓自有，对齐 shadcn alert）",
       "files": [
         "alert.tsx",
         "alert.css"
@@ -672,7 +672,7 @@
       "name": "collapsible",
       "type": "registry:ui",
       "status": "ready",
-      "description": "折叠区：trigger + 条件渲染内容（kit 自有，对齐 shadcn collapsible）",
+      "description": "折叠区：trigger + 条件渲染内容（本仓自有，对齐 shadcn collapsible）",
       "files": [
         "collapsible.tsx",
         "collapsible.css"
@@ -684,7 +684,7 @@
       "name": "accordion",
       "type": "registry:ui",
       "status": "ready",
-      "description": "手风琴：single/multiple，grid-rows 高度动画（kit 自有，对齐 shadcn accordion）",
+      "description": "手风琴：single/multiple，grid-rows 高度动画（本仓自有，对齐 shadcn accordion）",
       "files": [
         "accordion.tsx",
         "accordion.css"
@@ -696,7 +696,7 @@
       "name": "scroll-area",
       "type": "registry:ui",
       "status": "ready",
-      "description": "细滚动条容器：宿主 scrollbar token（kit 自有，对齐 shadcn scroll-area）",
+      "description": "细滚动条容器：宿主 scrollbar token（本仓自有，对齐 shadcn scroll-area）",
       "files": [
         "scroll-area.tsx",
         "scroll-area.css"
@@ -708,7 +708,7 @@
       "name": "table",
       "type": "registry:ui",
       "status": "ready",
-      "description": "语义表格原语：Table/Header/Body/Row/Head/Cell/Caption（kit 自有，对齐 shadcn table）",
+      "description": "语义表格原语：Table/Header/Body/Row/Head/Cell/Caption（本仓自有，对齐 shadcn table）",
       "files": [
         "table.tsx",
         "table.css"
@@ -720,7 +720,7 @@
       "name": "data-table",
       "type": "registry:ui",
       "status": "ready",
-      "description": "轻数据表：列配置 + 表头排序（无表格库依赖）（kit 自有，对齐 shadcn data-table）",
+      "description": "轻数据表：列配置 + 表头排序（无表格库依赖）（本仓自有，对齐 shadcn data-table）",
       "files": [
         "data-table.tsx",
         "data-table.css"
@@ -734,7 +734,7 @@
       "name": "toggle",
       "type": "registry:ui",
       "status": "ready",
-      "description": "按下态按钮：aria-pressed，default/ghost 变体（kit 自有，对齐 shadcn toggle）",
+      "description": "按下态按钮：aria-pressed，default/ghost 变体（本仓自有，对齐 shadcn toggle）",
       "files": [
         "toggle.tsx",
         "toggle.css"
@@ -746,7 +746,7 @@
       "name": "toggle-group",
       "type": "registry:ui",
       "status": "ready",
-      "description": "切换组：single/multiple 按下态集合（kit 自有，对齐 shadcn toggle-group）",
+      "description": "切换组：single/multiple 按下态集合（本仓自有，对齐 shadcn toggle-group）",
       "files": [
         "toggle-group.tsx",
         "toggle-group.css"
@@ -782,7 +782,7 @@
       "name": "popover",
       "type": "registry:ui",
       "status": "ready",
-      "description": "浮层面板：官方锚定钩子 + 外点关闭，body-portaled（kit 自有，对齐 shadcn popover）",
+      "description": "浮层面板：官方锚定钩子 + 外点关闭，body-portaled（本仓自有，对齐 shadcn popover）",
       "files": [
         "popover.tsx",
         "popover.css"
@@ -797,7 +797,7 @@
       "name": "combobox",
       "type": "registry:ui",
       "status": "ready",
-      "description": "可输入过滤下拉：combobox/listbox 语义 + 键盘走查（kit 自有，对齐 shadcn combobox）",
+      "description": "可输入过滤下拉：combobox/listbox 语义 + 键盘走查（本仓自有，对齐 shadcn combobox）",
       "files": [
         "combobox.tsx",
         "combobox.css"
@@ -813,7 +813,7 @@
       "name": "command",
       "type": "registry:ui",
       "status": "ready",
-      "description": "命令面板列表：输入过滤 + 键盘导航（可见性由调用方控制）（kit 自有，对齐 shadcn command）",
+      "description": "命令面板列表：输入过滤 + 键盘导航（可见性由调用方控制）（本仓自有，对齐 shadcn command）",
       "files": [
         "command.tsx",
         "command.css"
@@ -825,7 +825,7 @@
       "name": "context-menu",
       "type": "registry:ui",
       "status": "ready",
-      "description": "右键菜单：官方 Menu 的 contextual 指针模式封装（kit 自有，对齐 shadcn context-menu）",
+      "description": "右键菜单：官方 Menu 的 contextual 指针模式封装（本仓自有，对齐 shadcn context-menu）",
       "files": [
         "context-menu.tsx",
         "context-menu.css"
@@ -839,7 +839,7 @@
       "name": "menubar",
       "type": "registry:ui",
       "status": "ready",
-      "description": "顶栏菜单：点击展开 + 悬停切换（kit 自有，对齐 shadcn menubar）",
+      "description": "顶栏菜单：点击展开 + 悬停切换（本仓自有，对齐 shadcn menubar）",
       "files": [
         "menubar.tsx",
         "menubar.css"
@@ -853,7 +853,7 @@
       "name": "sheet",
       "type": "registry:ui",
       "status": "ready",
-      "description": "侧滑/底滑面板：portal + modal 层级栈；side bottom 即 drawer（kit 自有，对齐 shadcn sheet）",
+      "description": "侧滑/底滑面板：portal + modal 层级栈；side bottom 即 drawer（本仓自有，对齐 shadcn sheet）",
       "files": [
         "sheet.tsx",
         "sheet.css"
@@ -868,7 +868,7 @@
       "name": "navigation-menu",
       "type": "registry:ui",
       "status": "ready",
-      "description": "顶部导航：链接 + 当前指示 + 可选官方 Menu 下拉（简化版）（kit 自有，对齐 shadcn navigation-menu）",
+      "description": "顶部导航：链接 + 当前指示 + 可选官方 Menu 下拉（简化版）（本仓自有，对齐 shadcn navigation-menu）",
       "files": [
         "navigation-menu.tsx",
         "navigation-menu.css"
@@ -882,7 +882,7 @@
       "name": "pagination",
       "type": "registry:ui",
       "status": "ready",
-      "description": "分页：页码窗口 + ellipsis + 上下页（kit 自有，对齐 shadcn pagination）",
+      "description": "分页：页码窗口 + ellipsis + 上下页（本仓自有，对齐 shadcn pagination）",
       "files": [
         "pagination.tsx",
         "pagination.css"
@@ -894,7 +894,7 @@
       "name": "slider",
       "type": "registry:ui",
       "status": "ready",
-      "description": "滑杆：原生 range 的 token 化外衣（select 路线）（kit 自有，对齐 shadcn slider）",
+      "description": "滑杆：原生 range 的 token 化外衣（select 路线）（本仓自有，对齐 shadcn slider）",
       "files": [
         "slider.tsx",
         "slider.css"
@@ -906,7 +906,7 @@
       "name": "radio-group",
       "type": "registry:ui",
       "status": "ready",
-      "description": "单选组：原生 radio 语义 + 别名色圆点（kit 自有，对齐 shadcn radio-group）",
+      "description": "单选组：原生 radio 语义 + 别名色圆点（本仓自有，对齐 shadcn radio-group）",
       "files": [
         "radio-group.tsx",
         "radio-group.css"
@@ -918,7 +918,7 @@
       "name": "input-otp",
       "type": "registry:ui",
       "status": "ready",
-      "description": "验证码输入：单隐形 input + 格子可视化（kit 自有，对齐 shadcn input-otp）",
+      "description": "验证码输入：单隐形 input + 格子可视化（本仓自有，对齐 shadcn input-otp）",
       "files": [
         "input-otp.tsx",
         "input-otp.css"
@@ -930,7 +930,7 @@
       "name": "calendar",
       "type": "registry:ui",
       "status": "ready",
-      "description": "月历网格：受控月份 + 今日/选中态 + 禁用回调（kit 自有，对齐 shadcn calendar）",
+      "description": "月历网格：受控月份 + 今日/选中态 + 禁用回调（本仓自有，对齐 shadcn calendar）",
       "files": [
         "calendar.tsx",
         "calendar.css"
@@ -944,7 +944,7 @@
       "name": "date-picker",
       "type": "registry:ui",
       "status": "ready",
-      "description": "日期选择：输入框 + Popover 月历（kit 自有，对齐 shadcn date-picker）",
+      "description": "日期选择：输入框 + Popover 月历（本仓自有，对齐 shadcn date-picker）",
       "files": [
         "date-picker.tsx",
         "date-picker.css"
@@ -960,7 +960,7 @@
       "name": "carousel",
       "type": "registry:ui",
       "status": "ready",
-      "description": "滑动画廊：scroll-snap + 页点（无轮播库）（kit 自有，对齐 shadcn carousel）",
+      "description": "滑动画廊：scroll-snap + 页点（无轮播库）（本仓自有，对齐 shadcn carousel）",
       "files": [
         "carousel.tsx",
         "carousel.css"
@@ -972,7 +972,7 @@
       "name": "resizable",
       "type": "registry:ui",
       "status": "ready",
-      "description": "双栏拖拽分割（水平）（kit 自有，对齐 shadcn resizable）",
+      "description": "双栏拖拽分割（水平）（本仓自有，对齐 shadcn resizable）",
       "files": [
         "resizable.tsx",
         "resizable.css"
@@ -984,7 +984,7 @@
       "name": "sidebar",
       "type": "registry:ui",
       "status": "ready",
-      "description": "侧栏壳：Header/Content/Footer + 收起态（kit 自有，对齐 shadcn sidebar）",
+      "description": "侧栏壳：Header/Content/Footer + 收起态（本仓自有，对齐 shadcn sidebar）",
       "files": [
         "sidebar.tsx",
         "sidebar.css"
@@ -996,7 +996,7 @@
       "name": "chart",
       "type": "registry:ui",
       "status": "ready",
-      "description": "极简图表：柱/线/迷你图（零依赖；shadcn chart 的 recharts 不引入）（kit 自有，对齐 shadcn chart）",
+      "description": "极简图表：柱/线/迷你图（零依赖；shadcn chart 的 recharts 不引入）（本仓自有，对齐 shadcn chart）",
       "files": [
         "chart.tsx",
         "chart.css"
@@ -1008,7 +1008,7 @@
       "name": "form",
       "type": "registry:ui",
       "status": "ready",
-      "description": "表单语义壳：提交期 pending 态（字段壳见 field）（kit 自有，对齐 shadcn form）",
+      "description": "表单语义壳：提交期 pending 态（字段壳见 field）（本仓自有，对齐 shadcn form）",
       "files": [
         "form.tsx",
         "form.css"
@@ -1114,7 +1114,7 @@
         "shiki": "4.4.3",
         "@shikijs/langs": "4.4.3"
       },
-      "upstream": "packages/client/ui-primitives/src/markdown/highlight.ts @ dsh v0.2.2-rc.1（kit 自有：静态语法集，不带懒加载与流式会话）",
+      "upstream": "packages/client/ui-primitives/src/markdown/highlight.ts @ dsh v0.2.2-rc.1（本仓自有：静态语法集，不带懒加载与流式会话）",
       "rawStyles": [
         "shiki.css"
       ]
@@ -1140,7 +1140,7 @@
       "name": "diff-block",
       "type": "registry:ui",
       "status": "ready",
-      "description": "差异块：npm diff 的 structuredPatch（Myers 算法）+ kit 的编辑预算守卫，官方 markup（内容块；官方源保真复制）",
+      "description": "差异块：npm diff 的 structuredPatch（Myers 算法）+ 本仓的编辑预算守卫，官方 markup（内容块；官方源保真复制）",
       "tier": "content",
       "files": [
         "diff-block.tsx",
@@ -1242,7 +1242,7 @@
         "@types/mdast": "^4.0.0",
         "micromark-util-types": "^2.0.0"
       },
-      "upstream": "packages/client/ui-primitives/src/markdown/（kit 保真复制；裁流式臂 / DraggableImage / 官方 LinkIcon；KaTeX CSS 文本化）",
+      "upstream": "packages/client/ui-primitives/src/markdown/（本仓保真复制；裁流式臂 / DraggableImage / 官方 LinkIcon；KaTeX CSS 文本化）",
       "rawStyles": [
         "katex.css"
       ]

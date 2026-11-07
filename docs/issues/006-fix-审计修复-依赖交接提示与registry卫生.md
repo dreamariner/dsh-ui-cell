@@ -59,14 +59,14 @@ note 与它同源。护栏补两条：code-block 冒烟断言建议命令含 `@s
 
 - README / AGENTS.md 仍写「87 个条目」与 30/6/41/10 旧表，「官方轻量核心」行还留着
   「重依赖以替身顶替」的 004 旧话 → 按实际重算：官方保真复制 37 / 官方内容块 6 /
-  kit 自有 41 / 共享行为模块 10，合计 94
+  本仓自有 41 / 共享行为模块 10，合计 94
 - issue 005 结果段「atom 89 / content 5」实为 atom 85 / content 9（原文漏数 6 个
   content 档条目）；「静态 10 种常用语法」实为 8 种（`LANGS` 实际 8 个语法，js 家族
   共用 ts）→ 005 原文就地勘误标注，wiki 03 同步改
 - AGENTS.md 验证段「（19 条）」已过时（现 41 条）；目录结构缺 markdown 家族、
   tests/markdown.spec.tsx、scripts/import-markdown-family.mjs → 补齐
 - `src/diff.ts` 头注称 npm diff 的 structuredPatch 没有 maxEditLength；实测仓内
-  diff@9.0.0 支持（传 maxEditLength: 0 返回 undefined）→ 头注改为如实陈述（kit 保留
+  diff@9.0.0 支持（传 maxEditLength: 0 返回 undefined）→ 头注改为如实陈述（本仓保留
   自己那层守卫的真正理由是预算口径与调用方既有语义一致，不依赖 npm diff 内部细节）
 - cli/add.ts 的 note「本仓插件见 src/client/panel/panel-css.ts」是消费仓语境残留
   （5c2f713 引入，c417407 的公开仓清洗漏了 CLI note 这一处）→ 改通用表述

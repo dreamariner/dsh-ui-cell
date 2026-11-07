@@ -4,7 +4,7 @@
 // 2026-11-06 搬入（issue 005）：markdown 家族原先因「零依赖纪律」暂缓，现按分层纪律
 // 归入 content 档（带 npm 重依赖）。本文件是**机械搬运 + 导入路径改写**的产物，
 // 语义裁剪见 docs/issues/005（流式增量解析、DraggableImage、简化 LinkIcon、KaTeX CSS 文本化）。
-// 官方路径：markdown/render.tsx → kit 路径：markdown-render.tsx
+// 官方路径：markdown/render.tsx → 本仓路径：markdown-render.tsx
 /**
  * Direct mdast→React markdown renderer. Replaces the react-markdown /
  * remark-rehype pipeline with one switch over parsed nodes so streaming can
@@ -44,7 +44,7 @@ import css from './markdown-text.css'
 /**
  * 一个已解析的顶层块及其渲染键。
  *
- * 官方把该类型放在 markdown/incremental.ts（流式增量解析器的一部分），kit 裁掉了
+ * 官方把该类型放在 markdown/incremental.ts（流式增量解析器的一部分），本仓 裁掉了
  * 流式臂，故在此本地定义：settled 全量渲染只需要「节点 + 稳定的 key」。
  */
 export interface PositionedBlock {

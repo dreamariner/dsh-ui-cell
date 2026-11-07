@@ -1,4 +1,4 @@
-// markdown-link-icon：markdown 链接/文件引用的图标（kit 自有简化版）。
+// markdown-link-icon：markdown 链接/文件引用的图标（本仓自有简化版）。
 //
 // 上游对应：packages/client/ui-primitives/src/LinkIcon.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 //   （官方那份的 LinkIconMedium 与 classifyLinkPath）
@@ -8,12 +8,12 @@
 //   还有 FileTypeIcon 那一整套 DSH 文件类型表（品牌件）。第三方插件带 simple-icons
 //   只是为了「链接前面放个站点图标」，代价与收益不成比例。
 //
-// kit 的做法：按路径猜一个**文件类型**，用 kit 已有的 inline path 图标里最贴切的一个
+// 本仓的做法：按路径猜一个**文件类型**，用 本仓 已有的 inline path 图标里最贴切的一个
 //   （代码 → 代码括号、数据 → 数据库、其余 → 通用文件）；认不出就用通用文件图标。
 //   视觉上比官方的站点 mark 朴素，但零额外依赖。
 //
 // 契约（与官方对齐，调用方零改动）：
-//   classifyLinkPath(path) → 链接种类（kit 自己的枚举）
+//   classifyLinkPath(path) → 链接种类（本仓 自己的枚举）
 //   LinkIconMedium({ kind, className }) → 图标节点
 
 import type { ReactNode } from 'react'
@@ -22,7 +22,7 @@ import {
   IconDatabaseOutlineRegular, IconFileOutlineRegular, IconGlobeOutlineRegular, IconWarningOutlineRegular,
 } from './icons.tsx'
 
-/** 链接/文件引用的种类（kit 自有枚举，语义对齐官方的 classifyLinkPath）。 */
+/** 链接/文件引用的种类（本仓自有枚举，语义对齐官方的 classifyLinkPath）。 */
 export type MarkdownLinkKind = 'code' | 'image' | 'data' | 'doc' | 'link' | 'url'
 
 /**

@@ -1,5 +1,5 @@
-// collapsible：kit 自有组件（功能对齐 shadcn collapsible，样式沿用 DSH 设计 token）。
-// 上游来源：无官方对应原子；token 纪律与类名约定同 kit 全体。
+// collapsible：本仓自有组件（功能对齐 shadcn collapsible，样式沿用 DSH 设计 token）。
+// 上游来源：无官方对应原子；token 纪律与类名约定同本仓全体。
 import { forwardRef, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './collapsible.css'

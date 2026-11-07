@@ -1,4 +1,4 @@
-// chart：kit 自有组件（功能对齐 shadcn chart，样式沿用 DSH 设计 token）。
+// chart：本仓自有组件（功能对齐 shadcn chart，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。（诚实声明：shadcn chart 基于 recharts；本实现是零依赖的极简柱/线/迷你图，满足轻量展示，不做坐标轴体系与交互刷选）
 import { forwardRef } from 'react'
 import clsx from 'clsx'

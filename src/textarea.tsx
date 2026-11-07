@@ -1,4 +1,4 @@
-// Textarea: multi-line text input（kit 自有组件，非官方复制）。
+// Textarea: multi-line text input（本仓自有组件，非官方复制）。
 //
 // 官方 ui-primitives 用 InlineEditor 处理多行内联编辑，但那是「内联编辑态」的完整控件
 // （含提交/取消与键盘流），不适合「面板里的说明/备注输入框」这种轻量场景。

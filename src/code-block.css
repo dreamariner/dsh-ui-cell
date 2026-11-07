@@ -5,7 +5,7 @@
  * 高亮颜色不在这里：走 shiki 的 `--shiki-*` 变量表（src/shiki.css）。
  *
  * 与上游的差异：
- *   1. 文件名从 `CodeBlock.module.css` 改为 kit 约定的 `code-block.css`
+ *   1. 文件名从 `CodeBlock.module.css` 改为 本仓约定的 `code-block.css`
  *      （复制时由 add 转成 `<name>-css.ts`，类名表机制接管哈希隔离）；
  *   2. `:global(.line)` 原样保留（shiki 输出的行 span 是全局契约）。
  */

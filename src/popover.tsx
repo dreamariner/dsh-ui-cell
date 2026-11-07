@@ -1,5 +1,5 @@
-// popover：kit 自有组件（功能对齐 shadcn popover，样式沿用 DSH 设计 token）。
-// 上游来源：无官方对应原子；锚定/ dismissal 行为复用 kit 的官方行为模块。
+// popover：本仓自有组件（功能对齐 shadcn popover，样式沿用 DSH 设计 token）。
+// 上游来源：无官方对应原子；锚定/ dismissal 行为复用 本仓的官方行为模块。
 import { forwardRef, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'

@@ -17,9 +17,9 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const KIT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const SRC = join(KIT, 'src')
-const registry = JSON.parse(readFileSync(join(KIT, 'registry.json'), 'utf8'))
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const SRC = join(ROOT, 'src')
+const registry = JSON.parse(readFileSync(join(ROOT, 'registry.json'), 'utf8'))
 
 const seen = new Set()
 const duplicates = []

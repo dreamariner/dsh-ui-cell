@@ -1,6 +1,6 @@
 // containers：容器与布局演示
 import { useState } from 'react'
-import { Demo, type DemoSection } from '../demo-kit.tsx'
+import { Demo, type DemoSection } from '../demo-cell.tsx'
 import {
   Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter,
   Alert, AlertTitle, AlertDescription,
@@ -30,7 +30,7 @@ function CardSection() {
           </CardHeader>
           <CardContent>共 902 条记忆，3 条待确认。</CardContent>
           <CardFooter>
-            <button className="duk-button duk-button-primary duk-button-sm" type="button">查看</button>
+            <button className="duc-button duc-button-primary duc-button-sm" type="button">查看</button>
           </CardFooter>
         </Card>
       </div>
@@ -215,7 +215,7 @@ function EmptySection() {
           <EmptyMedia><IconDatabaseOutlineRegular size={28} /></EmptyMedia>
           <EmptyTitle>还没有记忆</EmptyTitle>
           <EmptyDescription>和助手多聊几句，记忆会自动沉淀在这里。</EmptyDescription>
-          <EmptyContent><button className="duk-button duk-button-outline duk-button-sm" type="button">了解记忆系统</button></EmptyContent>
+          <EmptyContent><button className="duc-button duc-button-outline duc-button-sm" type="button">了解记忆系统</button></EmptyContent>
         </Empty>
       </div>
     </Demo>

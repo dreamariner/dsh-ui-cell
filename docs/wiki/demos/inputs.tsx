@@ -1,6 +1,6 @@
 // inputs：输入进阶演示
 import { useState } from 'react'
-import { Demo, type DemoSection } from '../demo-kit.tsx'
+import { Demo, type DemoSection } from '../demo-cell.tsx'
 import {
   Select, Combobox, Slider, RadioGroup, InputOtp, Calendar, DatePicker, Form, Field, Input, Button,
 } from '../../../src/index.ts'

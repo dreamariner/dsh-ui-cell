@@ -1,10 +1,10 @@
 // 文档站 shell：侧栏导航 + 快速开始 + 全部演示分区。
-// 站点跑的是 kit 真组件；样式与 token 由 scripts/build-docs.mjs 编译期注入。
+// 站点跑的是 本仓 真组件；样式与 token 由 scripts/build-docs.mjs 编译期注入。
 import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import registryJson from '../../registry.json'
 import pkg from '../../package.json'
-import { Demo, type DemoSection } from './demo-kit.tsx'
+import { Demo, type DemoSection } from './demo-cell.tsx'
 import { atomSections } from './demos/atoms.tsx'
 import { containerSections } from './demos/containers.tsx'
 import { overlaySections } from './demos/overlays.tsx'
@@ -48,11 +48,11 @@ npx dsh-ui-cell add button input tag --to packages/my-plugin</pre>
           <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-secondary)', marginBottom: 6 }}>③ 把组件样式拼进插件已有的 style 注入器（panel-css 模式）</div>
           <pre className="demo-code">import {'{ styles as buttonCss }'} from '../ui/button-css.ts'
 
-const KIT_CSS = [buttonCss, inputCss, …].join('\n')
-tag.textContent = PANEL_CSS + '\n' + KIT_CSS</pre>
+const CELL_CSS = [buttonCss, inputCss, …].join('\n')
+tag.textContent = PANEL_CSS + '\n' + CELL_CSS</pre>
         </div>
         <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-secondary)', lineHeight: 1.8 }}>
-          类名表以原类名为键、最终类名为值（'primary' 对应 'duk-button-primary'），
+          类名表以原类名为键、最终类名为值（'primary' 对应 'duc-button-primary'），
           所以官方源里的 css[variant] 动态索引不用改写；暗色跟随宿主 body[data-ds-dark-theme]，
           右上角按钮即可在本站体验。
         </div>
@@ -106,7 +106,7 @@ function App() {
           }}>{dark ? '切回亮色' : '切换暗色'}</button>
         </div>
         <p className="doc-intro">
-          本站跑的是 kit 真组件（demo 源 import src/，样式走 add 交付的同一条 buildStyleModule
+          本站跑的是 本仓 真组件（demo 源 import src/，样式走 add 交付的同一条 buildStyleModule
           转换管线），每个组件给出用法与实时效果。新手教程全文见 docs/wiki/01-新手教程.md。
         </p>
         <QuickStart />

@@ -1,5 +1,5 @@
-// sheet：kit 自有组件（功能对齐 shadcn sheet，样式沿用 DSH 设计 token）。
-// 上游来源：无官方对应原子；锚定/ dismissal 行为复用 kit 的官方行为模块。（drawer 功能合并：side bottom 即抽屉形态）
+// sheet：本仓自有组件（功能对齐 shadcn sheet，样式沿用 DSH 设计 token）。
+// 上游来源：无官方对应原子；锚定/ dismissal 行为复用 本仓的官方行为模块。（drawer 功能合并：side bottom 即抽屉形态）
 
 import { forwardRef, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'

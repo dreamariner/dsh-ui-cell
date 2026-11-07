@@ -1,5 +1,5 @@
-// menubar：kit 自有组件（功能对齐 shadcn menubar，样式沿用 DSH 设计 token）。
-// 上游来源：无官方对应原子；锚定/ dismissal 行为复用 kit 的官方行为模块。
+// menubar：本仓自有组件（功能对齐 shadcn menubar，样式沿用 DSH 设计 token）。
+// 上游来源：无官方对应原子；锚定/ dismissal 行为复用 本仓的官方行为模块。
 import { useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './menubar.css'

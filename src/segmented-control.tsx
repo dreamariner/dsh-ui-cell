@@ -1,5 +1,5 @@
 // SegmentedControl: a tablist of two or more equal-width segments with one
-// sliding indicator（源自 DSH 官方 ui-primitives，类名 duk- 化）。
+// sliding indicator（源自 DSH 官方 ui-primitives，类名 duc- 化）。
 //
 // 上游来源：packages/client/ui-primitives/src/SegmentedControl.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // 保真说明：WAI-ARIA tabs 键盘走查（Arrow/Home/End 环绕、跳过 disabled）、roving tabindex、

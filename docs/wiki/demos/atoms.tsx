@@ -1,6 +1,6 @@
 // atoms：基础原子演示
 import { useState } from 'react'
-import { Demo, type DemoSection } from '../demo-kit.tsx'
+import { Demo, type DemoSection } from '../demo-cell.tsx'
 import {
   Button, Input, Textarea, Tag, Pill, StateDot, Checkbox, Switch, Label, Separator,
   AspectRatio, Progress, Spinner, Skeleton, Avatar, ShortcutKeys, CommandText,

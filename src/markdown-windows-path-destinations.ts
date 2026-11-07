@@ -4,7 +4,7 @@
 // 2026-11-06 搬入（issue 005）：markdown 家族原先因「零依赖纪律」暂缓，现按分层纪律
 // 归入 content 档（带 npm 重依赖）。本文件是**机械搬运 + 导入路径改写**的产物，
 // 语义裁剪见 docs/issues/005（流式增量解析、DraggableImage、简化 LinkIcon、KaTeX CSS 文本化）。
-// 官方路径：markdown/windows-path-destinations.ts → kit 路径：markdown-windows-path-destinations.ts
+// 官方路径：markdown/windows-path-destinations.ts → 本仓路径：markdown-windows-path-destinations.ts
 /** Keep backslash separators in Markdown destinations written as Windows paths. */
 import type { Definition, Image, Link } from 'mdast'
 import type { CompileContext, Extension, Token } from 'mdast-util-from-markdown'

@@ -2,7 +2,7 @@
 //
 // 上游来源：packages/client/ui-primitives/src/ansi.ts @ dsh v0.2.2-rc.1 (66491b05e3)
 //
-// 2026-11-06 升级说明（issue 005）：原先 kit 用自写的零依赖替身 ansi-lite（SGR 子集解析），
+// 2026-11-06 升级说明（issue 005）：原先 本仓用自写的零依赖替身 ansi-lite（SGR 子集解析），
 // 它有两处实打实的缺陷：256 色调色板按灰阶近似（不是 xterm 的 6×6×6 立方）、
 // truecolor 输出拼成坏 CSS（rgb(rgb(r, g, b))，浏览器整条丢弃 → 颜色丢失）。
 // 现改为**保真复制官方实现**：解析内核交给 npm anser，输出契约不变

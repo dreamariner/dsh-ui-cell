@@ -1,7 +1,7 @@
 /* 保真复制自 DSH 官方 ui-primitives。
  * 上游来源：packages/client/ui-primitives/src/ReadBlock.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
- * 2026-11-06 搬入（issue 005）：文件名从官方约定改为 kit 约定（X.module.css → X.css），
+ * 2026-11-06 搬入（issue 005）：文件名从官方约定改为 本仓约定（X.module.css → X.css），
  * 类名表机制接管哈希隔离；:global(...) 内的类名原样保留（第三方契约）。
  */
 .line {

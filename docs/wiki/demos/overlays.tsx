@@ -1,6 +1,6 @@
 // overlays：浮层与反馈演示
 import { useState } from 'react'
-import { Demo, type DemoSection } from '../demo-kit.tsx'
+import { Demo, type DemoSection } from '../demo-cell.tsx'
 import {
   Modal, RiskConfirmation, Tooltip, Popover, HoverCard, Toast, Menu,
   ContextMenu, Menubar, NavigationMenu, Sheet, Pagination, Button,
@@ -17,8 +17,8 @@ function ModalSection() {
       <Modal open={open} title="删除记忆" closeLabel="关闭" onClose={() => setOpen(false)}>
         <p style={{ margin: 0, color: 'var(--dsw-alias-label-secondary)' }}>该操作会移除 1 条记忆，且不可撤销。</p>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
-          <button className="duk-button duk-button-ghost duk-button-sm" type="button" onClick={() => setOpen(false)}>取消</button>
-          <button className="duk-button duk-button-primary duk-button-sm" type="button" onClick={() => setOpen(false)}>确认删除</button>
+          <button className="duc-button duc-button-ghost duc-button-sm" type="button" onClick={() => setOpen(false)}>取消</button>
+          <button className="duc-button duc-button-primary duc-button-sm" type="button" onClick={() => setOpen(false)}>确认删除</button>
         </div>
       </Modal>
     </Demo>

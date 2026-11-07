@@ -1,4 +1,4 @@
-// form：kit 自有组件（功能对齐 shadcn form，样式沿用 DSH 设计 token）。
+// form：本仓自有组件（功能对齐 shadcn form，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。（字段壳见 field；本件只管 form 元素语义与提交期状态）
 import { forwardRef, useState } from 'react'
 import clsx from 'clsx'

@@ -1,4 +1,4 @@
-/* Select: native <select> 的 token 化外衣（kit 自有，规格对齐 Input.module.css）。 */
+/* Select: native <select> 的 token 化外衣（本仓自有，规格对齐 Input.module.css）。 */
 .wrap {
   position: relative;
   display: inline-flex;

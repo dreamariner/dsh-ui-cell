@@ -2,8 +2,8 @@
 // build-docs.mjs — 构建 docs/wiki/index.html（自包含组件文档站）
 //
 // 设计要点：
-//   1. 站点跑的是 **kit 真组件**（demo 源直接 import ../../src/*），不是仿制的静态 markup；
-//   2. kit 组件的 `.css` 导入走 **add 交付的同一条转换管线**（buildStyleModule → 类名表 +
+//   1. 站点跑的是 **本仓 真组件**（demo 源直接 import ../../src/*），不是仿制的静态 markup；
+//   2. 本仓组件的 `.css` 导入走 **add 交付的同一条转换管线**（buildStyleModule → 类名表 +
 //      前缀化样式文本），由 esbuild 插件现场转换——文档站展示的就是插件会拿到的产物；
 //   3. 主题 token 从 DSH_CHECKOUT 的 ui-theme styles 目录拼装（含明暗两套，body[data-ds-dark-theme]
 //      切换），保证演示与宿主同源；
@@ -19,14 +19,14 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import * as esbuild from 'esbuild'
 import { dshCheckout } from './lib/paths.mjs'
 
-const KIT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const WIKI = join(KIT, 'docs', 'wiki')
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const WIKI = join(ROOT, 'docs', 'wiki')
 const GEN = '/tmp/dsh-ui-cell-docs-gen'
 
 // ── ① 先把 cli/add.ts 编译成可 import 的 mjs（文档站复用 add 的真实转换管线）──
 rmSync(GEN, { recursive: true, force: true })
 await esbuild.build({
-  entryPoints: [join(KIT, 'cli', 'add.ts')],
+  entryPoints: [join(ROOT, 'cli', 'add.ts')],
   outfile: join(GEN, 'add.mjs'),
   bundle: true,
   format: 'esm',
@@ -35,7 +35,7 @@ await esbuild.build({
   logLevel: 'silent',
 })
 const { buildStyleModule, prefixCss, loadRegistry } = await import(pathToFileURL(join(GEN, 'add.mjs')).href)
-const registry = loadRegistry(KIT)
+const registry = loadRegistry(ROOT)
 
 // ── ② 主题 token：从 checkout 的 ui-theme styles 全量拼装（官方明暗两套同源）──
 const checkout = dshCheckout()
@@ -52,13 +52,13 @@ if (!existsSync(stylesDir)) {
 const tokenCss = readdirSync(stylesDir).filter((f) => f.endsWith('.css')).sort()
   .map((f) => `/* ===== ${f} ===== */\n` + readFileSync(join(stylesDir, f), 'utf8')).join('\n')
 
-// ── ③ 全体组件样式：走 buildStyleModule（duk- 前缀，与 add 交付一致）──
-const kitStyles = []
+// ── ③ 全体组件样式：走 buildStyleModule（duc- 前缀，与 add 交付一致）──
+const cellStyles = []
 for (const item of registry.items) {
   if (item.status !== 'ready') continue
   for (const file of item.files) {
     if (!file.endsWith('.css')) continue
-    const cssText = readFileSync(join(KIT, 'src', file), 'utf8')
+    const cssText = readFileSync(join(ROOT, 'src', file), 'utf8')
     // 原样注入通道（registry 的 rawStyles）：第三方契约的类名不能前缀
     // （katex 的 .katex / .katex-display 是 katex 自己吐的类名，改了就对不上）
     const raw = (item.rawStyles ?? []).includes(file)
@@ -66,26 +66,26 @@ for (const item of registry.items) {
     // （code-card.css 属于 code-toolbar 条目），而 CLI 的 buildStyleModule 与
     // tsx 里的 css.xxx 访问都按文件名算 —— 这里必须一致，否则类名对不上、样式失效。
     const base = file.replace(/\.css$/, '')
-    kitStyles.push(`/* ===== ${item.name}/${file} ===== */\n` + (raw ? cssText : prefixCss(cssText, 'duk-', base)))
+    cellStyles.push(`/* ===== ${item.name}/${file} ===== */\n` + (raw ? cssText : prefixCss(cssText, 'duc-', base)))
   }
 }
-const combinedKitCss = kitStyles.join('\n')
+const combinedCellCss = cellStyles.join('\n')
 
-// kit css 导入 → buildStyleModule 现场转换（与 add 交付同一条管线）
-const kitCssTablePlugin = {
-  name: 'kit-css-table',
+// 本仓 css 导入 → buildStyleModule 现场转换（与 add 交付同一条管线）
+const cellCssTablePlugin = {
+  name: 'duc-css-table',
   setup(build) {
     // .css 扩展名有 esbuild 内置语义（css loader 不支持 default import），
     // 挪进自定义 namespace 彻底隔离，再按 buildStyleModule 转 JS 模块
     build.onResolve({ filter: /\.css$/ }, (args) => ({
       path: isAbsolute(args.path) ? args.path : join(args.resolveDir ?? '.', args.path),
-      namespace: 'kitcss',
+      namespace: 'duccss',
     }))
-    build.onLoad({ filter: /.*/, namespace: 'kitcss' }, (args) => {
+    build.onLoad({ filter: /.*/, namespace: 'duccss' }, (args) => {
       const cssText = readFileSync(args.path, 'utf8')
       const name = basename(args.path).replace(/\.css$/, '')
-      const moduleSrc = buildStyleModule(cssText, 'duk-', name)
-      // kit 源用 default 导入（import css from './x.css'）→ default = 类名表
+      const moduleSrc = buildStyleModule(cssText, 'duc-', name)
+      // 本仓源用 default 导入（import css from './x.css'）→ default = 类名表
       return { contents: moduleSrc + '\nexport default { css, styles }.css\n', loader: 'ts' }
     })
   },
@@ -100,7 +100,7 @@ const result = await esbuild.build({
   platform: 'browser',
   target: 'es2020',
   jsx: 'automatic',
-  plugins: [kitCssTablePlugin],
+  plugins: [cellCssTablePlugin],
   define: { 'process.env.NODE_ENV': '"production"' },
   write: false,
   logLevel: 'silent',
@@ -108,7 +108,7 @@ const result = await esbuild.build({
 const demoJs = result.outputFiles[0].text
 
 // ── ⑤ 注入 HTML 模板 ──
-const pkg = JSON.parse(readFileSync(join(KIT, 'package.json'), 'utf8'))
+const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'))
 const html = `<!doctype html>
 <!-- 生成物（scripts/build-docs.mjs @ ${pkg.version}），勿手改；重建：pnpm docs:build -->
 <html lang="zh-CN">
@@ -120,8 +120,8 @@ const html = `<!doctype html>
 ${tokenCss}
 </style>
 <style>
-/* ===== kit 全组件样式（duk- 前缀，buildStyleModule 产物） ===== */
-${combinedKitCss}
+/* ===== 本仓全组件样式（duc- 前缀，buildStyleModule 产物） ===== */
+${combinedCellCss}
 </style>
 <style>
 /* ===== 文档站骨架（自带样式，不占组件命名空间） ===== */

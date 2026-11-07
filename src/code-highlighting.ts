@@ -1,4 +1,4 @@
-// code-highlighting：kit 自有的语法高亮内核（契约对齐 DSH 官方 code-highlighting）。
+// code-highlighting：本仓自有的语法高亮内核（契约对齐 DSH 官方 code-highlighting）。
 //
 // 上游对应：packages/client/ui-primitives/src/code-highlighting.ts @ dsh v0.2.2-rc.1 (66491b05e3)
 //   （官方的实现本体在同包的 src/markdown/highlight.ts）
@@ -7,7 +7,7 @@
 //   官方那份 700 行里，大半是**懒加载机制**（40 个语言各自 dynamic import + 语法表 +
 //   订阅重渲染 + 视口门控 + 流式高亮会话）。第三方插件的 client bundle 不走宿主那套
 //   package-local chunk 登记（那是宿主自建包才有的基础设施），懒加载会退化成「永远
-//   plain text」。故 kit 改成**静态语法集**：常用语言直接打进 bundle，不依赖 chunk。
+//   plain text」。故 本仓 改成**静态语法集**：常用语言直接打进 bundle，不依赖 chunk。
 //
 // 契约（与官方一致，调用方零改动）：
 //   supportsHighlighting(lang) → boolean
@@ -19,7 +19,7 @@
 // 与官方的两处有意差异：
 //   1. 语法集是静态的（8 种常用，js 家族共用 ts 语法），不是懒加载的 40 种；不认识的语言一律 plain text。
 //   2. 不含官方的 Go 语法补丁（patchGoGrammar 绑死 @shikijs/langs 4.4.3 的语法结构，
-//      是升级即失效的地雷；kit 不带 Go 语法，补丁自然不需要）。
+//      是升级即失效的地雷；本仓 不带 Go 语法，补丁自然不需要）。
 //
 // 依赖：shiki（精确锁 4.4.3）+ @shikijs/langs（4.4.3）。
 // 颜色走 css-variables 主题（`--shiki-*` 变量），值在 src/shiki.css（映射 --dsw-alias-*）。
@@ -70,7 +70,7 @@ const LANG_ALIASES = new Map<string, string>([
 
 /**
  * 扩展名 → 语言提示（供「按文件名猜语言」用）。
- * 与官方 code-highlighting 的 languageForPath 同款语义，kit 自己的表。
+ * 与官方 code-highlighting 的 languageForPath 同款语义，本仓 自己的表。
  */
 const LANGUAGE_BY_EXTENSION = new Map<string, string>([
   ['ts', 'typescript'], ['tsx', 'tsx'], ['mts', 'typescript'], ['cts', 'typescript'],
@@ -212,7 +212,7 @@ export function highlightToHtml(code: string, lang: string | undefined): string 
 /**
  * React 侧的高亮入口（官方 `useCodeHighlighter` 同款契约）。
  *
- * 官方那版靠 `useSyncExternalStore` 订阅「懒加载语法就绪」来触发重渲染；kit 的语法
+ * 官方那版靠 `useSyncExternalStore` 订阅「懒加载语法就绪」来触发重渲染；本仓的语法
  * 是静态的（启动即在），没有加载态，故直接 `useCallback` 包一层即可。
  *
  * @param language - 语言提示；未知语言返回的函数恒产出 undefined（调用方走纯文本）。

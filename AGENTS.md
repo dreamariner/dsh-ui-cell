@@ -1,7 +1,7 @@
 # dsh-ui-cell — DSH 插件专用的复制式 UI 组件源
 
 > 名字即论点（cell = 细胞）：**复制即独立**。组件复制进插件后源码归插件所有，
-> 自带遗传物质（token 纪律、前缀命名空间、行为）离体存活，kit 与宿主升级互不影响。
+> 自带遗传物质（token 纪律、前缀命名空间、行为）离体存活，本仓与宿主升级互不影响。
 > 模型照 shadcn（registry + copy CLI + 源码归插件），组件源用 DSH 官方 primitives，
 > 第三方 DSH 插件**复制即用**，不依赖任何官方 client 包。
 
@@ -29,7 +29,7 @@ DSH 官方插件开发规范（`packages/preset/agent-preset/skills/cordis-plugi
 1. **样式只引用 `--dsw-alias-*` / `--dsw-radius-*` / `--dsw-elevation-*` / `--dsw-focus-ring-*`**：禁 `--dsw-static-*`（调色板原子色，官方换肤会重映射）、禁 `--dsw-specific-*`（场景级）、禁字面颜色（hex / rgb / 具名色）。官方规范原话是 alias 层是唯一稳定语义面。
 
    ⚠ **「类别对」不等于「token 对」**：token 名拼错、或官方在某版本删了它，CSS 规范是**整条声明被静默丢弃**（var() 解析失败），样式不生效且**无任何报错**。故除了类别护栏，还有一条**存在性校验**：`tokens/official-tokens.json`（pinned 快照，官方 ui-theme 的 token 定义）里必须能查到每个 `var(--x)`。清单外的 token 只有两类合法例外：宿主上下文变量（`--dsh-frame-*`，宿主 AppFrame 注入）与组件自有变量（`--dsh-segment-*`，组件自己 inline 设置）。DSH 升级时跑 `pnpm vendor` 重生成清单（范式同 `dreamariner/dsh-typert-protocol` 的 `vendor`/`vendor:check` 两段式）。
-2. **类名一律带插件前缀 + 组件名段，且跨组件唯一**：复制进插件后必须重命名，否则与插件自身样式撞车。且最终类名必须**跨组件唯一**：消费端把全部组件样式拼进**同一个 `<style>`**，官方 CSS Modules 的 per-file 哈希隔离在这里不存在，只加插件前缀不够（input 与 select 都有 `.wrap`、button 与 input 都有 `.icon`，2026-11-05 复审实证二者互覆，按钮 icon 被染成 input 的 tertiary 色）。`dsh-ui-cell add` 负责这件事：与组件同名的根类免组件段（`.button` → `duk-button`），其余加组件名段（input 的 `.wrap` → `duk-input-wrap`）；`@keyframes` 名是文档级命名空间，同规则改名且定义与引用同步。不要手抄组件绕过。
+2. **类名一律带插件前缀 + 组件名段，且跨组件唯一**：复制进插件后必须重命名，否则与插件自身样式撞车。且最终类名必须**跨组件唯一**：消费端把全部组件样式拼进**同一个 `<style>`**，官方 CSS Modules 的 per-file 哈希隔离在这里不存在，只加插件前缀不够（input 与 select 都有 `.wrap`、button 与 input 都有 `.icon`，2026-11-05 复审实证二者互覆，按钮 icon 被染成 input 的 tertiary 色）。`dsh-ui-cell add` 负责这件事：与组件同名的根类免组件段（`.button` → `duc-button`），其余加组件名段（input 的 `.wrap` → `duc-input-wrap`）；`@keyframes` 名是文档级命名空间，同规则改名且定义与引用同步。不要手抄组件绕过。
 3. **行为保真清单**（官方点名要保的用户依赖行为，不得简化）：
    - Modal：焦点陷阱（Tab 环绕）、Escape 关闭、关闭后焦点归还触发控件、`data-modal-autofocus` 初始焦点
    - SegmentedControl：WAI-ARIA tabs 键盘走查（Arrow/Home/End 环绕、跳过 disabled）、roving tabindex、选中后焦点跟随
@@ -46,7 +46,7 @@ dsh-ui-cell/
 ├── registry.json        # 组件清单（名字、状态、文件、dependencies 依赖闭包、上游出处、DSH 基线）
 ├── src/                 # 权威组件源码（tsx + css，类名为上游原名）
 │   ├── button.tsx/.css、input、tag、segmented-control、modal、risk-confirmation
-│   ├── select.tsx/.css、textarea.tsx/.css        # kit 自有（官方无对应原子）
+│   ├── select.tsx/.css、textarea.tsx/.css        # 本仓自有（官方无对应原子）
 │   ├── markdown-*.ts(x)、read-block、web-block、quote-preview、detail-document、
 │   │   code-block、code-highlighting、ansi.ts、diff.ts   # 内容块层（content 档，带 npm 重依赖）
 │   ├── icons.tsx                                 # 官方 icons/ 的子集（5 个）
@@ -67,11 +67,11 @@ dsh-ui-cell/
 
 ```bash
 # 把组件复制进插件（源码进插件自己的仓，提交后即与本仓解耦）
-npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duk-
+npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duc-
 
 # 参数
 #   --to <pluginDir>   目标插件目录（其下自动建 src/client/ui/）
-#   --prefix <pfx>     类名前缀，默认 duk-
+#   --prefix <pfx>     类名前缀，默认 duc-
 #   --force            覆盖已存在文件（默认跳过，避免盖掉插件的本地改动）
 #
 # 组件依赖自动解析闭包：add risk-confirmation 会同时复制 button / modal / icon。
@@ -82,17 +82,17 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duk-
 1. 组件文件进 `src/client/ui/`，`import { Button } from '../ui/button.tsx'`
 2. 样式注入：每个组件生成 `<name>-css.ts`，导出 `styles`（样式文本）与 `css`（类名表）；把用到的 `styles` 拼进插件已有的 `<style>` 注入器
 
-`css` 表以**原类名为键、最终类名为值**（`'primary': 'duk-button-primary'`；与组件同名的根类免组件段，`'button': 'duk-button'`），所以官方组件里 `css[variant]` 这类动态索引访问不用改写也能正确工作。值带组件名段的原因见红线 2。
+`css` 表以**原类名为键、最终类名为值**（`'primary': 'duc-button-primary'`；与组件同名的根类免组件段，`'button': 'duc-button'`），所以官方组件里 `css[variant]` 这类动态索引访问不用改写也能正确工作。值带组件名段的原因见红线 2。
 
 ## 组件清单
 
-**94 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`，每条带 upstream 出处或 kit 自有标注）：
+**94 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`，每条带 upstream 出处或 本仓自有标注）：
 
 | 来源 | 数量 | 内容 |
 |---|---|---|
-| 官方保真复制 | 37 | 官方除品牌件的全部原子（含 icon 集 15 个，inline path 不依赖宿主 sprite）+ markdown 家族 5（markdown-text / read-block / web-block / quote-preview / detail-document，裁剪版见 issue 005）+ code-block + code-highlighting（契约对齐的 kit 自写内核） |
+| 官方保真复制 | 37 | 官方除品牌件的全部原子（含 icon 集 15 个，inline path 不依赖宿主 sprite）+ markdown 家族 5（markdown-text / read-block / web-block / quote-preview / detail-document，裁剪版见 issue 005）+ code-block + code-highlighting（契约对齐的 本仓自写内核） |
 | 官方内容块 | 6 | json-tree / json-block / search-block（零依赖）+ code-toolbar / diff-block / terminal-block（issue 005 起带真实依赖 diff / anser / shiki） |
-| kit 自有 | 41 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/…），样式全 DSH token、行为手写 |
+| 本仓自有 | 41 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/…），样式全 DSH token、行为手写 |
 | 共享行为模块 | 10 | modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap |
 
 **未收录（issue 005 留档）**：官方品牌件（BrandWordmark / FishLogo / SiteGlyph / artwork / 专用 Icon）。

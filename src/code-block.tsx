@@ -4,7 +4,7 @@
 //
 // 与官方实现的差异（2026-11-06 起，issue 005）：
 //   1. **没有流式臂**：官方那份用 `StreamingHighlightSession` 逐块 tokenize 增长中的
-//      代码围栏，并配 `useViewportHighlighting` 视口门控。kit 的语法是**静态**的
+//      代码围栏，并配 `useViewportHighlighting` 视口门控。本仓的语法是**静态**的
 //      （见 code-highlighting.ts），没有「语法加载中」这回事，故整条流式链路不需要；
 //      第三方面板也不是流式场景。
 //   2. **DOM 契约照旧**：`md-code-block` 全局类、`data-line-numbers` /
@@ -13,7 +13,7 @@
 //      —— 这些是宿主样式与 DOM 测试的锚点，一个都不能少。
 //
 // 依赖：shiki（精确锁 4.4.3，见 code-highlighting.ts）+ @shikijs/langs。
-// 样式：src/code-block.css（kit 约定）+ src/shiki.css（--shiki-* 变量表）。
+// 样式：src/code-block.css（本仓约定）+ src/shiki.css（--shiki-* 变量表）。
 
 import { Fragment, useCallback, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode, Ref } from 'react'
@@ -48,7 +48,7 @@ export interface CodeBlockProps {
 
 /**
  * shiki 的 css-variables 主题在 HTML 臂吐出的 `<pre>` 属性，
- * 流式臂的树与之可互换（kit 无流式臂，但契约保持一致）。
+ * 流式臂的树与之可互换（本仓 无流式臂，但契约保持一致）。
  */
 const SHIKI_PRE_PROPS = {
   className: 'shiki css-variables',

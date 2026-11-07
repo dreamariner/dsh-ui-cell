@@ -1,4 +1,4 @@
-// Select: styled native <select>（kit 自有组件，非官方复制）。
+// Select: styled native <select>（本仓自有组件，非官方复制）。
 //
 // 为什么不用官方 primitive：官方 ui-primitives 没有 Select 原子（只有 SegmentedControl
 // 与 Menu），第三方插件要下拉筛选只能写裸 <select>，样式全靠浏览器默认。

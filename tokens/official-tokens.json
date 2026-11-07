@@ -2,7 +2,7 @@
   "dshVersion": "0.2.2-rc.1",
   "dshCommit": "66491b05e3f05ad35bcdd4f6cd7ed26041d9e3db",
   "source": "DSH packages/client/ui-theme/src/styles/*.css（整个目录，非个别文件）",
-  "note": "官方 token 定义快照（pinned）。用于校验 kit 组件引用的 token 是否真实存在——拼错或官方已删除的 token 会让样式静默失效（var() 解析失败 → 声明被丢弃），格式类护栏看不出来。DSH 升级时用 scripts/vendor-tokens.mjs 重新生成。",
+  "note": "官方 token 定义快照（pinned）。用于校验 本仓组件引用的 token 是否真实存在——拼错或官方已删除的 token 会让样式静默失效（var() 解析失败 → 声明被丢弃），格式类护栏看不出来。DSH 升级时用 scripts/vendor-tokens.mjs 重新生成。",
   "hostContextVariables": [
     "--dsh-frame-chrome-top",
     "--dsh-frame-overlay-top",

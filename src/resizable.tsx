@@ -1,4 +1,4 @@
-// resizable：kit 自有组件（功能对齐 shadcn resizable，样式沿用 DSH 设计 token）。
+// resizable：本仓自有组件（功能对齐 shadcn resizable，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。
 import { forwardRef, useCallback, useRef, useState, type ReactNode } from 'react'
 import clsx from 'clsx'

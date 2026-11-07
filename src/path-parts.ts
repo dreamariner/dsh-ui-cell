@@ -1,6 +1,6 @@
 // pathPartsOf：路径展示切分（目录前缀 + 末段），内联自官方 workspace-path 包。
 // 上游来源：packages/util/workspace-path/src/index.ts @ dsh v0.2.2-rc.1 (66491b05e3)
-// 该函数自足零依赖，内联以守住 kit 零官方运行时依赖的纪律。
+// 该函数自足零依赖，内联以守住 本仓零官方运行时依赖的纪律。
 
 /**
  * Split a path for display: the directories through their last separator, and

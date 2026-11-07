@@ -9,7 +9,7 @@
 //   3. token 名必须真实存在（拼错 = var() 解析失败 = 整条声明静默丢弃，零报错）
 //   4. 生成物的命名空间干净：最终类名跨组件唯一、keyframes 带前缀
 //      （消费端把所有组件样式拼进同一个 <style>，官方 CSS Modules 的 per-file 哈希隔离
-//      在这里不存在。2026-11-05 复审抓到 .duk-wrap / .duk-icon 被两个组件重复定义、
+//      在这里不存在。2026-11-05 复审抓到 .duc-wrap / .duc-icon 被两个组件重复定义、
 //      后定义者静默覆盖前者，按钮 icon 被染成 input 的 tertiary 色）
 //   5. 组件间依赖显式建模且与实际导入一致
 //      （复审曾实证：单加 risk-confirmation 产出 3 个悬空导入的坏产物，CLI 退出码还是 0）
@@ -225,15 +225,15 @@ describe('与上游同步（需要 DSH_CHECKOUT，缺省跳过）', () => {
 })
 
 describe('命名空间（消费端把全部组件样式拼进同一个 <style>）', () => {
-  it('全部组件的最终类名跨组件唯一（2026-11-05 复审：.duk-wrap/.duk-icon 曾跨组件互覆）', () => {
+  it('全部组件的最终类名跨组件唯一（2026-11-05 复审：.duc-wrap/.duc-icon 曾跨组件互覆）', () => {
     const seen = new Map<string, string>()
     const dups: string[] = []
     for (const item of registry.items) {
       if (item.status !== 'ready') continue
       for (const file of item.files) {
         if (!file.endsWith('.css')) continue
-        const module = buildStyleModule(readFileSync(join(src, file), 'utf8'), 'duk-', item.name)
-        for (const m of module.matchAll(/'([A-Za-z][\w-]*)': '(duk-[^']+)'/g)) {
+        const module = buildStyleModule(readFileSync(join(src, file), 'utf8'), 'duc-', item.name)
+        for (const m of module.matchAll(/'([A-Za-z][\w-]*)': '(duc-[^']+)'/g)) {
           const cls = m[2]!
           if (seen.has(cls) && seen.get(cls) !== item.name) {
             dups.push(`${cls}: ${seen.get(cls)} 与 ${item.name} 重复`)
@@ -253,9 +253,9 @@ describe('命名空间（消费端把全部组件样式拼进同一个 <style>�
         if (!file.endsWith('.css')) continue
         const cssText = readFileSync(join(src, file), 'utf8')
         if (!/@keyframes/.test(cssText)) continue
-        const module = buildStyleModule(cssText, 'duk-', item.name)
+        const module = buildStyleModule(cssText, 'duc-', item.name)
         for (const m of module.matchAll(/@keyframes\s+([\w-]+)/g)) {
-          if (!m[1]!.startsWith('duk-')) offenders.push(`${item.name}: @keyframes ${m[1]}`)
+          if (!m[1]!.startsWith('duc-')) offenders.push(`${item.name}: @keyframes ${m[1]}`)
         }
       }
     }
@@ -263,43 +263,43 @@ describe('命名空间（消费端把全部组件样式拼进同一个 <style>�
   })
 
   it('modal 的 keyframes 定义与 animation 引用同步改名（改定义不改引用 = 动画静默失效）', () => {
-    const module = buildStyleModule(readFileSync(join(src, 'modal.css'), 'utf8'), 'duk-', 'modal')
-    expect(module).toContain('@keyframes duk-modal-modalEnter')
-    expect(module).toContain('animation: duk-modal-modalEnter')
+    const module = buildStyleModule(readFileSync(join(src, 'modal.css'), 'utf8'), 'duc-', 'modal')
+    expect(module).toContain('@keyframes duc-modal-modalEnter')
+    expect(module).toContain('animation: duc-modal-modalEnter')
     expect(module).not.toContain('animation: modalEnter')
   })
 
   it('CSS 选择器加前缀时带组件名段（且不误伤属性值里的点号）', () => {
     const css = '.button { padding: 0 0.5px; }\n.primary:hover { background: var(--x); }'
-    const out = prefixCss(css, 'duk-', 'button')
-    expect(out).toContain('.duk-button')
-    expect(out).toContain('.duk-button-primary:hover')
+    const out = prefixCss(css, 'duc-', 'button')
+    expect(out).toContain('.duc-button')
+    expect(out).toContain('.duc-button-primary:hover')
     expect(out).toContain('0 0.5px') // 小数点不是类选择器
   })
 
   it('生成的类名表覆盖 CSS 里的全部类选择器', () => {
     const css = '.tag { color: red; }\n.tag[data-tone="info"] { color: blue; }'
-    const module = buildStyleModule(css, 'duk-', 'tag')
+    const module = buildStyleModule(css, 'duc-', 'tag')
     for (const name of cssClassNames(css)) {
-      expect(module, `类名表缺少 ${name}`).toContain(`'${name}': '${finalName('tag', name, 'duk-')}'`)
+      expect(module, `类名表缺少 ${name}`).toContain(`'${name}': '${finalName('tag', name, 'duc-')}'`)
     }
   })
 
   it('表以原类名为键、值为组件段前缀名（动态索引 css[variant] 才不会断）', () => {
-    const module = buildStyleModule('.primary { color: red; }', 'duk-', 'button')
-    expect(module).toContain("'primary': 'duk-button-primary'")
-    expect(module).not.toContain("'duk-button-primary': ")
+    const module = buildStyleModule('.primary { color: red; }', 'duc-', 'button')
+    expect(module).toContain("'primary': 'duc-button-primary'")
+    expect(module).not.toContain("'duc-button-primary': ")
   })
 
   it('链式类选择器（.a.b）逐段改名且进表（官方 menu/toast 在用，2026-11-06 起支持）', () => {
     const css = '.list.compactList { color: red; }\n.icon.success { color: blue; }'
-    const module = buildStyleModule(css, 'duk-', 'menu')
-    expect(module).toContain('.duk-menu-list.duk-menu-compactList')
-    expect(module).toContain('.duk-menu-icon.duk-menu-success')
-    expect(module).toContain("'list': 'duk-menu-list'")
-    expect(module).toContain("'compactList': 'duk-menu-compactList'")
-    expect(module).toContain("'icon': 'duk-menu-icon'")
-    expect(module).toContain("'success': 'duk-menu-success'")
+    const module = buildStyleModule(css, 'duc-', 'menu')
+    expect(module).toContain('.duc-menu-list.duc-menu-compactList')
+    expect(module).toContain('.duc-menu-icon.duc-menu-success')
+    expect(module).toContain("'list': 'duc-menu-list'")
+    expect(module).toContain("'compactList': 'duc-menu-compactList'")
+    expect(module).toContain("'icon': 'duc-menu-icon'")
+    expect(module).toContain("'success': 'duc-menu-success'")
   })
 })
 
@@ -331,7 +331,7 @@ describe('依赖闭包（单加一个组件必须产出可独立编译的完整�
   })
 
   it('add 单个组件自动带上依赖闭包，产物无悬空导入（复审实证：risk-confirmation 单加曾缺 3 个导入）', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'uikit-closure-'))
+    const dir = mkdtempSync(join(tmpdir(), 'uicell-closure-'))
     try {
       addComponents(['risk-confirmation'], { to: dir })
       const files = new Set(readdirSync(join(dir, 'src', 'client', 'ui')))
@@ -360,7 +360,7 @@ describe('依赖闭包（单加一个组件必须产出可独立编译的完整�
     const dangling: string[] = []
     for (const item of registry.items) {
       if (item.status !== 'ready') continue
-      const dir = mkdtempSync(join(tmpdir(), 'uikit-item-'))
+      const dir = mkdtempSync(join(tmpdir(), 'uicell-item-'))
       try {
         addComponents([item.name], { to: dir })
         const uiDir = join(dir, 'src', 'client', 'ui')
@@ -383,7 +383,7 @@ describe('依赖闭包（单加一个组件必须产出可独立编译的完整�
 describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', () => {
   /**
    * 基础依赖：所有组件都在用、且消费端必然自带（react / clsx / react-dom）。
-   * 它们由 kit 的文档统一交代（wiki 01：「运行时依赖只有 react + clsx」），
+   * 它们由 本仓的文档统一交代（wiki 01：「运行时依赖只有 react + clsx」），
    * **不**逐条目声明，否则 94 个条目要重复写三遍，且改版本要改 94 处。
    * npmDependencies 只管「条目特有」的重依赖。
    */
@@ -392,7 +392,7 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
   /**
    * 条目源码里的**裸 npm import**（不是相对路径、不是 node: 内置、不是基础依赖）。
    * 这些包必须被条目声明在 npmDependencies 里：add 复制的是源码，
-   * 消费端装不上就编译不过（而且是消费端编译时才炸，kit 自己看不出来）。
+   * 消费端装不上就编译不过（而且是消费端编译时才炸，本仓 自己看不出来）。
    */
   function bareNpmImports(item: { files: string[] }): Set<string> {
     const out = new Set<string>()
@@ -466,7 +466,7 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
   })
 
   it('缺失依赖的安装建议保留 scoped 包（对 pkg@range 串 split("@") 的截断回归，006）', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'uikit-inst-'))
+    const dir = mkdtempSync(join(tmpdir(), 'uicell-inst-'))
     try {
       const result = addComponents(['code-block'], { to: dir })
       const note = result.notes.find(n => n.includes('装：'))
@@ -496,7 +496,7 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
   })
 
   it('单次 add 内同名产物静默去重，不报假性已存在（006）', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'uikit-dedup-'))
+    const dir = mkdtempSync(join(tmpdir(), 'uicell-dedup-'))
     try {
       const result = addComponents(['hover-card'], { to: dir })
       expect(result.skipped, 'hover-card 闭包内不应有任何重复产物').toEqual([])
@@ -517,7 +517,7 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
    *      第三方契约类名（.katex / --shiki-*）被改名失配。
    */
   it('raw 样式模块在 add 的 note 里被点名（消费端是孤儿，漏拼就静默丢样式）', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'uikit-raw-'))
+    const dir = mkdtempSync(join(tmpdir(), 'uicell-raw-'))
     try {
       const result = addComponents(['markdown-text'], { to: dir })
       const uiDir = join(dir, 'src', 'client', 'ui')
@@ -554,10 +554,10 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
   })
 
   it('raw 样式模块不产出类名表（第三方契约类名不能改名）', () => {
-    const module = buildStyleModule('.katex { display: inline-block; }', 'duk-', 'katex', true)
+    const module = buildStyleModule('.katex { display: inline-block; }', 'duc-', 'katex', true)
     expect(module).toContain('export const css: Record<string, string> = {}')
     expect(module).toContain('.katex')
-    expect(module).not.toContain('duk-katex')
+    expect(module).not.toContain('duc-katex')
   })
 })
 
@@ -566,10 +566,10 @@ describe('类名前缀化', () => {
     const css = '/* .ghost 是注释里的样子 */\n.button { color: red; }'
     const names = cssClassNames(css)
     expect(names).toEqual(['button'])
-    const out = prefixCss(css, 'duk-', 'button')
+    const out = prefixCss(css, 'duc-', 'button')
     expect(out).toContain('/* .ghost 是注释里的样子 */')
-    expect(out).toContain('.duk-button')
-    expect(out).not.toContain('.duk-ghost')
+    expect(out).toContain('.duc-button')
+    expect(out).not.toContain('.duc-ghost')
   })
 
   // 2026-11-06：官方 markdown 家族有 11 处 `:global(...)`（`.katex` / `.md-code-block` /
@@ -584,17 +584,63 @@ describe('类名前缀化', () => {
     ].join('\n')
     // 不进表
     expect(cssClassNames(css)).toEqual(['markdown', 'tableScroll', 'numbered'])
-    const out = prefixCss(css, 'duk-', 'markdown-text')
+    const out = prefixCss(css, 'duc-', 'markdown-text')
     // :global 内的类名原样保留
     expect(out).toContain(':global(.katex-display)')
     expect(out).toContain(':global(.md-table-wide)')
     expect(out).toContain(':global(.line)')
-    expect(out).not.toContain('duk-markdown-text-katex')
-    expect(out).not.toContain('duk-markdown-text-md-table-wide')
-    expect(out).not.toContain('duk-markdown-text-line')
+    expect(out).not.toContain('duc-markdown-text-katex')
+    expect(out).not.toContain('duc-markdown-text-md-table-wide')
+    expect(out).not.toContain('duc-markdown-text-line')
     // 本组件自己的类名照常改名
-    expect(out).toContain('.duk-markdown-text-markdown')
-    expect(out).toContain('.duk-markdown-text-tableScroll')
-    expect(out).toContain('.duk-markdown-text-numbered')
+    expect(out).toContain('.duc-markdown-text-markdown')
+    expect(out).toContain('.duc-markdown-text-tableScroll')
+    expect(out).toContain('.duc-markdown-text-numbered')
+  })
+})
+
+describe('命名一致性（003 改名 dsh-ui-cell，007 起护栏固化）', () => {
+  /**
+   * 旧名 dsh-ui-kit 的三类残留曾遍布注释、registry 描述与生成脚本（007 全量清理）。
+   * 本护栏防回流。扫面（活面）排除两类：
+   *   - docs/issues/**：历史记录，不追溯改写（007 裁定；003 本身就是改名记录）
+   *   - 本 spec 自身：下面两个检查的正则与 needle 字面量会自伤
+   */
+  const REPO = join(import.meta.dirname, '..')
+
+  function livingFiles(withIndexHtml: boolean): string[] {
+    const out: string[] = []
+    const walk = (dir: string): void => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        if (e.name === 'issues') continue
+        const p = join(dir, e.name)
+        if (e.isDirectory()) walk(p)
+        else if (/\.(ts|tsx|css|md|mjs|json|html)$/.test(e.name)) out.push(p)
+      }
+    }
+    for (const d of [src, join(REPO, 'cli'), join(REPO, 'scripts'), join(REPO, 'tests'), join(REPO, 'docs', 'wiki'), join(REPO, 'tokens')]) walk(d)
+    for (const f of ['registry.json', 'README.md', 'AGENTS.md']) out.push(join(REPO, f))
+    const self = import.meta.filename
+    return out.filter(p => !p.endsWith(self) && (withIndexHtml || !p.endsWith('index.html')))
+  }
+
+  /** 合法保留面：曾用名句式、web 平台伪元素（::-webkit-scrollbar）、第三方资产的内联 base64。 */
+  const stripLegit = (text: string): string =>
+    text.replace(/dsh-ui-kit/g, '').replace(/webkits?/gi, '').replace(/base64,[A-Za-z0-9+/=]+/g, '')
+
+  it('活面不再有旧名 kit 的自指用法（dsh-ui-kit 曾用名句式与 webkit 除外）', () => {
+    const bad = livingFiles(false)
+      .map(p => ({ p, hit: stripLegit(readFileSync(p, 'utf8')).match(/kit/i) }))
+      .filter(x => x.hit !== null)
+      .map(x => `${x.p.replace(`${REPO}/`, '')}: ${x.hit?.[0]}`)
+    expect(bad, `旧名 kit 残留（应改「本仓」或属于合法保留面）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('默认前缀与全部示例统一 duc-（duk- 是旧名缩写，只允许存在于历史记录与消费端存量）', () => {
+    const needle = ['du', 'k-'].join('') // 拼接构造，避免本文件自伤
+    const bad = livingFiles(true)
+      .filter(p => readFileSync(p, 'utf8').includes(needle))
+      .map(p => p.replace(`${REPO}/`, ''))
+    expect(bad, `旧前缀 duk- 残留：\n${bad.join('\n')}`).toEqual([])
   })
 })

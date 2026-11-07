@@ -1,4 +1,4 @@
-// demo-kit：文档站的 Demo 原语（各分类文件共用）。
+// demo-cell：文档站的 Demo 原语（各分类文件共用）。
 import { useMemo, type ReactNode } from 'react'
 import registryJson from '../../registry.json'
 

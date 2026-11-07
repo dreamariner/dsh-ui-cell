@@ -1,8 +1,8 @@
-// Button: token-styled button atom（源自 DSH 官方 ui-primitives，类名 duk- 化）。
+// Button: token-styled button atom（源自 DSH 官方 ui-primitives，类名 duc- 化）。
 //
 // 上游来源：packages/client/ui-primitives/src/Button.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // 保真说明：DOM 结构、variant/size 枚举、原生属性透传与 ref 全部照抄官方实现；
-// 唯一改动是类名前缀（.button → .duk-button 等，见 add 脚本的前缀化规则）。
+// 唯一改动是类名前缀（.button → .duc-button 等，见 add 脚本的前缀化规则）。
 // 样式只引用 --dsw-alias-* / --dsw-radius-* token（DSH 插件开发规范）。
 
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'

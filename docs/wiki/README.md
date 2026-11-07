@@ -14,7 +14,7 @@ shadcn 式的新手教程 + 可视组件文档站。
 ## 站点的三个「真」
 
 1. **真组件**：demo 源直接 `import ../../src/*`，不是手仿的静态 markup
-2. **真转换**：kit 源的 `.css` 导入由 esbuild 插件现场调 `buildStyleModule`（`duk-` 前缀 +
+2. **真转换**：本仓源的 `.css` 导入由 esbuild 插件现场调 `buildStyleModule`（`duc-` 前缀 +
    类名表），即 **add 交付给插件的同一条管线**——你在站点里看到的就是插件会拿到的样式
 3. **真主题**：token 从 `DSH_CHECKOUT` 的 ui-theme styles 全量拼装（含明暗两套），
    右上角「切换暗色」按钮 = 宿主同机制的 `body[data-ds-dark-theme]`
@@ -29,7 +29,7 @@ docs/wiki/
 ├── 02-token纪律与升级.md  # 两道闸 + 命名空间 + DSH 升级同步流程
 ├── 03-依赖分层.md        # atom/content 两档 + add 的依赖交接 + bundle 影响
 ├── demo.tsx             # 站点 shell（侧栏 + 快速开始 + 组装各分类）
-├── demo-kit.tsx         # Demo 原语（用法 + 效果 + 代码三段式）
+├── demo-cell.tsx         # Demo 原语（用法 + 效果 + 代码三段式）
 └── demos/               # 五个分类的演示源（atoms/containers/overlays/inputs/content）
 ```
 

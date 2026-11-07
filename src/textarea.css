@@ -1,4 +1,4 @@
-/* Textarea: 多行输入的 token 化外衣（kit 自有，规格对齐 Input.module.css）。 */
+/* Textarea: 多行输入的 token 化外衣（本仓自有，规格对齐 Input.module.css）。 */
 .textarea {
   box-sizing: border-box;
   display: block;

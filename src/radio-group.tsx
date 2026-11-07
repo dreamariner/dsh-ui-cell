@@ -1,4 +1,4 @@
-// radio-group：kit 自有组件（功能对齐 shadcn radio-group，样式沿用 DSH 设计 token）。
+// radio-group：本仓自有组件（功能对齐 shadcn radio-group，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。
 import { forwardRef } from 'react'
 import clsx from 'clsx'

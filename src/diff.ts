@@ -1,19 +1,19 @@
-// diff：差异计算（npm diff 的 structuredPatch，kit 自有薄封装）。
+// diff：差异计算（npm diff 的 structuredPatch，本仓自有薄封装）。
 //
-// 上游对应：npm `diff` 的 structuredPatch（kit 只用到行级 + context 窗口两个能力）。
+// 上游对应：npm `diff` 的 structuredPatch（本仓 只用到行级 + context 窗口两个能力）。
 //
-// 2026-11-06 升级说明（issue 005）：原先 kit 用自写的零依赖替身 mini-diff
+// 2026-11-06 升级说明（issue 005）：原先 本仓用自写的零依赖替身 mini-diff
 // （LCS 动态规划），它有一个实打实的缺陷：前导 context 回填用
 // `script.lastIndexOf(entry)` 找「该行文本最后一次出现的位置」，遇到重复行
 // （大量 `}` 那种）会取错位置。npm diff 用 Myers 算法，无此问题。
 //
-// 现在：**算法内核交给 npm diff，kit 只保留自己那层预算守卫**（见下），
+// 现在：**算法内核交给 npm diff，本仓 只保留自己那层预算守卫**（见下），
 // 输出契约不变（{ hunks }），故 diff-block 的调用点零改动。
 //
 // 为什么还要留守卫：npm diff 的 structuredPatch 自 5.1 起也有 maxEditLength
-// （006 勘误：原注说它没有该选项，不对），但 kit 的预算口径是「hunk 内编辑行数、
+// （006 勘误：原注说它没有该选项，不对），但 本仓的预算口径是「hunk 内编辑行数、
 // 超限返回 undefined 由调用方整段回退」，与替身时期及调用方的既有语义一致。
-// 守卫留在 kit 这层做外层，不依赖 npm diff 内部对超限的处置细节。
+// 守卫留在 本仓 这层做外层，不依赖 npm diff 内部对超限的处置细节。
 
 import { structuredPatch as npmStructuredPatch } from 'diff'
 
