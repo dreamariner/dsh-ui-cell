@@ -1,6 +1,6 @@
 // content：内容块演示（官方保真复制 + content 档的 npm 重依赖）
 import { useState } from 'react'
-import { Demo, type DemoSection } from '../demo-cell.tsx'
+import { Demo, type DemoSection } from './demo-cell.tsx'
 import {
   JsonTree, JsonBlock, SearchBlock, CodeToolbar, DiffBlock, TerminalBlock,
   ImagePreview, ImageLightbox, ZoomControls, Button,

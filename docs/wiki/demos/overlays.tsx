@@ -1,6 +1,6 @@
 // overlays：浮层与反馈演示
 import { useState } from 'react'
-import { Demo, type DemoSection } from '../demo-cell.tsx'
+import { Demo, type DemoSection } from './demo-cell.tsx'
 import {
   Modal, RiskConfirmation, Tooltip, Popover, HoverCard, Toast, Menu,
   ContextMenu, Menubar, NavigationMenu, Sheet, Pagination, Button,

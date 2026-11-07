@@ -1,6 +1,6 @@
 // containers：容器与布局演示
 import { useState } from 'react'
-import { Demo, type DemoSection } from '../demo-cell.tsx'
+import { Demo, type DemoSection } from './demo-cell.tsx'
 import {
   Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter,
   Alert, AlertTitle, AlertDescription,

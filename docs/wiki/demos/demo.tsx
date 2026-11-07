@@ -2,15 +2,15 @@
 // 站点跑的是 本仓 真组件；样式与 token 由 scripts/build-docs.mjs 编译期注入。
 import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import registryJson from '../../registry.json'
-import pkg from '../../package.json'
+import registryJson from '../../../registry.json'
+import pkg from '../../../package.json'
 import { Demo, type DemoSection } from './demo-cell.tsx'
-import { atomSections } from './demos/atoms.tsx'
-import { containerSections } from './demos/containers.tsx'
-import { overlaySections } from './demos/overlays.tsx'
-import { inputSections } from './demos/inputs.tsx'
-import { contentSections } from './demos/content.tsx'
-import { Tag } from '../../src/index.ts'
+import { atomSections } from './atoms.tsx'
+import { containerSections } from './containers.tsx'
+import { overlaySections } from './overlays.tsx'
+import { inputSections } from './inputs.tsx'
+import { contentSections } from './content.tsx'
+import { Tag } from '../../../src/index.ts'
 
 const registry = registryJson as { items: { name: string; status: string; description: string }[]; dshVersion: string }
 const sections = [atomSections, containerSections, overlaySections, inputSections, contentSections]

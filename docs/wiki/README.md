@@ -28,9 +28,8 @@ docs/wiki/
 ├── 01-新手教程.md        # shadcn 式上手教程
 ├── 02-token纪律与升级.md  # 两道闸 + 命名空间 + DSH 升级同步流程
 ├── 03-依赖分层.md        # atom/content 两档 + add 的依赖交接 + bundle 影响
-├── demo.tsx             # 站点 shell（侧栏 + 快速开始 + 组装各分类）
-├── demo-cell.tsx         # Demo 原语（用法 + 效果 + 代码三段式）
-└── demos/               # 五个分类的演示源（atoms/containers/overlays/inputs/content）
+└── demos/               # 文档站源码：demo.tsx（shell）+ demo-cell.tsx（Demo 原语）
+                          # + 五个分类的演示（atoms/containers/overlays/inputs/content）
 ```
 
 ## 维护约定

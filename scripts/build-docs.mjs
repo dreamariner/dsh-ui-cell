@@ -93,7 +93,7 @@ const cellCssTablePlugin = {
 
 // ── ④ 打包 demo（react + 全组件，IIFE 自包含）──
 const result = await esbuild.build({
-  entryPoints: [join(WIKI, 'demo.tsx')],
+  entryPoints: [join(WIKI, 'demos', 'demo.tsx')],
   bundle: true,
   minify: true,
   format: 'iife',
