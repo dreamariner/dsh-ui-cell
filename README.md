@@ -86,4 +86,23 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force]
 
 ## 许可
 
-Apache-2.0。组件源码源自 DSH 官方 ui-primitives（Apache-2.0），保真复制并按官方规范加了插件前缀。
+Apache-2.0。组件源码源自 DSH 官方 ui-primitives（Apache-2.0），按官方插件开发规范
+（practices.md 的 sanctioned 复制路径）保真复制并加了插件前缀；逐文件出处见
+`registry.json` 的 `upstream` 字段与各源码头注，相对上游的改动（导入路径、类名机制、
+裁剪边界）已在头注显著标注。
+
+与 shadcn/ui 的关系：仅借鉴其「registry + CLI + 复制分发」的模型与组件 API 形状，
+未复制其任何代码（shadcn/ui 为 MIT；本仓组件的样式与行为均为原创实现，走 DSH
+token 体系而非 Tailwind / Radix）。
+
+## 致谢
+
+- [shadcn/ui](https://github.com/shadcn-ui/ui)：复制式分发的模型来源，本仓的
+  registry + add 交付形态与「源码归插件所有」的理念由此而来
+- DSH 官方 ui-primitives（Apache-2.0）：全部官方保真件的组件源，宿主亲生的行为与
+  token 纪律的锚点
+- 内容块层的开源基础：[shiki](https://github.com/shikijs/shiki)（语法高亮）、
+  [KaTeX](https://github.com/KaTeX/KaTeX)（数学排版）、
+  [micromark / mdast 家族](https://github.com/micromark/micromark)（markdown 解析）、
+  [diff](https://github.com/jsdiff/jsdiff)（差异计算）、
+  [anser](https://github.com/IonicaBizau/anser)（ANSI 解析）
