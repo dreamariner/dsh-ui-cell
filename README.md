@@ -82,6 +82,7 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force]
 - `docs/wiki/` — 组件 Wiki（新手教程 + 可视文档站 index.html，组件用法与实时效果）
 - `tests/` — 自守护栏：`registry.spec.ts`（registry 一致性 + token 纪律 + 存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接）与 `markdown.spec.tsx`（内容块渲染回归）
 - `AGENTS.md` — 定位与红线（改本仓前先读）
+- `skills/dsh-ui-cell/SKILL.md` — Agent 接入手册（随 npm 包分发；消费端拷进插件的 `.agents/skills/`）
 
 ## 许可
 

@@ -9,6 +9,7 @@
   "files": [
     "lib",
     "src",
+    "skills",
     "registry.json",
     "AGENTS.md",
     "README.md"

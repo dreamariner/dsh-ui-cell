@@ -438,6 +438,7 @@ export function addComponents(
     notes.push(`原样注入的样式模块（第三方契约类名，不加前缀）：${rawStyleModules.join(', ')} —— 它们没有组件引用，要自己 import { styles } 一起拼进注入器，漏了会丢样式（公式不排版 / 代码高亮没颜色）。`)
   }
   notes.push(`类名前缀：${prefix} + 组件名段（官方规范要求复制后重命名类名以免与插件自身样式相撞；keyframes 同规则改名）。`)
+  notes.push(`Agent 接线手册随包分发：把本包 skills/dsh-ui-cell/（npm 包内同路径）拷进插件的 .agents/skills/，后续 Agent 按手册操作（选型、样式注入、依赖交接、坑位清单都在里面）。`)
 
   // 依赖交接：内容块层组件带 npm 重依赖，消费端得自己装上（否则源码里的裸 import 编译不过）
   const wanted = collectNpmDependencies(expanded, registry)

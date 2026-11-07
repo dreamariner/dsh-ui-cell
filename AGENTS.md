@@ -60,6 +60,7 @@ dsh-ui-cell/
 ├── scripts/lib/paths.mjs        # DSH_CHECKOUT 解析（显式指定，无默认推导）
 ├── cli/add.ts           # add 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析 + 依赖分层交接[tier/npmDependencies/rawStyles 原样注入]）
 ├── cli/index.ts         # CLI 入口
+├── skills/dsh-ui-cell/SKILL.md  # Agent 接入手册（随 npm 包分发；消费端拷进插件 .agents/skills/）
 └── tests/               # 自守护栏：registry.spec.ts（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接）+ markdown.spec.tsx（渲染回归）
 ```
 
