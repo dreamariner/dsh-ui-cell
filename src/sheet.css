@@ -1,3 +1,16 @@
+/* sheet：侧滑/底滑面板。样式沿用 DSH 设计 token，动画用官方 --ds-transition-duration。
+ *
+ * 动画分进出场两段，由根节点的 data-state 驱动：
+ *   open   → 面板从视口边缘滑入（位移量 = 面板自身尺寸，与 shadcn 的抽屉一致）+ 淡入，遮罩同步淡入
+ *   closed → 面板滑回视口边缘 + 淡出，遮罩淡出
+ *
+ * ⚠ 出场段要成立，组件侧必须在 closed 段播完之后才卸载（见 sheet.tsx 的 phase 状态机）；
+ *   直接 return null 卸载 = 出场动画永远没机会播（用户看到的「关面板没有动画」）。
+ *
+ * 位移量走自定义属性 --sheet-shift-x / --sheet-shift-y：方向规则只改这两个值，
+ * 进出场共用同一对 keyframes，不必为四个方向各写一条。
+ */
+
 .root {
   position: fixed;
   z-index: 1000;
@@ -11,11 +24,30 @@
 .root[data-side='bottom'] { flex-direction: column; justify-content: flex-end; }
 .root[data-side='top'] { flex-direction: column; justify-content: flex-start; }
 
+/* 遮罩：进出场各一段淡入淡出。closed 段用 forwards 保持隐藏，直到组件卸载。 */
 .mask {
   position: absolute;
   inset: 0;
   background: var(--dsw-alias-bg-mask-1);
   backdrop-filter: var(--dsw-mask-blur);
+}
+
+.root[data-state='open'] .mask {
+  animation: mask-in var(--ds-transition-duration) var(--ds-ease-in-out) forwards;
+}
+
+.root[data-state='closed'] .mask {
+  animation: mask-out var(--ds-transition-duration) var(--ds-ease-in-out) forwards;
+}
+
+@keyframes mask-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mask-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .panel {
@@ -27,13 +59,33 @@
   min-width: 0;
   background: var(--dsw-alias-bg-layer-2);
   box-shadow: var(--dsw-elevation-prominent);
-  animation: sheet-in 160ms var(--ds-ease-in-out);
+  /* 位移量默认值（方向规则覆盖）：0 = 原地不动。 */
+  --sheet-shift-x: 0px;
+  --sheet-shift-y: 0px;
 }
 
-.root[data-side='right'] .panel { height: 100%; border-left: 0.5px solid var(--dsw-alias-border-l4); }
-.root[data-side='left'] .panel { height: 100%; border-right: 0.5px solid var(--dsw-alias-border-l4); }
-.root[data-side='bottom'] .panel { width: 100%; max-height: 70vh; border-top: 0.5px solid var(--dsw-alias-border-l4); border-radius: var(--dsw-radius-panel) var(--dsw-radius-panel) 0 0; }
-.root[data-side='top'] .panel { width: 100%; max-height: 70vh; border-bottom: 0.5px solid var(--dsw-alias-border-l4); border-radius: 0 0 var(--dsw-radius-panel) var(--dsw-radius-panel); }
+.root[data-side='right'] .panel { height: 100%; border-left: 0.5px solid var(--dsw-alias-border-l4); --sheet-shift-x: 100%; }
+.root[data-side='left'] .panel { height: 100%; border-right: 0.5px solid var(--dsw-alias-border-l4); --sheet-shift-x: -100%; }
+.root[data-side='bottom'] .panel { width: 100%; max-height: 70vh; border-top: 0.5px solid var(--dsw-alias-border-l4); border-radius: var(--dsw-radius-panel) var(--dsw-radius-panel) 0 0; --sheet-shift-y: 100%; }
+.root[data-side='top'] .panel { width: 100%; max-height: 70vh; border-bottom: 0.5px solid var(--dsw-alias-border-l4); border-radius: 0 0 var(--dsw-radius-panel) var(--dsw-radius-panel); --sheet-shift-y: -100%; }
+
+.root[data-state='open'] .panel {
+  animation: sheet-in var(--ds-transition-duration) var(--ds-ease-in-out);
+}
+
+.root[data-state='closed'] .panel {
+  animation: sheet-out var(--ds-transition-duration) var(--ds-ease-in-out) forwards;
+}
+
+@keyframes sheet-in {
+  from { opacity: 0; transform: translate(var(--sheet-shift-x), var(--sheet-shift-y)); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes sheet-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translate(var(--sheet-shift-x), var(--sheet-shift-y)); }
+}
 
 .header {
   display: flex;
@@ -88,30 +140,9 @@
   border-top: 0.5px solid var(--dsw-alias-border-l4);
 }
 
-@keyframes sheet-in {
-  from { opacity: 0; transform: translateX(24px); }
-  to { opacity: 1; transform: none; }
-}
-
-.root[data-side='bottom'] .panel { animation-name: sheet-up; }
-.root[data-side='top'] .panel { animation-name: sheet-down; }
-.root[data-side='left'] .panel { animation-name: sheet-left; }
-
-@keyframes sheet-up {
-  from { opacity: 0; transform: translateY(32px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes sheet-down {
-  from { opacity: 0; transform: translateY(-32px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes sheet-left {
-  from { opacity: 0; transform: translateX(-24px); }
-  to { opacity: 1; transform: none; }
-}
-
+/* 降级：系统开了「减少动态效果」就不要动画。
+ * ⚠ 此时没有 animationend 事件，组件侧要自己兜底卸载（见 sheet.tsx 的 reducedMotion 分支）。 */
 @media (prefers-reduced-motion: reduce) {
-  .panel { animation: none; }
+  .root .mask,
+  .root .panel { animation: none; }
 }
