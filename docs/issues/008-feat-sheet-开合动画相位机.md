@@ -90,6 +90,27 @@ DOM 时序回归（是先在消费端实机踩到、再回头把护栏补成能�
   opacity 1 → 0，动画播完才摘除 DOM；Escape 可关；焦点进对话框后能归位
 - 消费端 7 个复制件统一 `duc-` 前缀，`duk-` 零残留（消费端 issue 005 记）
 
+## 复审：限定容器（container 属性，同日）
+
+插件面板里的详情抽屉原先是 `portal → document.body` + `position: fixed; inset: 0`，
+**盖住整个应用窗口**：打开抽屉时对话区、别的侧栏都被遮罩挡住，不能用。
+
+新增可选属性 `container`：
+
+- 给了它，面板只在这个元素占的范围内展开（遮罩与滑入位置都跟着它走）；
+- 缺省行为不变（整个视口）。
+
+实现上有两个坑，都绕开了：
+
+1. **容器只用来量边界，DOM 仍然 portal 到 document.body**：若 portal 进容器并用
+   `position: absolute`，容器内部滚动时抽屉会跟着滚走（它是滚动内容的一部分）。
+   现在是「量容器的 `getBoundingClientRect` → 给根节点写死 left/top/width/height」，
+   根节点仍是视口定位的 fixed，容器滚动只影响矩形的取值。
+2. **滚动监听要用捕获阶段**（`window.addEventListener('scroll', update, true)`）：
+   内层容器的 scroll 事件不冒泡到 window，捕获才收得到；窗口缩放另加 resize 监听。
+
+回归测试两例：给了 container 时根节点按容器矩形定位；不给时不写内联边界（= 整个视口）。
+
 ## 留痕
 
 - 本 issue 的另一半（前缀统一）在消费端完成：kit 侧 007 已把默认前缀定成 `duc-`，

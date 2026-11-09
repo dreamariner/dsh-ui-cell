@@ -13,7 +13,7 @@
 //   DOM 会比 open 晚一个提交才出现，于是 useModalLayer 的 layout effect 跑在
 //   DOM 出现之前 → 层级栈不注册 → **Escape 关不掉、焦点也不进对话框**。
 
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import css from './sheet.css'
 import { useModalLayer } from './use-modal-layer.ts'
@@ -29,7 +29,27 @@ export interface SheetProps {
   footer?: ReactNode
   /** 面板宽度（right/left 时生效），默认 380px。 */
   width?: number | string
+  /**
+   * 限定容器（可选）：面板只在这个元素占的范围内展开，**不覆盖整个窗口**。
+   *
+   * ⚠ 典型用法：插件面板里的详情抽屉要限制在**自己那个页签**里，
+   *   免得遮住宿主应用的其他区域（对话区、别的侧栏），打开抽屉时那些区域还能用。
+   *   缺省 = 整个视口（portal 到 document.body + position: fixed）。
+   *
+   * 实现：容器只用来**量边界**（getBoundingClientRect），DOM 仍然 portal 到
+   *   document.body 且用 position: fixed 定位 —— 这样容器内部滚动时抽屉不会跟着滚走
+   *   （若 portal 进容器并用 absolute，它会被容器的滚动内容带着走）。
+   */
+  container?: HTMLElement | null
   children: ReactNode
+}
+
+/** 容器在视口里的矩形（抽屉的展开范围）。 */
+interface SheetBounds {
+  left: number
+  top: number
+  width: number
+  height: number
 }
 
 /**
@@ -60,13 +80,17 @@ function usePrefersReducedMotion(): boolean {
 }
 
 /** 侧滑/底滑面板：portal + modal 层级栈（Escape 只归最上层），mask 点击关闭。 */
-export function Sheet({ open, onOpenChange, side = 'right', title, footer, width, children }: SheetProps) {
+export function Sheet({
+  open, onOpenChange, side = 'right', title, footer, width, container, children,
+}: SheetProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const reducedMotion = usePrefersReducedMotion()
   // mounted 管 DOM 在不在，phase 管播哪段动画（写进 data-state）。
   const [mounted, setMounted] = useState(open)
   const [phase, setPhase] = useState<'open' | 'closed'>(open ? 'open' : 'closed')
   const [prevOpen, setPrevOpen] = useState(open)
+  // 限定容器的边界（视口坐标）：给了 container 才量，缺省是整个视口。
+  const [bounds, setBounds] = useState<SheetBounds | null>(null)
 
   // 渲染期同步（React 官方「按 props 调整 state」写法）：
   // open 变化的**同一次提交**里就切相位、挂载 DOM。
@@ -94,9 +118,41 @@ export function Sheet({ open, onOpenChange, side = 'right', title, footer, width
 
   useModalLayer(dialogRef, open, () => onOpenChange?.(false))
 
+  // 量容器的边界：容器滚动、窗口缩放都要跟着变（用捕获阶段监听 scroll，
+  // 内层容器的滚动事件不冒泡到 window，捕获才收得到）。
+  useLayoutEffect(() => {
+    if (container === null || container === undefined) {
+      setBounds(null)
+      return
+    }
+    const update = (): void => {
+      const rect = container.getBoundingClientRect()
+      setBounds({ left: rect.left, top: rect.top, width: rect.width, height: rect.height })
+    }
+    update()
+    window.addEventListener('scroll', update, true)
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('scroll', update, true)
+      window.removeEventListener('resize', update)
+    }
+  }, [container])
+
   if (!mounted) return null
   return createPortal(
-    <div className={css.root} data-side={side} data-state={phase}>
+    <div
+      className={css.root}
+      data-side={side}
+      data-state={phase}
+      style={bounds === null ? undefined : {
+        left: bounds.left,
+        top: bounds.top,
+        right: 'auto',
+        bottom: 'auto',
+        width: bounds.width,
+        height: bounds.height,
+      }}
+    >
       <div className={css.mask} onClick={() => onOpenChange?.(false)} />
       <div
         ref={dialogRef}
