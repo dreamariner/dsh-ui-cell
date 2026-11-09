@@ -853,7 +853,7 @@
       "name": "sheet",
       "type": "registry:ui",
       "status": "ready",
-      "description": "侧滑/底滑面板：portal + modal 层级栈；开合都有动画（相位状态机，见 issue 008）；可限定在指定容器内展开（container 属性，见 issue 008 复审）；side bottom 即 drawer（本仓自有，对齐 shadcn sheet）",
+      "description": "侧滑/底滑面板：portal + modal 层级栈；开合都有动画（相位状态机，见 issue 008）；可限定在指定容器内展开并挂进容器（container 属性，见 issue 008 复审）；side bottom 即 drawer（本仓自有，对齐 shadcn sheet）",
       "files": [
         "sheet.tsx",
         "sheet.css"

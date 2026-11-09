@@ -64,8 +64,14 @@
   --sheet-shift-y: 0px;
 }
 
-.root[data-side='right'] .panel { height: 100%; border-left: 0.5px solid var(--dsw-alias-border-l4); --sheet-shift-x: 100%; }
-.root[data-side='left'] .panel { height: 100%; border-right: 0.5px solid var(--dsw-alias-border-l4); --sheet-shift-x: -100%; }
+/* 侧滑面板：靠视口边缘那侧是直的，**靠内容那侧的两个角要圆**（抽屉感）。
+   从右侧滑出 → 左上角 / 左下角圆；从左侧滑出 → 右上角 / 右下角圆。 */
+.root[data-side='right'] .panel { height: 100%; border-left: 0.5px solid var(--dsw-alias-border-l4);
+  border-top-left-radius: var(--dsw-radius-panel); border-bottom-left-radius: var(--dsw-radius-panel);
+  --sheet-shift-x: 100%; }
+.root[data-side='left'] .panel { height: 100%; border-right: 0.5px solid var(--dsw-alias-border-l4);
+  border-top-right-radius: var(--dsw-radius-panel); border-bottom-right-radius: var(--dsw-radius-panel);
+  --sheet-shift-x: -100%; }
 .root[data-side='bottom'] .panel { width: 100%; max-height: 70vh; border-top: 0.5px solid var(--dsw-alias-border-l4); border-radius: var(--dsw-radius-panel) var(--dsw-radius-panel) 0 0; --sheet-shift-y: 100%; }
 .root[data-side='top'] .panel { width: 100%; max-height: 70vh; border-bottom: 0.5px solid var(--dsw-alias-border-l4); border-radius: 0 0 var(--dsw-radius-panel) var(--dsw-radius-panel); --sheet-shift-y: -100%; }
 

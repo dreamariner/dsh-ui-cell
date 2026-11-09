@@ -104,8 +104,9 @@ describe('sheet 开合动画的相位状态机', () => {
 })
 
 describe('sheet 的限定容器（不覆盖整个窗口）', () => {
-  it('给了 container：面板按容器的矩形展开（视口坐标）', () => {
-    // 插件面板里的详情抽屉要限制在自己那个页签内，别盖住宿主的对话区。
+  it('给了 container：面板 portal 到容器内部，并按容器的矩形展开', () => {
+    // 插件面板里的详情抽屉要限制在自己那个页签内：① 不盖住宿主的对话区；
+    // ② 页签切走时抽屉跟着消失（DOM 归属在页签里）。
     const host = document.createElement('div')
     host.getBoundingClientRect = (): DOMRect => ({
       left: 100, top: 50, width: 300, height: 200, right: 400, bottom: 250, x: 100, y: 50,
@@ -114,6 +115,8 @@ describe('sheet 的限定容器（不覆盖整个窗口）', () => {
     document.body.append(host)
 
     renderSheet(true, undefined, host)
+    expect(host.contains(panel()), '抽屉没有挂在容器内部').toBe(true)
+
     const root = panel()?.parentElement
     const style = root?.getAttribute('style') ?? ''
     expect(style, '没按容器定位').toContain('left: 100px')
@@ -122,9 +125,10 @@ describe('sheet 的限定容器（不覆盖整个窗口）', () => {
     expect(style).toContain('height: 200px')
   })
 
-  it('不给 container：整个视口（不写内联边界）', () => {
+  it('不给 container：挂在 document.body 上（整个视口，不写内联边界）', () => {
     renderSheet(true)
     const root = panel()?.parentElement
+    expect(root?.parentElement, '没挂在 body 上').toBe(document.body)
     expect(root?.getAttribute('style') ?? '').not.toContain('left:')
   })
 })

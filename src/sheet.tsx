@@ -30,15 +30,15 @@ export interface SheetProps {
   /** 面板宽度（right/left 时生效），默认 380px。 */
   width?: number | string
   /**
-   * 限定容器（可选）：面板只在这个元素占的范围内展开，**不覆盖整个窗口**。
+   * 限定容器（可选）：面板**portal 到这个元素内部**，并只在它占的范围内展开。
    *
-   * ⚠ 典型用法：插件面板里的详情抽屉要限制在**自己那个页签**里，
-   *   免得遮住宿主应用的其他区域（对话区、别的侧栏），打开抽屉时那些区域还能用。
-   *   缺省 = 整个视口（portal 到 document.body + position: fixed）。
+   * ⚠ 典型用法：插件面板里的详情抽屉要限制在**自己那个页签**里 ——
+   *   ① 不覆盖整个窗口（对话区、别的侧栏照常用）；
+   *   ② 页签被宿主切走 / 隐藏时，抽屉跟着一起消失（它在这个页签的 DOM 子树里）。
+   *   缺省 = 整个视口（portal 到 document.body）。
    *
-   * 实现：容器只用来**量边界**（getBoundingClientRect），DOM 仍然 portal 到
-   *   document.body 且用 position: fixed 定位 —— 这样容器内部滚动时抽屉不会跟着滚走
-   *   （若 portal 进容器并用 absolute，它会被容器的滚动内容带着走）。
+   * 实现：DOM 挂到容器里，但**定位仍用视口坐标**（position: fixed + 量容器的矩形）——
+   *   若改用 absolute，容器内部滚动时抽屉会跟着滚走（它是滚动内容的一部分）。
    */
   container?: HTMLElement | null
   children: ReactNode
@@ -139,6 +139,9 @@ export function Sheet({
   }, [container])
 
   if (!mounted) return null
+  // 容器给了就挂进容器（DOM 归属跟着页签走：页签隐藏 / 切走，抽屉一起消失），
+  // 没给就挂 document.body（整个视口）。
+  const target = container ?? document.body
   return createPortal(
     <div
       className={css.root}
@@ -176,6 +179,6 @@ export function Sheet({
         {footer !== undefined && <div className={css.footer}>{footer}</div>}
       </div>
     </div>,
-    document.body,
+    target,
   )
 }

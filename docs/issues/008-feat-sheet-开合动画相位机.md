@@ -111,6 +111,28 @@ DOM 时序回归（是先在消费端实机踩到、再回头把护栏补成能�
 
 回归测试两例：给了 container 时根节点按容器矩形定位；不给时不写内联边界（= 整个视口）。
 
+## 再复审：容器要「挂进去」，不是只量边界（同日）
+
+第一版只拿 container 量边界，DOM 仍然 portal 到 document.body —— 于是**页签被宿主切走
+时抽屉还挂在窗口上**（宿主把页签 cell 设为 display:none，但抽屉不在那个 cell 里，
+于是它浮在别的页签上面）。
+
+改成：给了 container 时 **DOM 直接 portal 到容器内部**，同时**定位仍用视口坐标**
+（position: fixed + 量容器矩形）。这样两件事同时成立：
+
+- DOM 归属在页签里 → 宿主把该页签 cell 设为 `display: none` 时，抽屉跟着一起不可见；
+- 定位不跟滚动 → 容器内部滚动时抽屉不跟着滚走（用 absolute 就会）。
+
+实测（DSH Desktop）：抽屉的父链 = `duc-sheet-root → _paneBody_ → _pane_ → _tabCell_`，
+`pilot-root.closest('[class*=tabCell]').contains(抽屉)` 为真；切到别的插件页签后，
+该 cell 的 `display` 变 `none`，抽屉随之不可见（截图确认别的页签上不再浮着抽屉）。
+
+## 圆角（同日）
+
+侧滑面板改成抽屉观感：**靠视口边缘那侧是直的，靠内容那侧的两个角要圆**。
+从右侧滑出 → 左上角 / 左下角圆（`--dsw-radius-panel`，实测 28px）；
+从左侧滑出 → 右上角 / 右下角圆（镜像）。
+
 ## 留痕
 
 - 本 issue 的另一半（前缀统一）在消费端完成：kit 侧 007 已把默认前缀定成 `duc-`，
