@@ -1,7 +1,7 @@
 {
   "name": "@dreamariner/dsh-ui-cell",
   "description": "DSH 插件专用的 shadcn 式 UI 组件框架：组件源码复制进插件、类名带插件前缀、样式只引用 --dsw-alias-* token",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "bin": {
     "dsh-ui-cell": "./lib/cli.mjs"

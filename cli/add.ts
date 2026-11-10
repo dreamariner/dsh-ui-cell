@@ -433,7 +433,12 @@ export function addComponents(
   if (skipped.length > 0 && !options.force) {
     notes.push(`已存在未覆盖（要覆盖加 --force）：${skipped.join(', ')}`)
   }
-  notes.push(`样式注入：在插件入口把各组件的 styles 拼进已有的 <style> 注入器（消费端可自建一个样式聚合模块统一管理，模式见 README）。`)
+  // 注入顺序是隐性依赖（2026-11-10 实证：dsh-pilot 把 pill 排在 segmented-tabs 之后，
+  // tab 的扁平样式被 Pill 的按钮外观整个盖掉，筛选行「药丸套方框」）。上游 CSS Modules
+  // 靠哈希类名隔离，复制改名后类名共存于同一个 <style>，同特异性规则按注入顺序后者胜，
+  // 所以复用别件样式的组件必须排在被复用件之后。expanded 恰好是后序闭包（deps 先于本体），
+  // 直接作为注入顺序交给消费端。
+  notes.push(`样式注入：把各组件的 styles 拼进已有的 <style> 注入器（聚合模块模式见 README）。注入顺序按依赖序，被复用者先注入：${expanded.join(' → ')}。复制件的类名共存于同一个 <style>（上游 CSS Modules 的哈希隔离不复存在），同特异性规则按注入顺序后者胜：复用别件样式的组件（如 segmented-tabs 复用 pill）必须排在被复用件之后，排反了会被底件外观覆盖（实证：dsh-pilot 筛选行药丸化，2026-11-10）；多次 add 时按同规则把新组件插进已有聚合模块。`)
   if (rawStyleModules.length > 0) {
     notes.push(`原样注入的样式模块（第三方契约类名，不加前缀）：${rawStyleModules.join(', ')} —— 它们没有组件引用，要自己 import { styles } 一起拼进注入器，漏了会丢样式（公式不排版 / 代码高亮没颜色）。`)
   }

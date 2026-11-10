@@ -1,7 +1,7 @@
 ---
 name: dsh-ui-cell
 description: DSH 插件接入 dsh-ui-cell 组件的操作手册（shadcn 式复制分发：add 复制源码进插件、类名 duc- 前缀、样式转 TS 运行时注入、npm 依赖交接）。触发场景：给 DSH 插件新增或修改 client 面板、控件、内容块；被要求使用 dsh-ui-cell 组件；执行 add 后做接线（样式注入、依赖安装、raw 样式拼接）；add 产物编译报错的排查；组件升级后重新复制；原子件（atom）与内容块（content）的选型。当任务提到 DSH 插件 UI、panel-css、duc- 类名或前缀冲突时也应触发。
-version: 1.0.0
+version: 1.1.0
 author: Jianan
 ---
 
@@ -53,6 +53,11 @@ npx dsh-ui-cell add button input --to <插件根目录>
   重复制会被覆盖，自担）；规范改法是回 dsh-ui-cell 仓的 `src/*.css` 改完重新 add
 - **keyframes 同规则改名**：动画名跟类名一样带前缀与组件名段，定义与引用已同步处理，
   不要在插件里再注册同名动画
+- **注入顺序按依赖序（被复用者先注入）**：复制件的类名共存于同一个 `<style>`，
+  同特异性规则按注入顺序后者胜。复用别件样式的组件（segmented-tabs 复用 pill、
+  terminal-block 复用 pill / state-dot / command-text）必须排在被复用件之后，
+  排反了会被底件外观整个盖掉（实证：dsh-pilot 筛选行药丸化，2026-11-10）。
+  add 的 note 给出本次闭包的顺序，照抄即可；多次 add 按同规则插进已有聚合模块
 
 ## ④ 高频坑（每条都有实证）
 
@@ -61,6 +66,7 @@ npx dsh-ui-cell add button input --to <插件根目录>
 | tsc 报 Cannot find module 'clsx' | baseline 三件套没装 | 安装 react / react-dom / clsx |
 | 公式塌成一坨 / 代码高亮没颜色，且零报错 | raw 样式（katex-css / shiki-css）没拼进注入器 | 按 note 点名补 import 与拼接 |
 | 复制后组件没样式 | styles 没拼进 `<style>`，或 tsx 里手写了最终类名绕过表 | 全部走 `css.xxx` 取类名 + styles 注入 |
+| 控件外观互相覆盖（如 segmented-tabs 的 tab 变成药丸按钮、指示器四角外露） | styles 拼接顺序违反依赖序：被复用件排在了复用件之后，复用件的覆盖规则全部失效 | 按依赖序重排聚合模块（被复用者先注入）；add 的 note 有本次闭包的顺序 |
 | 重新 add 后新旧类名对不上 | 上次用旧默认 `duk-`，本次默认 `duc-` | add 加 `--prefix duk-` 保持同一命名空间，或择机整体迁移 |
 | --force 之后本地改动消失 | 覆盖是设计行为 | add 前先 diff / 备份本地修改 |
 

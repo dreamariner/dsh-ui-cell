@@ -81,7 +81,7 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duc-
 复制后插件侧要做的两件事：
 
 1. 组件文件进 `src/client/ui/`，`import { Button } from '../ui/button.tsx'`
-2. 样式注入：每个组件生成 `<name>-css.ts`，导出 `styles`（样式文本）与 `css`（类名表）；把用到的 `styles` 拼进插件已有的 `<style>` 注入器
+2. 样式注入：每个组件生成 `<name>-css.ts`，导出 `styles`（样式文本）与 `css`（类名表）；把用到的 `styles` **按依赖序**拼进插件已有的 `<style>` 注入器（被复用者先注入，add 的 note 给出本次闭包的顺序）。类名共存于同一个 `<style>`，同特异性规则按注入顺序后者胜：复用别件样式的组件（segmented-tabs 复用 pill 等）必须排在被复用件之后，排反了会被底件外观覆盖（2026-11-10 实证）
 
 `css` 表以**原类名为键、最终类名为值**（`'primary': 'duc-button-primary'`；与组件同名的根类免组件段，`'button': 'duc-button'`），所以官方组件里 `css[variant]` 这类动态索引访问不用改写也能正确工作。值带组件名段的原因见红线 2。
 

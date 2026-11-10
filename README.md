@@ -41,7 +41,7 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force]
 复制后插件侧做两件事：
 
 1. 组件文件进 `src/client/ui/`，`import { Button } from '../ui/button.tsx'`
-2. 样式注入：每个组件生成 `<name>-css.ts`，导出 `styles`（样式文本）与 `css`（类名表）；把用到的 `styles` 拼进插件已有的 `<style>` 注入器
+2. 样式注入：每个组件生成 `<name>-css.ts`，导出 `styles`（样式文本）与 `css`（类名表）；把用到的 `styles` **按依赖序**拼进插件已有的 `<style>` 注入器（被复用者先注入，add 的 note 给出本次闭包的顺序）。类名共存于同一个 `<style>`，同特异性规则按注入顺序后者胜：复用别件样式的组件（segmented-tabs 复用 pill 等）必须排在被复用件之后，排反了会被底件外观覆盖（2026-11-10 实证）
 
 `css` 表以**原类名为键、最终类名为值**（`'primary': 'duc-button-primary'`；与组件同名的根类免组件段，`'button': 'duc-button'`），所以官方组件里 `css[variant]` 这类动态索引访问不用改写也能正确工作。值里带组件名段的原因：消费端把全部组件样式拼进**同一个 `<style>`**，官方 CSS Modules 的 per-file 哈希隔离在这里不存在，只加插件前缀时 input 与 select 的 `.wrap` 会互覆（复审实证过）。`@keyframes` 名是文档级命名空间，同规则改名。
 

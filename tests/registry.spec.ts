@@ -506,6 +506,27 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
     }
   })
 
+  // 样式注入顺序（2026-11-10 起，dsh-pilot 筛选行药丸化实证）：
+  // 复制件的类名共存于同一个 <style>，同特异性规则按注入顺序后者胜。
+  // 复用别件样式的组件（segmented-tabs 复用 pill）排到被复用件之前，
+  // 其覆盖规则就全部失效，底件外观整个盖上来。
+  it('闭包解析的顺序本身就是注入顺序（deps 先于本体）', () => {
+    const ordered = resolveDependencies(['segmented-tabs'], registry)
+    expect(ordered.indexOf('pill'), 'pill 必须先于 segmented-tabs').toBeLessThan(ordered.indexOf('segmented-tabs'))
+  })
+
+  it('add 的 note 给出本次闭包的注入顺序（消费端照抄即可，不再靠猜）', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'uicell-order-'))
+    try {
+      const result = addComponents(['segmented-tabs'], { to: dir })
+      const note = result.notes.find(n => n.includes('pill → segmented-tabs'))
+      expect(note, 'note 里必须有按依赖序的注入顺序段').toBeDefined()
+      expect(note, 'note 必须写明顺序为何重要（同特异性共存类，后者胜）').toContain('同特异性')
+    } finally {
+      rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
   /**
    * 原样注入通道（rawStyles）的两条纪律（2026-11-06，issue 005 收尾）：
    *
