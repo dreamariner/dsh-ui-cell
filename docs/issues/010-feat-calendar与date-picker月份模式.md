@@ -23,6 +23,9 @@ kit；kit 里 date-picker 只有日粒度，registry 94 原子里没有月份选
 
 - `date-picker.tsx` 的 `fromIso` 正则写成 `/^(d{4})-(d{2})-(d{2})$/`（`\d` 丢了反斜杠），
   实际只能匹配字面 `dddd-dd-dd`，**受控值的选中态永远解析不出来**（选中日在月历上不高亮）；
+- 导航「下一个月 / 下一年」的箭头图标漏了旋转：两个导航钮都用向下雪佛龙，
+  prev 靠 `rotate(90deg)` 转向左，next 没挂任何旋转类，显示成向下（实机验收发现）。
+  补 `.chevronLeft { rotate(-90deg) }` 挂到 next；
 - 触发按钮被 `disabled={disabled !== undefined}` 误禁：`disabled` 的契约是日期谓词，
   传了谓词（做范围夹取的正常用法）整个触发器就点不开，弹层永远出不来。去掉该门控，
   谓词只作用于月历内的日期/月份格。
@@ -37,7 +40,7 @@ kit；kit 里 date-picker 只有日粒度，registry 94 原子里没有月份选
 2. `DatePicker` 增 `mode?: 'day' | 'month'`：
    - day 值 `YYYY-MM-DD`（不变）；month 值 `YYYY-MM`；
    - month 模式缺省占位「选择月份」（day 模式「选择日期」不变）；
-3. 修复 `fromIso` 正则（`\d`）与触发按钮误禁（disabled 谓词不再作用于触发器）。
+3. 修复 `fromIso` 正则（`\d`）、触发按钮误禁、next 导航箭头向下三处存量问题。
 4. 测试钉住：month 模式的 12 格渲染 / 年月选择回调 / disabled / 年翻页；fromIso 修复回归
    （受控值选中态高亮）。
 

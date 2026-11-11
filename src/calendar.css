@@ -44,6 +44,10 @@
   transform: rotate(90deg);
 }
 
+.chevronLeft {
+  transform: rotate(-90deg);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

@@ -66,7 +66,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
             </button>
             <div className={css.monthLabel}>{year} 年</div>
             <button type="button" aria-label="下一年" className={css.nav} onClick={() => move(1)}>
-              <IconChevronDownOutlineRegular size={14} />
+              <IconChevronDownOutlineRegular size={14} className={css.chevronLeft} />
             </button>
           </div>
           <div className={css.monthGrid} role="grid">
@@ -113,7 +113,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
           </button>
           <div className={css.monthLabel}>{year} 年 {monthIndex + 1} 月</div>
           <button type="button" aria-label="下个月" className={css.nav} onClick={() => move(1)}>
-            <IconChevronDownOutlineRegular size={14} />
+            <IconChevronDownOutlineRegular size={14} className={css.chevronLeft} />
           </button>
         </div>
         <div className={css.grid} role="grid">
