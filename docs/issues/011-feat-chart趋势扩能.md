@@ -2,7 +2,7 @@
 id: 011
 type: feat
 title: chart 趋势扩能：TrendChart（多序列分组柱 + 柱线组合 + 当前项高亮）
-status: doing
+status: done
 priority: P1
 labels: [chart, 组件行为]
 created: 2026-11-12
@@ -57,11 +57,11 @@ related: [010]
 
 ## 验收标准
 
-- [ ] 既有 BarChart / LineChart / Sparkline 行为不变
-- [ ] TrendChart：分组柱逐类目 N 根、折线点位落在槽中心、高亮项（柱 / 刻度 / 打点）正确
-- [ ] 图例随多序列 / 折线出现且可关；tone 换色生效且全部 token 在官方清单内
-- [ ] 空 labels / 空序列不炸
-- [ ] `pnpm typecheck` 0 错；`pnpm test` 全绿；`pnpm build` 通过；registry 护栏全绿
+- [x] 既有 BarChart / LineChart / Sparkline 行为不变
+- [x] TrendChart：分组柱逐类目 N 根、折线点位落在槽中心、高亮项（柱 / 刻度 / 打点）正确
+- [x] 图例随多序列 / 折线出现且可关；tone 换色生效且全部 token 在官方清单内
+- [x] 空 labels / 空序列不炸
+- [x] `pnpm typecheck` 0 错；`pnpm test` 全绿；`pnpm build` 通过；registry 护栏全绿
 
 ## 依赖
 
@@ -71,3 +71,6 @@ related: [010]
 ## 进度日志
 
 - 2026-11-12 01:30  lin  创建 issue（消费端 006 仪表盘趋势图前置）
+- 2026-11-12 08:40  lin  全量实施（351bba6）：TrendChart + tone 体系 + 测试 10 例；0.5.0；
+  闸门全绿（typecheck 0 错 / 74 例 / build / registry 护栏）。消费端已 add 并接入
+  仪表盘趋势图（dsh-ledger 006）。关闭 issue。

@@ -2,11 +2,11 @@
 id: 010
 type: feat
 title: calendar / date-picker 月份模式（mode='month'：年格 + YYYY-MM 值）+ fromIso 正则修复
-status: doing
+status: done
 priority: P1
 labels: [calendar, date-picker, 组件行为, 护栏]
 created: 2026-11-11
-updated: 2026-11-11
+updated: 2026-11-12
 assignee: lin
 related: [002, 005]
 ---
@@ -63,8 +63,14 @@ kit；kit 里 date-picker 只有日粒度，registry 94 原子里没有月份选
 
 ## 验收标准
 
-- [ ] day 模式行为不变（现有消费方零感知）
-- [ ] month 模式：12 格、点选回调 `YYYY-MM`（月 1 日 Date）、disabled 生效、年翻页正确（跨年）
-- [ ] 受控值（day / month）都能正确高亮选中（fromIso 修复回归）
-- [ ] 传 disabled 谓词时触发器仍可打开（误禁修复回归）
-- [ ] `pnpm typecheck` 0 错；`pnpm test` 全绿；`pnpm build` 通过
+- [x] day 模式行为不变（现有消费方零感知）
+- [x] month 模式：12 格、点选回调 `YYYY-MM`（月 1 日 Date）、disabled 生效、年翻页正确（跨年）
+- [x] 受控值（day / month）都能正确高亮选中（fromIso 修复回归）
+- [x] 传 disabled 谓词时触发器仍可打开（误禁修复回归）
+- [x] `pnpm typecheck` 0 错；`pnpm test` 全绿；`pnpm build` 通过
+
+## 进度日志
+
+- 2026-11-11  lin  全量实施（28d72ca）：月份模式 + fromIso 正则修复 + 触发器误禁修复；0.4.0
+- 2026-11-12  lin  补 next 导航箭头旋转修复（719a82a，实机验收发现显示成向下）；消费端
+  （dsh-ledger）实机复验通过（中文月格 / 界外置灰 / 选择即切账期报告），关闭 issue
