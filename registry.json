@@ -930,7 +930,7 @@
       "name": "calendar",
       "type": "registry:ui",
       "status": "ready",
-      "description": "月历网格：受控月份 + 今日/选中态 + 禁用回调（本仓自有，对齐 shadcn calendar）",
+      "description": "月历 / 年格：day 日历与 month 十二月模式，今日/选中态 + 禁用回调（本仓自有，对齐 shadcn calendar）",
       "files": [
         "calendar.tsx",
         "calendar.css"
@@ -944,7 +944,7 @@
       "name": "date-picker",
       "type": "registry:ui",
       "status": "ready",
-      "description": "日期选择：输入框 + Popover 月历（本仓自有，对齐 shadcn date-picker）",
+      "description": "日期 / 月份选择：输入框 + Popover（day 值 YYYY-MM-DD，month 值 YYYY-MM；本仓自有，对齐 shadcn date-picker）",
       "files": [
         "date-picker.tsx",
         "date-picker.css"

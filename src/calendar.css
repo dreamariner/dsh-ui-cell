@@ -92,3 +92,44 @@
   opacity: 0.35;
   cursor: default;
 }
+
+/* month 模式：十二月年格（3 列 × 4 行），状态色与 day 格共用同一组 token */
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.monthCell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: var(--dsw-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-primary);
+}
+
+.monthCell:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.monthCell[data-today] {
+  color: var(--dsw-alias-brand-primary);
+  font-weight: 500;
+}
+
+.monthCell[data-selected] {
+  background: var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-label-primary-foreground);
+  font-weight: 500;
+}
+
+.monthCell:disabled {
+  opacity: 0.35;
+  cursor: default;
+}

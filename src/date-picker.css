@@ -17,11 +17,6 @@
   background: var(--dsw-alias-interactive-bg-hover);
 }
 
-.trigger:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
 .value {
   flex: 1 1 0;
   min-width: 0;
