@@ -121,9 +121,6 @@ export { HoverCard } from './hover-card.tsx'
 // ── hover-card/hover-card-group.tsx ──
 export { HoverCardGroupContext, HoverCardGroup } from './hover-card-group.tsx'
 
-// ── hover-card/overlay-top-margin.ts ──
-export { overlayTopMargin } from './overlay-top-margin.ts'
-
 // ── image-lightbox/image-lightbox.tsx ──
 export { ImageLightbox } from './image-lightbox.tsx'
 export type { ImageLightboxLabels } from './image-lightbox.tsx'
@@ -159,6 +156,9 @@ export { modalSelector, closeTopModal, isBehindModal, useModalLayer } from './us
 // ── pointer-grace/pointer-grace.ts ──
 export { POINTER_GRACE_MS, usePointerGrace } from './pointer-grace.ts'
 export type { PointerGrace } from './pointer-grace.ts'
+
+// ── overlay-top-margin/overlay-top-margin.ts ──
+export { overlayTopMargin } from './overlay-top-margin.ts'
 
 // ── separator/separator.tsx ──
 export { Separator } from './separator.tsx'
@@ -308,8 +308,8 @@ export { Sidebar } from './sidebar.tsx'
 export type { SidebarProps } from './sidebar.tsx'
 
 // ── chart/chart.tsx ──
-export { BarChart, LineChart, Sparkline } from './chart.tsx'
-export type { ChartDatum, BarChartProps, LineChartProps, SparklineProps } from './chart.tsx'
+export { BarChart, LineChart, Sparkline, TrendChart } from './chart.tsx'
+export type { ChartDatum, BarChartProps, LineChartProps, SparklineProps, ChartTone, ChartSeries, TrendChartProps } from './chart.tsx'
 
 // ── form/form.tsx ──
 export { Form } from './form.tsx'

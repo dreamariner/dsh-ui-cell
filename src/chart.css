@@ -46,8 +46,140 @@
 
 .line {
   fill: none;
-  stroke: var(--dsw-alias-brand-primary);
+  stroke: var(--chart-tone, var(--dsw-alias-brand-primary));
   stroke-width: 1.5;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
+
+/* ── TrendChart（011）：分组柱 + 叠加折线 + 当前项高亮 ─────────────────── */
+
+.trendChart {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+/* 绘图区：柱行铺满，折线 SVG 覆盖其上 */
+.plot {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+}
+
+.barsRow {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.slot {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.barStack {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.trendBar {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 16px;
+  border-radius: var(--dsw-radius-sm) var(--dsw-radius-sm) 0 0;
+  background: var(--chart-tone, var(--dsw-alias-brand-primary));
+  opacity: 0.82;
+  transition: opacity 120ms ease;
+}
+
+.slot:hover .trendBar,
+.slot[data-highlight] .trendBar {
+  opacity: 1;
+}
+
+.lineLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* 高亮折线点：HTML dot（百分比定位，无 SVG 拉伸变形） */
+.lineDot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--chart-tone, var(--dsw-alias-brand-primary));
+  box-shadow: 0 0 0 2px var(--dsw-alias-bg-layer-2);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* 刻度行：与柱行同 gap 同等分的槽，中心对齐 */
+.labelRow {
+  display: flex;
+  gap: 6px;
+}
+
+.slotLabel {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font: var(--dsw-font-xs-13);
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.slotLabel[data-highlight] {
+  color: var(--dsw-alias-label-primary);
+  font-weight: 500;
+}
+
+.legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: var(--dsw-font-xs-13);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--chart-tone, var(--dsw-alias-brand-primary));
+}
+
+.legendLine {
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--chart-tone, var(--dsw-alias-brand-primary));
+}
+
+/* 序列色调：组件局部变量，柱 / 折线 / 图例统一取用（token 全在官方清单内） */
+.toneBrand { --chart-tone: var(--dsw-alias-brand-primary); }
+.toneSuccess { --chart-tone: var(--dsw-alias-state-success-primary); }
+.toneError { --chart-tone: var(--dsw-alias-state-error-primary); }
+.toneWarn { --chart-tone: var(--dsw-alias-state-warn-primary); }
+.toneNeutral { --chart-tone: var(--dsw-alias-label-tertiary); }

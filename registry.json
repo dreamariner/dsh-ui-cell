@@ -996,7 +996,7 @@
       "name": "chart",
       "type": "registry:ui",
       "status": "ready",
-      "description": "极简图表：柱/线/迷你图（零依赖；shadcn chart 的 recharts 不引入）（本仓自有，对齐 shadcn chart）",
+      "description": "极简图表：柱/线/迷你图 + TrendChart 趋势组合（多序列分组柱 + 柱线叠加 + 当前项高亮）（零依赖；shadcn chart 的 recharts 不引入；本仓自有，对齐 shadcn chart）",
       "files": [
         "chart.tsx",
         "chart.css"
