@@ -19,7 +19,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const SRC = join(ROOT, 'src')
 const OFFICIAL = process.env.DSH_CHECKOUT
   ? join(process.env.DSH_CHECKOUT, 'packages', 'client', 'ui-primitives', 'src')
-  : '/Users/nan/Documents/zero/专题系列/DeepSeekHarness研究/deepseek-harness/packages/client/ui-primitives/src'
+  : '/Users/nan/Documents/zero/专题系列/林老师的DSH小作坊/DeepSeekHarness研究/deepseek-harness/packages/client/ui-primitives/src'
 
 if (!existsSync(OFFICIAL)) {
   console.error(`[import-markdown] 找不到官方源目录：${OFFICIAL}`)
