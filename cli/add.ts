@@ -433,12 +433,12 @@ export function addComponents(
   if (skipped.length > 0 && !options.force) {
     notes.push(`已存在未覆盖（要覆盖加 --force）：${skipped.join(', ')}`)
   }
-  // 注入顺序是隐性依赖（2026-11-10 实证：dsh-pilot 把 pill 排在 segmented-tabs 之后，
+  // 注入顺序是隐性依赖（2026-11-10 实证：某消费插件把 pill 排在 segmented-tabs 之后，
   // tab 的扁平样式被 Pill 的按钮外观整个盖掉，筛选行「药丸套方框」）。上游 CSS Modules
   // 靠哈希类名隔离，复制改名后类名共存于同一个 <style>，同特异性规则按注入顺序后者胜，
   // 所以复用别件样式的组件必须排在被复用件之后。expanded 恰好是后序闭包（deps 先于本体），
   // 直接作为注入顺序交给消费端。
-  notes.push(`样式注入：把各组件的 styles 拼进已有的 <style> 注入器（聚合模块模式见 README）。注入顺序按依赖序，被复用者先注入：${expanded.join(' → ')}。复制件的类名共存于同一个 <style>（上游 CSS Modules 的哈希隔离不复存在），同特异性规则按注入顺序后者胜：复用别件样式的组件（如 segmented-tabs 复用 pill）必须排在被复用件之后，排反了会被底件外观覆盖（实证：dsh-pilot 筛选行药丸化，2026-11-10）；多次 add 时按同规则把新组件插进已有聚合模块。`)
+  notes.push(`样式注入：把各组件的 styles 拼进已有的 <style> 注入器（聚合模块模式见 README）。注入顺序按依赖序，被复用者先注入：${expanded.join(' → ')}。复制件的类名共存于同一个 <style>（上游 CSS Modules 的哈希隔离不复存在），同特异性规则按注入顺序后者胜：复用别件样式的组件（如 segmented-tabs 复用 pill）必须排在被复用件之后，排反了会被底件外观覆盖（实证：某消费插件筛选行药丸化，2026-11-10）；多次 add 时按同规则把新组件插进已有聚合模块。`)
   if (rawStyleModules.length > 0) {
     notes.push(`原样注入的样式模块（第三方契约类名，不加前缀）：${rawStyleModules.join(', ')} —— 它们没有组件引用，要自己 import { styles } 一起拼进注入器，漏了会丢样式（公式不排版 / 代码高亮没颜色）。`)
   }
@@ -474,7 +474,7 @@ export function runCli(argv: string[]): number {
     if (arg === '--with-deps') { withDeps = true; continue }
     if (arg === '--help' || arg === '-h') {
       console.log('用法：dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force] [--with-deps]')
-      console.log('示例：dsh-ui-cell add button input --to packages/plugin-memory（组件依赖自动带上）')
+      console.log('示例：dsh-ui-cell add button input --to packages/my-plugin（组件依赖自动带上）')
       console.log('  --with-deps  把缺失的 npm 依赖直接写进消费端 package.json 的 dependencies（默认只提示）')
       return 0
     }

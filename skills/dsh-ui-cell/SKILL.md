@@ -56,7 +56,7 @@ npx dsh-ui-cell add button input --to <插件根目录>
 - **注入顺序按依赖序（被复用者先注入）**：复制件的类名共存于同一个 `<style>`，
   同特异性规则按注入顺序后者胜。复用别件样式的组件（segmented-tabs 复用 pill、
   terminal-block 复用 pill / state-dot / command-text）必须排在被复用件之后，
-  排反了会被底件外观整个盖掉（实证：dsh-pilot 筛选行药丸化，2026-11-10）。
+  排反了会被底件外观整个盖掉（实证：某消费插件筛选行药丸化，2026-11-10）。
   add 的 note 给出本次闭包的顺序，照抄即可；多次 add 按同规则插进已有聚合模块
 
 ## ④ 高频坑（每条都有实证）
