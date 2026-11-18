@@ -36,12 +36,12 @@ related: [003, 006]
 
 - `dsh-ui-kit` 作为**曾用名句式**（README / AGENTS.md 的改名记录与生态划分说明：
   与 neil-ji/dsh-ui-kit 运行时库无关，同名曾迫使本次改名）
-- docs/issues/001-005 与 Luna 日记（2026-11-04）：历史记录不追溯改写
+- docs/issues/001-005 与个人笔记（2026-11-04）：历史记录不追溯改写
 
 ## 决策
 
 **默认前缀 `duk-` → `duc-`（用户拍板，彻底清除旧名痕迹）**。代价已知：四个消费仓
-（dsh-ledger / dsh-pilot / media-platforms-center / luna-dsh plugin-memory）共 59 个
+（dsh-ledger / dsh-pilot / media-platforms-center / 内部插件仓）共 59 个
 已复制文件烤着 `duk-` 类名，后续重新 add 会产出 `duc-` 类名，同仓内两套前缀并存，
 需要各消费仓择机迁移（见遗留）。
 
@@ -73,4 +73,4 @@ related: [003, 006]
   迁移时连各自的 `*-css.ts` 类名表与手写引用一起改，属消费仓自己的 issue
 - **index.html 是手工同步的生成物**：下次在有 DSH_CHECKOUT 的环境跑 `pnpm docs:build`
   会从已改写的 md / registry 重新生成，届时可 diff 校验本次手改无遗漏
-- 父仓 zero 的历史提交信息（如「同步 kit v0.3.0」）与 Luna 日记属历史记录，不改
+- 内部仓库的历史提交信息（如「同步 kit v0.3.0」）与个人笔记属历史记录，不改

@@ -30,7 +30,7 @@ seed-forge/dsh-plugin-ui-components 占了 dsh+ui+components 词根）、`dsh-ui
 
 ## 落地
 
-- GitHub 仓改名（林老师操作），旧 URL 自动重定向
+- GitHub 仓改名（作者操作），旧 URL 自动重定向
 - `package.json`：name `@dreamariner/dsh-ui-cell`、bin `dsh-ui-cell`、version 0.2.1
 - `registry.json`：name 与 homepage
 - `cli/add.ts`：CLI 输出前缀与生成产物的 header 印章（消费端据此重新 add）

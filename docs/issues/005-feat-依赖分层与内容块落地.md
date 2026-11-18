@@ -8,7 +8,7 @@ labels: [dsh-ui-cell, markdown, 依赖分层, shiki]
 created: 2026-11-06
 updated: 2026-11-06
 assignee: lin
-related: [004, luna-dsh#033, dsh-ledger#002, dsh-pilot#002, media-platforms-center#001]
+related: [004, dsh-ledger#002, dsh-pilot#002, media-platforms-center#001]
 ---
 
 # 005 · 依赖分层与 markdown 家族落地
