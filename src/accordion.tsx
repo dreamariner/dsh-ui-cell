@@ -1,5 +1,7 @@
 // accordion：本仓自有组件（功能对齐 shadcn accordion，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；token 纪律与类名约定同本仓全体。
+// 内容区常驻 DOM（grid 0fr↔1fr 过渡），收起态加 inert（焦点不进入视觉隐藏区，
+// React 18 下 inert 以空串转发；issue 020，与 Collapsible 同款）。
 import { forwardRef, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './accordion.css'
@@ -31,7 +33,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
                 </svg>
                 {item.header}
               </button>
-              <div className={css.content}>
+              <div className={css.content} {...(open ? {} : { inert: '' })}>
                 <div className={css.contentInner}>{item.content}</div>
               </div>
             </div>

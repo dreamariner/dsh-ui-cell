@@ -147,6 +147,9 @@ export type { DocumentZoomLabels } from './document-zoom.ts'
 // ── focus/focus.ts ──
 export { isMobileDevice, focusWithoutRing } from './focus.ts'
 
+// ── use-prefers-reduced-motion/use-prefers-reduced-motion.ts ──
+export { usePrefersReducedMotion } from './use-prefers-reduced-motion.ts'
+
 // ── keyboard-composition/keyboard-composition.ts ──
 export { observeComposition } from './keyboard-composition.ts'
 
@@ -304,8 +307,12 @@ export { Resizable } from './resizable.tsx'
 export type { ResizableProps } from './resizable.tsx'
 
 // ── sidebar/sidebar.tsx ──
-export { Sidebar } from './sidebar.tsx'
+export { Sidebar, useSidebarCollapsed } from './sidebar.tsx'
 export type { SidebarProps } from './sidebar.tsx'
+
+// ── sidebar-nav/sidebar-nav.tsx ──
+export { SidebarNav } from './sidebar-nav.tsx'
+export type { SidebarNavItem, SidebarNavGroup, SidebarNavProps } from './sidebar-nav.tsx'
 
 // ── chart/chart.tsx ──
 export { BarChart, LineChart, Sparkline, TrendChart } from './chart.tsx'

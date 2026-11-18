@@ -53,7 +53,9 @@ export const InputOtp = forwardRef<HTMLInputElement, InputOtpProps>(
           value={value}
           className={css.input}
           onChange={(event) => {
-            const digits = event.target.value.replace(/D/g, '').slice(0, length)
+            // 非数字一律剥掉（\D = 非数字字符类；此前误写成 /D/ 只剥字面字母 D，
+            // 字母与符号都能混进验证码 —— 实测 a1b2 原样进格，issue 022 顺带修）
+            const digits = event.target.value.replace(/\D/g, '').slice(0, length)
             emit(digits)
           }}
           onKeyDown={(event) => {

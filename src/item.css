@@ -1,9 +1,9 @@
 .item {
   display: flex;
-  gap: 12px;
+  gap: var(--dsh-space-12);
   box-sizing: border-box;
   width: 100%;
-  padding: 10px 12px;
+  padding: var(--dsh-space-8) var(--dsh-space-12);
   border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-1);
 }
@@ -19,7 +19,7 @@
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--dsh-space-2);
   min-width: 0;
 }
 
@@ -39,5 +39,5 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 6px;
+  gap: var(--dsh-space-6);
 }

@@ -15,9 +15,26 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* 圆形裁剪写在图片自己身上（与上游 AccountAvatar 一致）：靠父级 overflow 裁替换元素
+     在个别引擎里会漏，圆角直接落在 img 上最稳（issue 018）。 */
+  border-radius: 50%;
 }
 
 .fallback {
-  padding: 0 2px;
+  /* 回退是一个「有边界的圆形色块 + 首字母」，不是一个浮在页面上的裸文字。
+     底色不能只靠 bg-layer-3：亮色主题里它就是纯白（= 页面底色），圆形会整个消失；
+     所以再补一圈 border-l3 的描边，两套主题里都看得出这是个头像。 */
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--dsw-alias-border-l3);
+  background: var(--dsw-alias-bg-layer-3);
+  /* 不留内边距：圆形头像的可用宽度是内切正方形，内边距会把文字推出可显示区。
+     字号已按字数缩放（见 avatar.tsx 的 fallbackText）。 */
+  padding: 0;
   line-height: 1;
 }

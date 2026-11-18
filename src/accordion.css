@@ -11,10 +11,10 @@
 
 .header {
   display: flex;
-  gap: 8px;
+  gap: var(--dsh-space-8);
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 12px;
+  padding: var(--dsh-space-8) var(--dsh-space-12);
   border: none;
   background: transparent;
   cursor: pointer;
@@ -34,7 +34,7 @@
   width: 14px;
   height: 14px;
   color: var(--dsw-alias-label-tertiary);
-  transition: transform 150ms ease;
+  transition: transform var(--ds-transition-duration) var(--ds-ease-in-out);
 }
 
 .item[data-open] .chevron {
@@ -44,7 +44,7 @@
 .content {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 180ms ease;
+  transition: grid-template-rows var(--ds-transition-duration) var(--ds-ease-in-out);
 }
 
 .item[data-open] .content {
@@ -53,15 +53,18 @@
 
 .contentInner {
   overflow: hidden;
-  padding: 0 12px 0 34px;
+  /* 左内边距是组合值：12（触发器左内边距）+ 14（chevron）+ 8（头部 gap），
+     保证内容与触发器文字对齐，是关系不是节奏，故不归一到刻度（issue 012 的组合值例外）。 */
+  padding: 0 var(--dsh-space-12) 0 34px;
   font: var(--dsw-font-s-14);
   color: var(--dsw-alias-label-secondary);
 }
 
 .item[data-open] .contentInner {
-  padding-bottom: 12px;
+  padding-bottom: var(--dsh-space-12);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .content { transition: none; }
+  .content,
+  .chevron { transition: none; }
 }

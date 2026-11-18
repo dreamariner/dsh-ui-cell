@@ -33,6 +33,14 @@ const HOST_CONTEXT = new Set(tokenInventory.hostContextVariables)
 const registry = loadRegistry()
 const src = srcDir()
 
+/**
+ * 基础层（foundation.css）定义的实现层变量（issue 012）。
+ * 不在官方 token 清单里，但由本仓自己定义，故算「已知 token」。
+ */
+const FOUNDATION_VARS = new Set(
+  [...readFileSync(join(src, 'foundation.css'), 'utf8').matchAll(/(--dsh-space-\d+)\s*:/g)].map(m => m[1]!),
+)
+
 /** 与转换器同规则的最终类名（键为原类名时的值）：根类用组件名，其余加组件名段。 */
 const finalName = (componentName: string, name: string, prefix: string): string =>
   name === componentName ? `${prefix}${name}` : `${prefix}${componentName}-${name}`
@@ -75,13 +83,15 @@ describe('registry 一致性', () => {
 
 describe('token 纪律（DSH 官方规范）', () => {
   // 官方保真复制的组件原样使用了 static / specific / 字面色（tooltip/toast 用 static 调色板、
-  // hover-card 字面深底、zoom-controls light-dark 阴影等）。纪律的本意是拦「手写样式」别用
+  // zoom-controls light-dark 阴影等）。纪律的本意是拦「手写样式」别用
   // 不稳定面；对逐字节保真的官方复制，保真优先，升级重 diff 时跟随官方。例外逐文件登记，
   // 未登记的文件出现这些形态仍然要红。
+  // hover-card.css 曾带字面深底（#2C2C2E / #FFFFFF，旧版上游的写法），2026-11-19 对齐
+  // 现行上游（hovercard alias token 族）后恢复逐字节一致，退出例外表 —— 它不再被允许字面色。
   const OFFICIAL_EXCEPTIONS = new Map<string, RegExp[]>([
     ['tooltip.css', [/--dsw-static-/]],
     ['toast.css', [/--dsw-static-/]],
-    ['hover-card.css', [/--dsw-specific-/, /#[0-9a-fA-F]{3,8}\b/]],
+    ['hover-card.css', [/--dsw-specific-/]],
     ['json-tree.css', [/#[0-9a-fA-F]{3,8}\b/, /\brgba?\(/]],
     ['image-lightbox.css', [/--dsw-specific-/]],
     ['user-message-bubble.css', [/--dsw-specific-/]],
@@ -135,7 +145,7 @@ describe('token 存在性（拼错 = 样式静默失效）', () => {
     // CSS 规范：var() 解析失败 → 整条声明被静默丢弃 → 样式不生效且**无任何报错**。
     // 格式类护栏（禁 static/specific/字面色）看不出「token 名拼错」或「官方已删除」，
     // 故这里按 pinned 的官方清单做存在性校验。
-    const known = new Set([...KNOWN_TOKENS, ...HOST_CONTEXT])
+    const known = new Set([...KNOWN_TOKENS, ...HOST_CONTEXT, ...FOUNDATION_VARS])
     const offenders: string[] = []
     for (const item of registry.items) {
       if (item.status !== 'ready') continue
@@ -663,5 +673,290 @@ describe('命名一致性（003 改名 dsh-ui-cell，007 起护栏固化）', ()
       .filter(p => readFileSync(p, 'utf8').includes(needle))
       .map(p => p.replace(`${REPO}/`, ''))
     expect(bad, `旧前缀 duk- 残留：\n${bad.join('\n')}`).toEqual([])
+  })
+})
+
+/**
+ * 公开面不泄露本机与个人私有信息（2026-11-18 起）。
+ *
+ * 本仓是公开仓（GitHub），文档站会发到 GitHub Pages，npm 包会发到 registry。
+ * 示例里的一个本机绝对路径，就等于把使用者的用户名与目录结构贴到公开网上；
+ * 个人私有项目与人格相关的名字同理（见内部规范：公开面一律用通用表述）。
+ *
+ * 这条护栏把「活面」（源码 / 脚本 / 文档 / 技能手册 / 生成物）扫一遍：
+ *   · 本机用户目录：/Users/<名>/ 、/home/<名>/ 、C:\Users\<名>\
+ *   · 私有名字：Luna 人格、luna-dsh 及其插件、人格相关称谓
+ * 命中即红。历史 git blob 不在扫描面里（改写历史不是本仓的职责）。
+ */
+describe('公开面不泄露本机与个人私有信息', () => {
+  const REPO = join(import.meta.dirname, '..')
+
+  /** 活面文件（含 docs/issues 与 skills；生成物 index.html 也算，它会被发到 GitHub Pages）。 */
+  function publicFiles(): string[] {
+    const out: string[] = []
+    const walk = (dir: string): void => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        const p = join(dir, e.name)
+        if (e.isDirectory()) walk(p)
+        else if (/\.(ts|tsx|css|md|mjs|json|html)$/.test(e.name)) out.push(p)
+      }
+    }
+    for (const d of [
+      src,
+      join(REPO, 'cli'),
+      join(REPO, 'scripts'),
+      join(REPO, 'skills'),
+      join(REPO, 'docs'),
+      join(REPO, 'tokens'),
+    ]) walk(d)
+    for (const f of ['registry.json', 'README.md', 'AGENTS.md', 'package.json']) out.push(join(REPO, f))
+    const self = import.meta.filename
+    return out.filter(p => !p.endsWith(self))
+  }
+
+  it('活面不写本机用户目录的绝对路径', () => {
+    // /Users/<名>/ 、 /home/<名>/ 、 C:\Users\<名>\
+    const pattern = /(?:^|["'`(\s])(?:\/Users\/|\/home\/|[A-Za-z]:\\Users\\)[A-Za-z0-9._-]+[\\/]/g
+    const bad = publicFiles()
+      .map(p => ({ p, hit: readFileSync(p, 'utf8').match(pattern) }))
+      .filter(x => x.hit !== null)
+      .map(x => `${x.p.replace(`${REPO}/`, '')}: ${x.hit?.[0].trim()}`)
+    expect(bad, `写了本机用户目录路径（公开仓会把它贴到网上，改用中性示例路径）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('活面不出现个人私有项目与人格相关的名字（公开面一律用通用表述）', () => {
+    // Luna 人格、其插件仓、以及人格相关称谓（内部规范 A 方案：公开面不得提及）
+    const needles = ['Luna', 'luna-dsh', 'plugin-memory', 'plugin-skills', '林老师']
+    const bad = publicFiles()
+      .map(p => ({ p, text: readFileSync(p, 'utf8') }))
+      .filter(x => needles.some(n => x.text.includes(n)))
+      .map(x => `${x.p.replace(`${REPO}/`, '')}: ${needles.filter(n => x.text.includes(n)).join(', ')}`)
+    expect(bad, `出现了个人私有信息（公开面一律用通用表述）：\n${bad.join('\n')}`).toEqual([])
+  })
+})
+
+/**
+ * 间距与动效规范（issue 012：官方底座上扩展，不另起主题）。
+ *
+ * 官方分工（`docs/web-styling.md` + `.agents/skills/dsh-client-ui-ux/`）：
+ *   · **动效**归 `ui-theme` 持有（--ds-transition-duration{,-fast,-slow} / --ds-ease-in-out），
+ *     官方原话「shared colors, typography, elevation, and motion belong to the theme package」。
+ *     故本仓**不新增任何全局动效变量**，自有件只许用官方那四个 token。
+ *   · **间距数值刻度**官方明确不给（spacing 参考末句「This skill defines no numeric scale」，
+ *     SKILL.md 说「numeric scales stay with their implementation owners」），
+ *     故本仓作为第三方插件组件的实现方在 `foundation.css` 定义 `--dsh-space-*`。
+ *   · 官方 53 件保真复制件一律不动（保真优先，DSH 升级时跟随上游 re-diff）。
+ */
+describe('文档站的代码块不许被 JSX 折行', () => {
+  it('demo 源码里 <pre> 的多行内容必须走 {`...`} 表达式（裸文本的换行会被 JSX 折成空格）', () => {
+    // JSX 的文本子节点会把「首尾空白 + 换行」删掉、内部换行折成一个空格：
+    //   <pre>npm i -D x
+    //   npx y</pre>
+    // 渲染出来是「npm i -D x npx y」一行。代码块被折行，读者复制下来就是坏的命令
+    // （2026-11-18 实测：快速开始那三段全被折成了一行）。
+    // 写法：<pre>{`第一行
+    // 第二行`}</pre>（模板字面量保留换行；里面的 \n 要写成 \\n）。
+    const dir = join(import.meta.dirname, '..', 'docs', 'wiki', 'demos')
+    const bad: string[] = []
+    for (const file of readdirSync(dir)) {
+      if (!file.endsWith('.tsx')) continue
+      const text = readFileSync(join(dir, file), 'utf8')
+      const re = /<pre[^>]*>([^<{]*\n[^<{]*)/g
+      let m: RegExpExecArray | null
+      while ((m = re.exec(text)) !== null) {
+        bad.push(`${file}:${text.slice(0, m.index).split('\n').length}`)
+      }
+    }
+    expect(bad, `<pre> 里的裸文本多行会被 JSX 折成一行（要用 {\`...\`} 模板字面量）：\n${bad.join('\n')}`).toEqual([])
+  })
+})
+
+describe('间距与动效规范（issue 012）', () => {
+  /** 官方三档时长（ui-theme 持有）。 */
+  const OFFICIAL_DURATIONS = new Set([
+    'var(--ds-transition-duration)',
+    'var(--ds-transition-duration-fast)',
+    'var(--ds-transition-duration-slow)',
+  ])
+
+  /**
+   * 官方刻度（4px 底座，2px 半步）。
+   * 改刻度是一次有意的决定：这里与 `foundation.css` 必须一起改（护栏会红）。
+   */
+  const CANONICAL_SPACES: Record<string, string> = {
+    '1': '1px',
+    '2': '2px',
+    '4': '4px',
+    '6': '6px',
+    '8': '8px',
+    '12': '12px',
+    '16': '16px',
+    '20': '20px',
+    '24': '24px',
+    '32': '32px',
+  }
+
+  /**
+   * 组合值例外：缩进 / 让位这类**由图标尺寸与偏移推导出来**的值。
+   * 它们保证内容与触发器文字对齐，是关系不是节奏，故不归一到刻度
+   * （官方 spacing 参考也强调距离由关系决定，不由数值决定）。
+   */
+  const SPACING_COMPOSED = new Map<string, string[]>([
+    ['select.css', ['28px']], // 右内边距 = 8（右偏移）+ 14（chevron）+ 6（间隔）
+    ['collapsible.css', ['28px']], // 内容缩进 = 8（触发器左内边距）+ 14（chevron）+ 6（间隔）
+    ['accordion.css', ['34px']], // 内容缩进 = 12（触发器左内边距）+ 14（chevron）+ 8（头部 gap）
+  ])
+
+  /** 本仓自有件的 CSS（官方保真复制件不在此列）。 */
+  const ownedCss = (): { item: RegistryItem; file: string }[] => {
+    const out: { item: RegistryItem; file: string }[] = []
+    for (const item of registry.items) {
+      if (item.status !== 'ready') continue
+      if (item.upstream) continue // 官方保真复制件：保真优先，跟随上游
+      for (const file of item.files) if (file.endsWith('.css')) out.push({ item, file })
+    }
+    return out
+  }
+
+  it('基础层 foundation.css 的刻度与期望表一致（改刻度是有意的决定，两处一起改）', () => {
+    const text = readFileSync(join(src, 'foundation.css'), 'utf8')
+    const defined: Record<string, string> = {}
+    for (const m of text.matchAll(/--dsh-space-(\d+)\s*:\s*([^;]+);/g)) defined[m[1]!] = m[2]!.trim()
+    expect(defined, 'foundation.css 的间距刻度与期望表不符').toEqual(CANONICAL_SPACES)
+  })
+
+  it('基础层被 add 每次都带上（漏注入 = var(--dsh-space-*) 解析失败 = 静默掉样式）', () => {
+    const base = registry.items.filter(i => i.role === 'base' && i.status === 'ready')
+    expect(base.length, 'registry 里没有基础层条目').toBeGreaterThan(0)
+    for (const item of base) {
+      const closed = resolveDependencies(['button'], registry)
+      expect(closed[0], '基础层必须排在闭包第一位（样式注入顺序：被复用者先注入）').toBe(item.name)
+      const dir = mkdtempSync(join(tmpdir(), 'uicell-base-'))
+      try {
+        addComponents(['button'], { to: dir })
+        const files = new Set(readdirSync(join(dir, 'src', 'client', 'ui')))
+        for (const file of item.files) {
+          const baseName = file.replace(/\.css$/, '')
+          expect(
+            files.has(file.endsWith('.css') ? `${baseName}-css.ts` : file),
+            `单加组件没带上基础层 ${file}`,
+          ).toBe(true)
+        }
+      } finally {
+        rmSync(dir, { recursive: true, force: true })
+      }
+    }
+  })
+
+  it('自有件引用的 --dsh-space-* 都在基础层有定义（拼错 = var() 解析失败 = 静默掉样式）', () => {
+    const bad: string[] = []
+    for (const { file } of ownedCss()) {
+      const css = readFileSync(join(src, file), 'utf8')
+      for (const m of css.matchAll(/var\(--dsh-space-(\d+)/g)) {
+        if (!FOUNDATION_VARS.has(`--dsh-space-${m[1]}`)) bad.push(`${file}: --dsh-space-${m[1]}`)
+      }
+    }
+    expect(bad, `引用了基础层没有的间距档（会静默失效）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('自有件的间距声明不写 px 字面量（组合值与发丝补偿除外）', () => {
+    const bad: string[] = []
+    for (const { file } of ownedCss()) {
+      const allowed = SPACING_COMPOSED.get(file) ?? []
+      const css = readFileSync(join(src, file), 'utf8')
+      css.split('\n').forEach((line, idx) => {
+        const m = line.match(/^\s*(padding|margin|gap|row-gap|column-gap)(-[a-z]+)?\s*:\s*([^;]+);/)
+        if (!m) return
+        for (const v of m[3]!.matchAll(/(-?\d*\.?\d+)px/g)) {
+          const num = Number(v[1]!)
+          if (num === 0) continue // 复位值不是节奏值
+          if (Math.abs(num) <= 0.5) continue // 发丝补偿（-0.5px）
+          if (allowed.includes(`${v[1]}px`)) continue // 组合值例外
+          bad.push(`${file}:${idx + 1}  ${m[0].trim()}`)
+        }
+      })
+    }
+    expect(
+      bad,
+      `间距写了 px 字面量（请用 var(--dsh-space-*)；组合值登记到 SPACING_COMPOSED 并写明构成）：\n${bad.join('\n')}`,
+    ).toEqual([])
+  })
+
+  it('自有件的过渡只许官方三档时长与官方缓动（动效归 ui-theme 持有，本仓不另起全局动效变量）', () => {
+    const bad: string[] = []
+    for (const { file } of ownedCss()) {
+      const css = readFileSync(join(src, file), 'utf8')
+      css.split('\n').forEach((line, idx) => {
+        const m = line.match(/^\s*(transition|animation)(-[a-z]+)?\s*:\s*([^;]+);/)
+        if (!m) return
+        const value = m[3]!
+        const isAnimation = m[1] === 'animation'
+        // 循环节律（呼吸 / 旋转 / 闪烁）不是交互时长，豁免字面时长与匀速 / 离散缓动
+        const looping = isAnimation && /\binfinite\b/.test(value)
+        if (!looping) {
+          for (const d of value.matchAll(/(?<![\w.-])(\d*\.?\d+)(?:ms|s)\b/g)) {
+            bad.push(`${file}:${idx + 1}  字面时长 ${d[0]}`)
+          }
+        }
+        for (const e of value.matchAll(/(?<![\w-])(ease(?:-in|-out|-in-out)?|cubic-bezier|linear|steps)(?![\w-])/g)) {
+          if (looping && (e[1] === 'linear' || e[1] === 'steps')) continue
+          bad.push(`${file}:${idx + 1}  字面缓动 ${e[1]}`)
+        }
+        for (const t of value.matchAll(/var\((--ds-transition-duration[a-z-]*)\)/g)) {
+          if (!OFFICIAL_DURATIONS.has(`var(${t[1]})`)) bad.push(`${file}:${idx + 1}  非官方时长 token ${t[1]}`)
+        }
+      })
+    }
+    expect(
+      bad,
+      `动效没走官方 token（--ds-transition-duration{,-fast,-slow} / --ds-ease-in-out）：\n${bad.join('\n')}`,
+    ).toEqual([])
+  })
+
+  it('带动画的自有件都有 prefers-reduced-motion 降级（缺降级 = 该动效对动效敏感用户是硬伤）', () => {
+    const bad: string[] = []
+    for (const { file } of ownedCss()) {
+      const css = readFileSync(join(src, file), 'utf8')
+      if (!/^\s*(transition|animation)(-[a-z]+)?\s*:/m.test(css)) continue
+      if (!/prefers-reduced-motion/.test(css)) bad.push(file)
+    }
+    expect(bad, `带动画但没有减少动效降级：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('自有件的文字不跟随宿主字号（font: inherit = 控件大小随宿主漂移）', () => {
+    // 2026-11-18 实测（issue 014）：ConfigField 的控件写 `font: inherit`，而宿主
+    // （DSH 应用与文档站）都没显式字号，浏览器默认 16px —— 同一行里 label 是显式
+    // 13px、控件却是 16px，控件比标题大一号，行的层级读不出来。
+    // 自有件必须钉在主题的字体档位上（--dsw-font-*），这样同一个组件在不同宿主里长得一样。
+    // 官方复制件不在此列：内容块（markdown / code / json）跟随宿主文字大小是有意为之。
+    const bad: string[] = []
+    for (const { file } of ownedCss()) {
+      const css = readFileSync(join(src, file), 'utf8')
+      if (/font:\s*inherit/.test(css)) bad.push(file)
+    }
+    expect(bad, `自有件用了 font: inherit（文字会跟随宿主字号）：\n${bad.join('\n')}`).toEqual([])
+  })
+
+  it('本仓的原生 select 一律收掉浏览器自绘箭头（自绘箭头跟字号脱钩，CSS 挪不动）', () => {
+    // 2026-11-18 复审实测（issue 014）：浏览器自绘的下拉箭头**不随字号缩放**，控件归到
+    // 14px 档之后它显得比文字还重（粗黑），跟本仓其它地方的细线 chevron（Select /
+    // Accordion / Collapsible / DisclosureRow）不是一个语言；而且实测 Chromium 的原生
+    // 箭头不随 padding-right 移动（12px 与 28px 两档位置完全一致），CSS 改不动它，
+    // 只能换自定义图标 —— 那就得在源头挡住，别等复审再抓。
+    // 口径：渲染原生 <select> 的组件，其样式里必须有 appearance: none（配 DSH chevron）。
+    const bad: string[] = []
+    for (const item of registry.items) {
+      if (item.status !== 'ready') continue
+      const rendersSelect = item.files
+        .filter(f => f.endsWith('.tsx'))
+        .some(f => /<select[\s>]/.test(readFileSync(join(src, f), 'utf8')))
+      if (!rendersSelect) continue
+      const css = item.files
+        .filter(f => f.endsWith('.css'))
+        .map(f => readFileSync(join(src, f), 'utf8'))
+        .join('\n')
+      if (!/appearance:\s*none/.test(css)) bad.push(item.name)
+    }
+    expect(bad, `原生 select 没收掉浏览器自绘箭头（要改用 DSH chevron）：\n${bad.join('\n')}`).toEqual([])
   })
 })

@@ -12,11 +12,11 @@
 .wrap {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--dsh-space-6);
   box-sizing: border-box;
   width: 100%;
   height: 32px;
-  padding: 0 8px;
+  padding: 0 var(--dsh-space-8);
   border: 0.5px solid var(--dsw-alias-border-l4);
   border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-1);
@@ -52,7 +52,7 @@
   box-sizing: border-box;
   max-height: var(--dsh-anchored-max-height, 320px);
   overflow: auto;
-  padding: 4px;
+  padding: var(--dsh-space-4);
   border: 0.5px solid var(--dsw-alias-border-l4);
   border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-2);
@@ -62,7 +62,7 @@
 .option {
   display: block;
   width: 100%;
-  padding: 6px 8px;
+  padding: var(--dsh-space-6) var(--dsh-space-8);
   border: none;
   border-radius: var(--dsw-radius-sm);
   background: transparent;
@@ -83,7 +83,7 @@
 }
 
 .none {
-  padding: 10px 8px;
+  padding: var(--dsh-space-8) var(--dsh-space-8);
   font: var(--dsw-font-xs-13);
   color: var(--dsw-alias-label-tertiary);
   text-align: center;

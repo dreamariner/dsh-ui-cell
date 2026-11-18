@@ -1,7 +1,7 @@
 .root {
   position: relative;
   display: inline-flex;
-  gap: 6px;
+  gap: var(--dsh-space-6);
   cursor: text;
 }
 
@@ -12,7 +12,11 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border: 0.5px solid var(--dsw-alias-border-l4);
+  /* 1px 而不是仓里惯用的 0.5px 发丝线（issue 022）：0.5px 横边落在小数布局 Y 上时
+     会被设备像素对齐整段吞掉（实测 dpr=1 下上/下两条横边整个不画，只剩四角弧与
+     左右竖边），小格子 + 高对比的选中蓝把断口放得特别明显。≥1px 的边框无论落在
+     哪个分数像素都至少盖满一行，永远闭合。 */
+  border: 1px solid var(--dsw-alias-border-l4);
   border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-1);
   font: var(--dsw-font-m-18);

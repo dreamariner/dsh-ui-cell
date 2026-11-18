@@ -1,8 +1,13 @@
 // ConfigField: DSH 官方 ui-primitives 保真复制。
 // 上游来源：packages/client/ui-primitives/src/ConfigField.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
+//
+// ⚠ 本仓侧改动（2026-11-18 起，issue 014）：选择框多一层包裹，用来把浏览器自绘的
+// 箭头换成 DSH 的 chevron（与本仓自有 Select 同一套处理）。上游原文件是裸 <select>，
+// DSH 升级 re-diff 时保留本仓这一层。
 /** Controlled configuration input shared by generated and custom forms. */
 import { useId } from 'react'
+import { IconChevronDownOutlineRegular } from './icons.tsx'
 import css from './config-field.css'
 
 /** Field state and localized controls supplied by the owning form. */
@@ -41,11 +46,16 @@ export function ConfigField(props: ConfigFieldProps) {
       {props.overridden ? <button type="button" disabled={props.disabled} onClick={props.onReset}>{props.labels.reset}</button> : null}
     </div>
     {props.choices.length > 0
-      ? <select id={id} value={props.value} disabled={props.disabled} aria-invalid={props.invalid}
-        onChange={(event) => { if (event.target.value === '') props.onReset(); else props.onChange(event.target.value) }}>
-        <option value="">{props.labels.inherited}</option>
-        {props.choices.map(choice => <option key={choice} value={choice}>{choice}</option>)}
-      </select>
+      ? <span className={css.selectWrap}>
+        <select id={id} value={props.value} disabled={props.disabled} aria-invalid={props.invalid}
+          onChange={(event) => { if (event.target.value === '') props.onReset(); else props.onChange(event.target.value) }}>
+          <option value="">{props.labels.inherited}</option>
+          {props.choices.map(choice => <option key={choice} value={choice}>{choice}</option>)}
+        </select>
+        <span aria-hidden="true" className={css.selectChevron}>
+          <IconChevronDownOutlineRegular size={14} />
+        </span>
+      </span>
       : props.secret
         ? <input id={id} type="password" autoComplete="new-password" value={props.value} disabled={props.disabled}
           aria-invalid={props.invalid} onChange={(event) => { props.onChange(event.target.value) }} />

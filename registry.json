@@ -6,6 +6,18 @@
   "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。",
   "items": [
     {
+      "name": "foundation",
+      "type": "registry:base",
+      "status": "ready",
+      "role": "base",
+      "description": "基础层：间距刻度 --dsh-space-*（本仓实现层；官方给间距语义不给数值刻度，数值归实现方。动效不在这里，官方 ui-theme 持有 motion）",
+      "files": [
+        "foundation.css"
+      ],
+      "dependencies": [],
+      "upstream": null
+    },
+    {
       "name": "button",
       "type": "registry:ui",
       "status": "ready",
@@ -45,7 +57,7 @@
       "name": "segmented-control",
       "type": "registry:ui",
       "status": "ready",
-      "description": "分段控制器：WAI-ARIA tabs 键盘走查（Arrow/Home/End 环绕、跳过 disabled）、roving tabindex、滑动指示器",
+      "description": "分段控制器（紧凑档 36px）：WAI-ARIA tabs 键盘走查（环绕、跳过 disabled）、roving tabindex、滑动指示器；段可 disabled（带 title 提示）。与 segmented-tabs 的分工：要禁用段或更小的体量用这个，纯筛选页签用 segmented-tabs",
       "files": [
         "segmented-control.tsx",
         "segmented-control.css"
@@ -224,9 +236,10 @@
       ],
       "dependencies": [
         "icon",
-        "text-shimmer"
+        "text-shimmer",
+        "use-prefers-reduced-motion"
       ],
-      "upstream": "packages/client/ui-primitives/src/DisclosureRow.tsx"
+      "upstream": "packages/client/ui-primitives/src/DisclosureRow.tsx（本仓侧改动见 docs/issues/015：内容区改相位状态机，展开收起有动画）"
     },
     {
       "name": "fold-toggle",
@@ -273,8 +286,10 @@
         "config-field.tsx",
         "config-field.css"
       ],
-      "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/ConfigField.tsx"
+      "dependencies": [
+        "icon"
+      ],
+      "upstream": "packages/client/ui-primitives/src/ConfigField.tsx（本仓侧改动见 docs/issues/014：控件字号归主题档位、按钮去 UA padding、select 换 DSH chevron（DOM 多一层包裹，箭头不再由浏览器自绘））"
     },
     {
       "name": "connection-indicator",
@@ -307,7 +322,7 @@
       "name": "segmented-tabs",
       "type": "registry:ui",
       "status": "ready",
-      "description": "分段页签：Pill 组合的轻量 tabs",
+      "description": "分段页签（标准档 42px，sm 34px）：Pill 组合的轻量 tabs，面板由调用方接线（显式 id/panelId）；无 disabled 段。与 segmented-control 的分工：筛选/视图切换的轻量页签用这个，要禁用段或更紧凑的用 segmented-control",
       "files": [
         "segmented-tabs.tsx",
         "segmented-tabs.css"
@@ -452,6 +467,17 @@
       ],
       "dependencies": [],
       "upstream": "packages/client/ui-primitives/src/focus.ts"
+    },
+    {
+      "name": "use-prefers-reduced-motion",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "行为模块：系统「减少动态效果」开关的订阅（带出场动画的组件都要靠它自己收尾，样式关掉动画就没有 animationend 事件）",
+      "files": [
+        "use-prefers-reduced-motion.ts"
+      ],
+      "dependencies": [],
+      "upstream": null
     },
     {
       "name": "keyboard-composition",
@@ -672,7 +698,7 @@
       "name": "collapsible",
       "type": "registry:ui",
       "status": "ready",
-      "description": "折叠区：trigger + 条件渲染内容（本仓自有，对齐 shadcn collapsible）",
+      "description": "折叠区：trigger + 展开收起动画（grid 高度过渡，内容常驻 DOM，收起态 inert；本仓自有，对齐 shadcn collapsible）",
       "files": [
         "collapsible.tsx",
         "collapsible.css"
@@ -853,14 +879,15 @@
       "name": "sheet",
       "type": "registry:ui",
       "status": "ready",
-      "description": "侧滑/底滑面板：portal + modal 层级栈；开合都有动画（相位状态机，见 issue 008）；可限定在指定容器内展开并挂进容器（container 属性，见 issue 008 复审）；side bottom 即 drawer（本仓自有，对齐 shadcn sheet）",
+      "description": "侧滑/底滑面板：portal + modal 层级栈；开合都有动画（相位状态机，见 issue 008）；可限定容器展开（container）；radius 可自定义（缺省 radius-panel，只圆内容侧两角，issue 026）；side bottom 即 drawer（本仓自有，对齐 shadcn sheet）",
       "files": [
         "sheet.tsx",
         "sheet.css"
       ],
       "dependencies": [
         "modal-layer",
-        "icon"
+        "icon",
+        "use-prefers-reduced-motion"
       ],
       "upstream": null
     },
@@ -868,7 +895,7 @@
       "name": "navigation-menu",
       "type": "registry:ui",
       "status": "ready",
-      "description": "顶部导航：链接 + 当前指示 + 可选官方 Menu 下拉（简化版）（本仓自有，对齐 shadcn navigation-menu）",
+      "description": "顶部导航：链接 + 当前指示（下划线双模式：defaultCurrentId 非受控自迁移 / current 声明受控）+ 可选官方 Menu 下拉（简化版）（本仓自有，对齐 shadcn navigation-menu）",
       "files": [
         "navigation-menu.tsx",
         "navigation-menu.css"
@@ -984,12 +1011,26 @@
       "name": "sidebar",
       "type": "registry:ui",
       "status": "ready",
-      "description": "侧栏壳：Header/Content/Footer + 收起态（本仓自有，对齐 shadcn sidebar）",
+      "description": "侧栏壳：Header/Content/Footer 三段 + 收起态（宽度过渡 + Context 下发给槽内内容，useSidebarCollapsed 感知）",
       "files": [
         "sidebar.tsx",
         "sidebar.css"
       ],
       "dependencies": [],
+      "upstream": null
+    },
+    {
+      "name": "sidebar-nav",
+      "type": "registry:ui",
+      "status": "ready",
+      "description": "侧栏导航：分组 + 图标 + 徽标 + 选中态，收起态自动读所在 Sidebar 的 Context（本仓自有，对齐 shadcn sidebar 菜单族精简版）",
+      "files": [
+        "sidebar-nav.tsx",
+        "sidebar-nav.css"
+      ],
+      "dependencies": [
+        "sidebar"
+      ],
       "upstream": null
     },
     {

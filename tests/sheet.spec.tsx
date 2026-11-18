@@ -185,3 +185,54 @@ describe('sheet 样式表的动画契约', () => {
     expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)/)
   })
 })
+
+describe('sheet 的 radius 覆盖契约（issue 026）', () => {
+  /** 面板的 inline style。 */
+  function panelStyle(): Record<string, string> {
+    const el = document.querySelector('[role="dialog"]') as HTMLElement
+    const out: Record<string, string> = {}
+    for (let i = 0; i < el.style.length; i++) {
+      const prop = el.style.item(i)!
+      out[prop] = el.style.getPropertyValue(prop)
+    }
+    return out
+  }
+
+  it('radius 数字按 px 写进「靠内容侧」的两角（side=right → 左上/左下）', () => {
+    container = document.createElement('div')
+    document.body.append(container)
+    root = createRoot(container)
+    act(() => {
+      root?.render(createElement(Sheet, { open: true, title: 'T', children: 'C', side: 'right', radius: 16 }))
+    })
+    const style = panelStyle()
+    expect(style['border-top-left-radius']).toBe('16px')
+    expect(style['border-bottom-left-radius']).toBe('16px')
+    // 贴边侧（右上/右下）不受影响 —— 保持直角
+    expect(style['border-top-right-radius']).toBeUndefined()
+    expect(style['border-bottom-right-radius']).toBeUndefined()
+  })
+
+  it('字符串原样引用（可传 token），side=bottom → 顶部两角', () => {
+    container = document.createElement('div')
+    document.body.append(container)
+    root = createRoot(container)
+    act(() => {
+      root?.render(createElement(Sheet, { open: true, title: 'T', children: 'C', side: 'bottom', radius: 'var(--dsw-radius-lg)' }))
+    })
+    const style = panelStyle()
+    expect(style['border-top-left-radius']).toBe('var(--dsw-radius-lg)')
+    expect(style['border-top-right-radius']).toBe('var(--dsw-radius-lg)')
+    expect(style['border-bottom-left-radius']).toBeUndefined()
+  })
+
+  it('不给 radius 就不写 inline 圆角（保持样式表的 panel 档缺省）', () => {
+    container = document.createElement('div')
+    document.body.append(container)
+    root = createRoot(container)
+    act(() => {
+      root?.render(createElement(Sheet, { open: true, title: 'T', children: 'C' }))
+    })
+    expect(panelStyle()['border-top-left-radius']).toBeUndefined()
+  })
+})

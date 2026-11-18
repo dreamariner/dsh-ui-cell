@@ -8,18 +8,24 @@
 // （裁流式增量解析 / 裁 DraggableImage / 换简化 LinkIcon / KaTeX CSS 文本化）
 // 由后续手工编辑完成，见 docs/issues/005。
 //
-// 用法：node scripts/import-markdown-family.mjs [--force]
+// 用法：DSH_CHECKOUT=<官方 checkout> node scripts/import-markdown-family.mjs [--force]
 //      （不带 --force 时，已存在的目标文件不覆盖，避免冲掉手工改动）
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { dshCheckout } from './lib/paths.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const SRC = join(ROOT, 'src')
-const OFFICIAL = process.env.DSH_CHECKOUT
-  ? join(process.env.DSH_CHECKOUT, 'packages', 'client', 'ui-primitives', 'src')
-  : '/Users/nan/Documents/zero/专题系列/林老师的DSH小作坊/DeepSeekHarness研究/deepseek-harness/packages/client/ui-primitives/src'
+// 显式指定、无默认推导（scripts/lib/paths.mjs）：不假定 checkout 在本机的什么位置，
+// 免得把本机路径写进仓库（那是个人私有信息，不该出现在公开仓里）。
+const checkout = dshCheckout()
+if (!checkout) {
+  console.error('[import-markdown] 需要 DSH_CHECKOUT=<官方 checkout 路径>（显式指定，无默认推导）')
+  process.exit(1)
+}
+const OFFICIAL = join(checkout, 'packages', 'client', 'ui-primitives', 'src')
 
 if (!existsSync(OFFICIAL)) {
   console.error(`[import-markdown] 找不到官方源目录：${OFFICIAL}`)

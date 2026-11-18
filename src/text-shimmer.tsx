@@ -1,6 +1,19 @@
 // TextShimmer: DSH 官方 ui-primitives 保真复制。
 // 上游来源：packages/client/ui-primitives/src/TextShimmer.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
+//
+// 用法提醒（2026-11-18，issue 017；不改官方行为，只是把坑写在这里）：
+// 微光层是「文字色的一份半透明副本」叠在真文字上，颜色取自 `--dsw-alias-label-shimmer`。
+// 这个 token 的默认值是**绝对值**（亮色 30% 黑、暗色 45% 白），**不随被作用的文字走**，
+// 压在正文色（label-primary）上就是同色叠加 —— 看得见动画在跑，但肉眼看不出在动。
+// 要看到效果，给它一个跟底色有对比的值：
+//
+//   <div style={{ '--dsw-alias-label-shimmer': 'var(--dsw-alias-label-secondary)' }}>
+//     <TextShimmer active>正在生成…</TextShimmer>
+//   </div>
+//
+// DSH 应用自己的跑动状态就是这么改这个 token 的（ChatView.module.css 的 `.running`
+// 把它指向 `--dsw-alias-label-deep-diving-shimmer`）。
 /** Text activity animation shared by a row and its nested text fragments. */
 import { createContext, memo, useContext, type ReactNode } from 'react'
 import clsx from 'clsx'

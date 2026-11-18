@@ -1,9 +1,9 @@
 .alert {
   display: flex;
-  gap: 10px;
+  gap: var(--dsh-space-8);
   box-sizing: border-box;
   width: 100%;
-  padding: 12px 14px;
+  padding: var(--dsh-space-12) var(--dsh-space-12);
   border: 0.5px solid var(--dsw-alias-border-l4);
   border-left-width: 2px;
   border-radius: var(--dsw-radius-md);
@@ -19,7 +19,7 @@
 .icon {
   display: flex;
   flex: none;
-  padding-top: 1px;
+  padding-top: var(--dsh-space-1);
   color: var(--dsw-alias-label-secondary);
 }
 
@@ -31,7 +31,7 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--dsh-space-2);
   min-width: 0;
 }
 

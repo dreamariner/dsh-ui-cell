@@ -12,11 +12,11 @@
   border-radius: inherit;
   background: var(--dsw-alias-brand-primary);
   transform-origin: left;
-  transition: transform 200ms ease;
+  transition: transform var(--ds-transition-duration) var(--ds-ease-in-out);
 }
 
 .indeterminate .indicator {
-  animation: progress-slide 1.4s ease-in-out infinite;
+  animation: progress-slide 1.4s var(--ds-ease-in-out) infinite;
 }
 
 @keyframes progress-slide {
@@ -26,5 +26,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .indeterminate .indicator { animation: none; }
+}
+
+/* 降级：减少动效时进度条直接跳到目标值，不做滑动（issue 012） */
+@media (prefers-reduced-motion: reduce) {
+  .indicator { transition: none; }
   .indeterminate .indicator { animation: none; }
 }

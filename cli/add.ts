@@ -53,6 +53,16 @@ export interface RegistryItem {
    * 改名就与它吐出的 HTML 对不上。普通组件样式不在此列（照常加前缀 + 组件名段）。
    */
   rawStyles?: string[]
+  /**
+   * 条目角色（2026-11-18 起，issue 012）：
+   *   `base` —— 基础层。本仓实现层的全局变量（当前是间距刻度 `--dsh-space-*`）。
+   *   它**不是**组件的依赖（组件不 import 它，只是引用它定义的 CSS 变量），
+   *   所以不能进 `dependencies`（那条要等于实际相对导入，护栏会拦）。
+   *   但每次 add 都要带上它，且样式注入顺序排在**第一位**（被复用者先注入的规则，
+   *   基础层是最底层）。漏注入 = 组件里 var(--dsh-space-*) 解析失败 = 静默掉样式。
+   * 缺省是普通组件。
+   */
+  role?: 'base'
   upstream: string | null
 }
 
@@ -260,6 +270,9 @@ export function rewriteCssImports(tsx: string, cssBases: ReadonlySet<string>): s
 /**
  * 依赖闭包解析：请求的组件 → 按 registry 的 dependencies 展开成 deps 先于本体的有序清单。
  * 环检测显式报错；未知组件报错时带上下文（直接请求还是某组件的依赖）。
+ *
+ * 基础层（role=base）先进清单：它不是组件的依赖（组件不 import 它），但所有组件样式
+ * 都引用它定义的变量，且样式注入顺序必须第一位（被复用者先注入，基础层最底层）。
  */
 export function resolveDependencies(names: string[], registry: Registry): string[] {
   const byName = new Map(registry.items.map(item => [item.name, item]))
@@ -278,6 +291,9 @@ export function resolveDependencies(names: string[], registry: Registry): string
     visiting.delete(name)
     seen.add(name)
     ordered.push(name)
+  }
+  for (const item of registry.items) {
+    if (item.role === 'base' && item.status === 'ready') visit(item.name, null)
   }
   for (const name of names) visit(name, null)
   return ordered
@@ -380,9 +396,13 @@ export function addComponents(
   const written = new Set<string>()
 
   const expanded = resolveDependencies(names, registry)
-  const auto = expanded.filter(name => !names.includes(name))
+  const baseItems = expanded.filter(name => registry.items.find(i => i.name === name)?.role === 'base')
+  const auto = expanded.filter(name => !names.includes(name) && !baseItems.includes(name))
   if (auto.length > 0) {
     notes.push(`依赖闭包自动带上：${auto.join(', ')}（被请求组件的导入需要它们）`)
+  }
+  if (baseItems.length > 0) {
+    notes.push(`基础层自动带上：${baseItems.join(', ')}（间距刻度 --dsh-space-*；组件样式里的 var(--dsh-space-*) 靠它解析，漏注入会静默掉样式。样式注入时必须排第一位，add 给的顺序里它就在最前）`)
   }
 
   // 全闭包的 css 文件集合（跨条目）：css 导入改写按它判定，

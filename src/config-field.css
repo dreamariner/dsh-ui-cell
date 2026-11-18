@@ -1,12 +1,59 @@
+/*
+ * ConfigField 样式（上游 packages/client/ui-primitives/src/ConfigField.module.css 的保真复制）。
+ *
+ * ⚠ 本仓侧改动（2026-11-18 起，issue 014）：三处，都是「成对标签 + 控件」的排版修正，
+ * DOM 与行为未动。上游原文件仍是 `font: inherit` / `padding: 6px 12px`，DSH 升级
+ * re-diff 时保留本仓这三处。
+ *
+ * 1. **控件字号归主题档位**（`.field input, .field select, .field textarea`）：
+ *    上游写 `font: inherit`，控件字号跟着宿主走。DSH 应用与文档站的 body 都没有显式
+ *    字号（浏览器默认 16px），于是同一行里 label 是显式 13px、控件却是 16px，
+ *    **控件比标题大一号**，整行的层级关系读不出来（实测：label 13px / select 16px）。
+ *    改为 `var(--dsw-font-s-14)`（14px 标准档）：比 label 大 1px，层级才是
+ *    「标题次要、控件正文」，且不随宿主字号漂移（组件在不同宿主里长得一样）。
+ *
+ * 2. **按钮不再撑高头行**（`.head button`）：
+ *    上游 `font: inherit` + UA 的 `padding: 1px 6px`，按钮行高 25px 而 label 只有
+ *    18.5px，头行被按钮撑高，于是 label 到控件的**实际**间距从 CSS 写的 6px 变成 9px。
+ *    改为 `font: var(--dsw-font-xs-13)`（与 label 同级）+ `padding: 0`（去 UA padding），
+ *    头行高度回到 label 的行高，间距就是 CSS 里写的那个数。
+ *
+ * 3. **下拉箭头换成 DSH chevron**（`.selectWrap` / `.selectChevron`，DOM 多一层包裹）：
+ *    原生 select 的箭头是浏览器自绘的：粗黑、固定大小（不随字号缩放），离右边框约 12px。
+ *    控件归到 14px 档之后，那个箭头显得比文字还重，与本仓其它地方的细线 chevron
+ *    （Select / Accordion / Collapsible / DisclosureRow）对不上；而且实测 Chromium 的
+ *    原生箭头**不随 padding-right 移动**（12px 与 28px 两档箭头位置一致），CSS 挪不动它。
+ *    于是照本仓自有 Select 的同一套做法：`appearance: none` 收掉自绘箭头，右侧挂一个
+ *    `IconChevronDownOutlineRegular`（14px，tertiary 色，跟 token 走）。
+ *    几何与 Select 一致：chevron 离右边框 12px（与文字的左内边距对称），
+ *    右内边距 32px = 12（chevron 偏移）+ 14（图标）+ 6（图标与文字的间隔）。
+ *
+ * 间距刻度（--dsh-space-*）是本仓实现层的变量，只对本仓自有件强制；官方复制件沿用上游
+ * 的 px 值，免得每次升级都要 re-diff 一遍数值。
+ */
 .field { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; }
 .field + .field { border-top: 0.5px solid var(--dsw-alias-border-l2); }
 .head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .head label { color: var(--dsw-alias-label-primary); font-size: 13px; font-weight: 500; }
-.head button { border: none; background: none; color: var(--dsw-alias-label-secondary); font: inherit; cursor: pointer; }
+.head button {
+  border: none; background: none; color: var(--dsw-alias-label-secondary); cursor: pointer;
+  font: var(--dsw-font-xs-13); padding: 0;
+}
 .field input, .field select, .field textarea {
   padding: 6px 12px; border: 0.5px solid var(--dsw-alias-border-l4); border-radius: var(--dsw-radius-md);
-  background: var(--dsw-alias-bg-layer-3); color: var(--dsw-alias-label-primary); font: inherit;
+  background: var(--dsw-alias-bg-layer-3); color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-s-14);
 }
+.field select { padding-right: 32px; }
 .field textarea { resize: vertical; }
 .field [aria-invalid='true'] { border-color: var(--dsw-alias-state-error-primary); }
 .field p { margin: 0; color: var(--dsw-alias-state-error-primary); font-size: 12px; }
+
+/* 选择框：包裹层定位 chevron，select 收掉浏览器自绘箭头并铺满包裹层。 */
+.selectWrap { position: relative; display: block; }
+.selectWrap select { appearance: none; -webkit-appearance: none; width: 100%; }
+.selectChevron {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--dsw-alias-label-tertiary); pointer-events: none;
+}

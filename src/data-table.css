@@ -8,13 +8,13 @@
 
 .sortButton {
   display: inline-flex;
-  gap: 4px;
+  gap: var(--dsh-space-4);
   align-items: center;
-  padding: 8px 12px;
+  padding: var(--dsh-space-8) var(--dsh-space-12);
   border: none;
   background: transparent;
   cursor: pointer;
-  font: inherit;
+  font: var(--dsw-font-s-14);
   font-weight: 500;
   color: var(--dsw-alias-label-secondary);
 }
@@ -32,7 +32,7 @@
 .arrow[data-state='desc']::after { content: '↓'; }
 
 .empty {
-  padding: 24px 12px;
+  padding: var(--dsh-space-24) var(--dsh-space-12);
   text-align: center;
   color: var(--dsw-alias-label-tertiary);
 }

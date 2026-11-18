@@ -5,10 +5,10 @@
 
 .trigger {
   display: flex;
-  gap: 6px;
+  gap: var(--dsh-space-6);
   width: 100%;
   box-sizing: border-box;
-  padding: 8px 10px;
+  padding: var(--dsh-space-8) var(--dsh-space-8);
   border: none;
   border-radius: inherit;
   background: transparent;
@@ -29,13 +29,45 @@
   width: 14px;
   height: 14px;
   color: var(--dsw-alias-label-tertiary);
-  transition: transform 150ms ease;
+  transition: transform var(--ds-transition-duration) var(--ds-ease-in-out);
 }
 
 .collapsible[data-open] .chevron {
   transform: rotate(180deg);
 }
 
+/* 内容区：常驻 DOM + grid-template-rows 0fr↔1fr 过渡（与 Accordion 同一手法，
+   issue 020）。收起态由组件侧加 inert（焦点不进入视觉隐藏区），样式只管高度。 */
 .content {
-  padding: 0 10px 10px 30px;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ds-transition-duration) var(--ds-ease-in-out);
+}
+
+.collapsible[data-open] .content {
+  grid-template-rows: 1fr;
+}
+
+.contentInner {
+  overflow: hidden;
+  min-width: 0;
+  /* 字号钉档 + 次级色（与 Accordion 的内容区同款）：不写 font 会继承宿主
+     （文档站 body 默认 16px），内容比 14px 的触发器大一号还更黑，整行层级倒挂
+     （issue 014 的「文字不跟随宿主字号」规则；此前只漏了这种「不写 font」的隐性继承）。 */
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-secondary);
+  /* 左内边距是组合值：8（触发器左内边距）+ 14（chevron）+ 6（间隔），
+     保证内容与触发器文字对齐，是关系不是节奏，故不归一到刻度（issue 012 的组合值例外）。
+     底部内边距只在展开态给（收起时 0fr 要真的归零，与 Accordion 同款）。 */
+  padding: 0 var(--dsh-space-8) 0 28px;
+}
+
+.collapsible[data-open] .contentInner {
+  padding-bottom: var(--dsh-space-8);
+}
+
+/* 降级：减少动效时箭头直接转到目标角度、内容直接到位，不做过渡（issue 012） */
+@media (prefers-reduced-motion: reduce) {
+  .chevron { transition: none; }
+  .content { transition: none; }
 }

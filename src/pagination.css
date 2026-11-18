@@ -1,6 +1,6 @@
 .pagination {
   display: inline-flex;
-  gap: 4px;
+  gap: var(--dsh-space-4);
   align-items: center;
 }
 
@@ -11,7 +11,7 @@
   justify-content: center;
   min-width: 28px;
   height: 28px;
-  padding: 0 6px;
+  padding: 0 var(--dsh-space-6);
   border: 0.5px solid var(--dsw-alias-border-l4);
   border-radius: var(--dsw-radius-sm);
   background: var(--dsw-alias-bg-layer-1);

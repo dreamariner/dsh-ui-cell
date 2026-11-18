@@ -17,7 +17,7 @@
 }
 
 .head {
-  padding: 8px 12px;
+  padding: var(--dsh-space-8) var(--dsh-space-12);
   text-align: left;
   font-weight: 500;
   color: var(--dsw-alias-label-secondary);
@@ -29,13 +29,13 @@
 }
 
 .cell {
-  padding: 8px 12px;
+  padding: var(--dsh-space-8) var(--dsh-space-12);
   color: var(--dsw-alias-label-primary);
   border-bottom: 0.5px solid var(--dsw-alias-border-l4);
 }
 
 .caption {
-  margin-top: 8px;
+  margin-top: var(--dsh-space-8);
   font: var(--dsw-font-xs-13);
   color: var(--dsw-alias-label-tertiary);
 }

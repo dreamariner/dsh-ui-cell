@@ -1,0 +1,117 @@
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dsh-space-16);
+  min-width: 0;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dsh-space-2);
+}
+
+.groupLabel {
+  padding: 0 var(--dsh-space-8);
+  font: var(--dsw-font-xs-13);
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--dsh-space-8);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--dsh-space-6) var(--dsh-space-8);
+  border: none;
+  border-radius: var(--dsw-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: var(--dsw-font-s-14);
+  color: var(--dsw-alias-label-secondary);
+  transition: background-color var(--ds-transition-duration-fast) var(--ds-ease-in-out),
+    color var(--ds-transition-duration-fast) var(--ds-ease-in-out);
+}
+
+@media (hover: hover) {
+  .item:hover:not(:disabled) {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+.item[aria-current] {
+  background: var(--dsw-alias-button-ghost-active-fill);
+  box-shadow: inset 0 0 0 1px var(--dsw-alias-button-ghost-active-border);
+  color: var(--dsw-alias-label-primary);
+  font-weight: 500;
+}
+
+.item:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.itemText {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.item[aria-current] .icon {
+  color: var(--dsw-alias-label-primary);
+}
+
+.badge {
+  flex: none;
+  padding: 0 var(--dsh-space-6);
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-bg-module-platform);
+  font: var(--dsw-font-xs-13);
+  line-height: 18px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+/* 收起态：徽标缩成一个圆点，**叠在图标右上角**（绝对定位、不占布局位）——
+   圆点若占布局位会和图标并排居中，图标被挤偏、圆点悬成个「白圈」（issue 027）。
+   点色用 brand 实心（复审：module-platform 近白灰压白底几乎看不见，很难发现）。 */
+.badgeDot {
+  position: absolute;
+  top: var(--dsh-space-4);
+  right: var(--dsh-space-4);
+  width: var(--dsh-space-6);
+  height: var(--dsh-space-6);
+  border-radius: 50%;
+  background: var(--dsw-alias-brand-primary);
+}
+
+/* 收起态：只显示图标，条目收成图标位（宽度由 Sidebar 的 collapsedWidth 决定）。 */
+.nav[data-collapsed] .item {
+  justify-content: center;
+  padding: var(--dsh-space-6);
+}
+
+.nav[data-collapsed] .icon {
+  color: var(--dsw-alias-label-secondary);
+}
+
+.nav[data-collapsed] .item[aria-current] .icon {
+  color: var(--dsw-alias-label-primary);
+}
+
+/* 降级：减少动效时悬停/选中直接变色（issue 012） */
+@media (prefers-reduced-motion: reduce) {
+  .item { transition: none; }
+}

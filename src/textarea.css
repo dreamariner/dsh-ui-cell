@@ -3,7 +3,7 @@
   box-sizing: border-box;
   display: block;
   width: 100%;
-  padding: 6px 8px;
+  padding: var(--dsh-space-6) var(--dsh-space-8);
   border: 0.5px solid var(--dsw-alias-border-l4);
   border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-1);

@@ -36,6 +36,9 @@ DSH 官方插件开发规范（`packages/preset/agent-preset/skills/cordis-plugi
    - Modal 层级栈：`useModalLayer` 的 WeakMap 栈（嵌套时只有最上层拥有 Escape）
 4. **不改 DSH 内核**：组件源来自 checkout 只读复制，不改上游任何文件。
 5. **基线锚**：`registry.json` 的 `dshVersion` / `dshCommit` 是组件来源的真相源（人工维护，升级时更新）。`tokens/official-tokens.json` 的同名字段由 `pnpm vendor` 从 checkout 自动派生（根 package.json 的 version + HEAD commit），**不手改**（旧实现把锚写成手写字面量，升级重跑后清单谎报来源且 --check 照样过，复审已修）。DSH 升级时按各条目的 `upstream` 字段逐组件重 diff，不是整包覆盖。
+6. **间距与动效走规范面**（2026-11-18 起，issue 012）：本仓**自有件**（`upstream` 为空）的间距只许 `var(--dsh-space-*)`（刻度定义在 `src/foundation.css`），动效只许官方三档 duration token（`--ds-transition-duration{,-fast,-slow}`）与官方 easing（`--ds-ease-in-out`），不写 px 字面量与字面时长曲线；带动画的组件必须有 `prefers-reduced-motion` 降级。控件的字不许跟随宿主字号（不写 `font: inherit`），渲染原生 `<select>` 的组件要 `appearance: none` 收掉浏览器自绘箭头、改挂 DSH chevron（issue 014）。官方保真复制件**保真不改**，走例外表（本仓已登记的偏离写在各条目 `upstream` 字段）。组合值（缩进、让位这类由图标尺寸推导的值）登记例外并写明构成。细则见 `docs/wiki/04-间距与动效规范.md`。
+7. **公开面不写本机与个人私有信息**（2026-11-18 起，issue 013）：本仓是公开仓，文档站会发到 GitHub Pages、npm 包会发到 registry。示例里写本机绝对路径（`/Users/<名>/` 之类）等于把使用者用户名与目录结构贴到公开面上；个人私有项目与人格相关名字同理，一律用通用表述（「姊妹插件仓」「内部插件仓」）。护栏扫活面（含生成物 `docs/wiki/index.html`）：改了源文件没重建站点，护栏会红。
+8. **拖拽类组件跟手且能收尾**（2026-11-18 起，issue 016）：拖拽条有宽度，百分比要按「条中心对准光标」反解（分子减半个条宽、分母用容器宽）；给百分比的那一栏**不能吃 `flex-grow`**（grow 会让百分比失真，状态 45% 渲染成 72.5%，越拖越偏）；松手必须三路收尾 —— 指针捕获 + `pointerup` / `pointercancel` / 窗口 `blur`，漏掉「在窗口外松手」这一路，之后每次移动鼠标都会继续改布局（极易误触）。细则见 `skills/dsh-ui-cell/references/interaction.md`。
 
 ## 目录结构
 
@@ -45,6 +48,7 @@ dsh-ui-cell/
 ├── package.json         # @dreamariner/dsh-ui-cell（bin: dsh-ui-cell）
 ├── registry.json        # 组件清单（名字、状态、文件、dependencies 依赖闭包、上游出处、DSH 基线）
 ├── src/                 # 权威组件源码（tsx + css，类名为上游原名）
+│   ├── foundation.css                             # 基础层：间距刻度 --dsh-space-*（role=base，add 每次带上且排注入第一位）
 │   ├── button.tsx/.css、input、tag、segmented-control、modal、risk-confirmation
 │   ├── select.tsx/.css、textarea.tsx/.css        # 本仓自有（官方无对应原子）
 │   ├── markdown-*.ts(x)、read-block、web-block、quote-preview、detail-document、
@@ -52,7 +56,7 @@ dsh-ui-cell/
 │   ├── icons.tsx                                 # 官方 icons/ 的子集（5 个）
 │   ├── use-modal-layer.ts、focus.ts、keyboard-composition.ts   # Modal 行为依赖
 │   └── index.ts                                  # 本仓 barrel（消费端不用它）
-├── docs/wiki/             # 组件 Wiki（新手教程 + 自包含文档站 index.html；docs:build 重建）
+├── docs/wiki/             # 组件 Wiki（新手教程 + token 纪律 + 依赖分层 + 间距与动效规范 + 自包含文档站 index.html；docs:build 重建）
 ├── tokens/official-tokens.json  # 官方 token 清单（pinned 快照，护栏据此做存在性校验；锚由 vendor 派生）
 ├── scripts/vendor-tokens.mjs    # 从 DSH checkout 同步 token 清单（升级期；vendor / vendor:check）
 ├── scripts/import-markdown-family.mjs  # markdown 家族的机械搬运脚本（升级期；语义裁剪仍需手工）
@@ -61,7 +65,9 @@ dsh-ui-cell/
 ├── cli/add.ts           # add 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析 + 依赖分层交接[tier/npmDependencies/rawStyles 原样注入]）
 ├── cli/index.ts         # CLI 入口
 ├── skills/dsh-ui-cell/SKILL.md  # Agent 接入手册（随 npm 包分发；消费端拷进插件 .agents/skills/）
-└── tests/               # 自守护栏：registry.spec.ts（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接）+ markdown.spec.tsx（渲染回归）
+│   ├── references/spacing-motion.md  # 写自有组件时的间距与动效规则（Agent 视角）
+│   └── references/interaction.md     # 写拖拽类组件的规则（跟手算式、百分比对齐、松手收尾）
+└── tests/               # 自守护栏：registry.spec.ts（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接 + 间距动效规范）+ markdown.spec.tsx（渲染回归）
 ```
 
 ## 用法
@@ -83,18 +89,23 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duc-
 1. 组件文件进 `src/client/ui/`，`import { Button } from '../ui/button.tsx'`
 2. 样式注入：每个组件生成 `<name>-css.ts`，导出 `styles`（样式文本）与 `css`（类名表）；把用到的 `styles` **按依赖序**拼进插件已有的 `<style>` 注入器（被复用者先注入，add 的 note 给出本次闭包的顺序）。类名共存于同一个 `<style>`，同特异性规则按注入顺序后者胜：复用别件样式的组件（segmented-tabs 复用 pill 等）必须排在被复用件之后，排反了会被底件外观覆盖（2026-11-10 实证）
 
+⚠ **基础层 `foundation-css.ts` 必须排在注入顺序第一位**：它是间距刻度（`--dsh-space-*`），
+组件样式里的 `var(--dsh-space-*)` 靠它解析。漏注入 = 那条声明被静默丢弃 = 间距全没、零报错
+（add 每次都会带上它并排在最前，别把它从聚合模块里删掉）。
+
 `css` 表以**原类名为键、最终类名为值**（`'primary': 'duc-button-primary'`；与组件同名的根类免组件段，`'button': 'duc-button'`），所以官方组件里 `css[variant]` 这类动态索引访问不用改写也能正确工作。值带组件名段的原因见红线 2。
 
 ## 组件清单
 
-**94 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`，每条带 upstream 出处或 本仓自有标注）：
+**97 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`，每条带 upstream 出处或 本仓自有标注）：
 
 | 来源 | 数量 | 内容 |
 |---|---|---|
 | 官方保真复制 | 37 | 官方除品牌件的全部原子（含 icon 集 15 个，inline path 不依赖宿主 sprite）+ markdown 家族 5（markdown-text / read-block / web-block / quote-preview / detail-document，裁剪版见 issue 005）+ code-block + code-highlighting（契约对齐的 本仓自写内核） |
 | 官方内容块 | 6 | json-tree / json-block / search-block（零依赖）+ code-toolbar / diff-block / terminal-block（issue 005 起带真实依赖 diff / anser / shiki） |
-| 本仓自有 | 41 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/…），样式全 DSH token、行为手写 |
-| 共享行为模块 | 10 | modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap |
+| 本仓自有 | 42 | shadcn base 功能对齐（card/alert/accordion/popover/combobox/command/table/data-table/sheet/calendar/slider/sidebar+sidebar-nav/…），样式全 DSH token、行为手写 |
+| 共享行为模块 | 11 | modal-layer / focus / keyboard-composition / pointer-grace / anchored-position / dismiss-on-outside-pointer / clipboard / clipboard-copy / overlay-top-margin / head-tail-cap / use-prefers-reduced-motion |
+| 基础层 | 1 | foundation：间距刻度 `--dsh-space-*`（`role=base`，add 每次带上并排在注入顺序第一位） |
 
 **未收录（issue 005 留档）**：官方品牌件（BrandWordmark / FishLogo / SiteGlyph / artwork / 专用 Icon）。
 
@@ -109,7 +120,7 @@ npx dsh-ui-cell add button input tag --to path/to/plugin --prefix duc-
 ## 验证
 
 ```bash
-pnpm test        # registry 护栏（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接）+ markdown 渲染回归（41 条，其中 1 条需 DSH_CHECKOUT 在场才跑）
+pnpm test        # registry 护栏（一致性 + token 纪律/存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接 + 间距动效规范）+ markdown 渲染回归（41 条，其中 1 条需 DSH_CHECKOUT 在场才跑）
 pnpm typecheck   # 组件源码类型检查
 ```
 

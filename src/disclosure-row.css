@@ -108,8 +108,62 @@ button.leading {
   color: inherit;
 }
 
+/* ── 本仓侧（2026-11-18 起，issue 015）：内容区的展开收起动画 ─────────────────
+   上游是 `{open && children}`：内容瞬间挂载/卸载，展开时「啪」地出现、收起时「啪」地消失，
+   观感硬；本仓自有的 Accordion / Collapsible 走 grid-template-rows 过渡，手感对不上。
+   这里内容区由 data-state 驱动两段动画（与 sheet 同一套相位范式）：
+     open   → content-in（展开 + 淡入）
+     closed → content-out（收起 + 淡出），播完由组件侧卸载（animationend）
+   高度用 grid-template-rows 0fr → 1fr（与本仓自有 Accordion 同一手法）。 */
+.content {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+.content[data-state='open'] {
+  grid-template-rows: 1fr;
+  animation: disclosure-content-in var(--ds-transition-duration) var(--ds-ease-in-out);
+}
+
+.content[data-state='closed'] {
+  animation: disclosure-content-out var(--ds-transition-duration) var(--ds-ease-in-out) forwards;
+}
+
+.contentInner {
+  overflow: hidden;
+  min-width: 0;
+}
+
+@keyframes disclosure-content-in {
+  from { grid-template-rows: 0fr; opacity: 0; }
+  to { grid-template-rows: 1fr; opacity: 1; }
+}
+
+@keyframes disclosure-content-out {
+  from { grid-template-rows: 1fr; opacity: 1; }
+  to { grid-template-rows: 0fr; opacity: 0; }
+}
+
+/* 图标：展开态的上箭头是新挂载的元素（上游是硬切：收起时挂一个，展开时换成另一个），
+   给它一段入场动画，避免图标「啪」地换掉。
+   收起方向仍是硬切（idle 图标重新挂载，若也加入场动画，页面初次加载时整页图标会一起淡入，
+   反而更吵）。要彻底解决得上游那侧改成「同一个箭头旋转」，那是 DOM 级改动，单独评估。 */
+.root[data-open] .leading > svg {
+  animation: disclosure-chevron-in var(--ds-transition-duration) var(--ds-ease-in-out);
+}
+
+@keyframes disclosure-chevron-in {
+  from { opacity: 0; transform: rotate(-24deg); }
+  to { opacity: 1; transform: rotate(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .row {
     transition: none;
+  }
+
+  .content,
+  .root[data-open] .leading > svg {
+    animation: none;
   }
 }

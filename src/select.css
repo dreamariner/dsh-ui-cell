@@ -20,7 +20,9 @@
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 0 28px 0 8px;
+  /* 右内边距是组合值：8（右偏移）+ 14（chevron 图标）+ 6（图标与文字的间隔），
+     不是节奏值，故不归一到刻度（issue 012 的组合值例外）。 */
+  padding: 0 28px 0 var(--dsh-space-8);
   border: none;
   outline: none;
   background: transparent;

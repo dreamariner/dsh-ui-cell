@@ -1,11 +1,11 @@
 .menubar {
   display: inline-flex;
-  gap: 2px;
+  gap: var(--dsh-space-2);
   align-items: center;
 }
 
 .entry {
-  padding: 4px 10px;
+  padding: var(--dsh-space-4) var(--dsh-space-8);
   border: none;
   border-radius: var(--dsw-radius-sm);
   background: transparent;

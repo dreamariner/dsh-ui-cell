@@ -1,17 +1,17 @@
 .group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--dsh-space-8);
 }
 
 .group[data-orientation='horizontal'] {
   flex-direction: row;
-  gap: 16px;
+  gap: var(--dsh-space-16);
 }
 
 .option {
   display: inline-flex;
-  gap: 8px;
+  gap: var(--dsh-space-8);
   align-items: center;
   cursor: pointer;
   user-select: none;
@@ -35,7 +35,7 @@
   border: 0.5px solid var(--dsw-alias-border-l3);
   border-radius: 50%;
   background: var(--dsw-alias-bg-layer-1);
-  transition: border-color 120ms ease;
+  transition: border-color var(--ds-transition-duration-fast) var(--ds-ease-in-out);
 }
 
 .dot::after {
@@ -46,7 +46,7 @@
   background: var(--dsw-alias-brand-primary);
   opacity: 0;
   transform: scale(0.4);
-  transition: opacity 120ms ease, transform 120ms ease;
+  transition: opacity var(--ds-transition-duration-fast) var(--ds-ease-in-out), transform var(--ds-transition-duration-fast) var(--ds-ease-in-out);
 }
 
 .input:checked + .dot {
@@ -70,4 +70,10 @@
 .label {
   font: var(--dsw-font-s-14);
   color: var(--dsw-alias-label-primary);
+}
+
+/* 降级：减少动效时选中态直接到位，不做淡入与放大（issue 012） */
+@media (prefers-reduced-motion: reduce) {
+  .dot,
+  .dot::after { transition: none; }
 }

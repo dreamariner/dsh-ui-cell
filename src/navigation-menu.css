@@ -1,13 +1,13 @@
 .nav {
   display: flex;
-  gap: 2px;
+  gap: var(--dsh-space-2);
   align-items: center;
 }
 
 .item {
   position: relative;
   display: inline-flex;
-  padding: 6px 10px;
+  padding: var(--dsh-space-6) var(--dsh-space-8);
   border: none;
   border-radius: var(--dsw-radius-sm);
   background: transparent;

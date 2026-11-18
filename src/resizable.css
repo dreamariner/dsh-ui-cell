@@ -11,12 +11,17 @@
   overflow: hidden;
 }
 
+/* 左栏不吃 flex-grow：grow 会把剩余空间按比例分给两栏，
+   于是「百分比」与实际渲染宽度对不上，拖动越拖越偏（issue 016）。
+   左栏的宽度由组件的 inline style 给（flex: 0 0 <percent>%），右栏吃剩下的空间。 */
 .divider {
   flex: none;
   width: 5px;
   cursor: col-resize;
   background: transparent;
   position: relative;
+  /* 触摸设备：别让浏览器把手势吃掉当滚动 */
+  touch-action: none;
 }
 
 .divider::after {
@@ -25,10 +30,15 @@
   inset: 0 2px;
   border-radius: var(--dsw-radius-sm);
   background: var(--dsw-alias-border-l4);
-  transition: background 120ms ease;
+  transition: background var(--ds-transition-duration-fast) var(--ds-ease-in-out);
 }
 
 .divider:hover::after,
 .divider:active::after {
   background: var(--dsw-alias-brand-primary);
+}
+
+/* 降级：减少动效时拖拽指示条直接变色，不做过渡（issue 012） */
+@media (prefers-reduced-motion: reduce) {
+  .divider::after { transition: none; }
 }

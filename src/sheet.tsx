@@ -17,6 +17,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import { createPortal } from 'react-dom'
 import css from './sheet.css'
 import { useModalLayer } from './use-modal-layer.ts'
+import { usePrefersReducedMotion } from './use-prefers-reduced-motion.ts'
 import { IconCloseOutlineRegular } from './icons.tsx'
 
 export type SheetSide = 'right' | 'left' | 'bottom' | 'top'
@@ -30,6 +31,12 @@ export interface SheetProps {
   /** 面板宽度（right/left 时生效），默认 380px。 */
   width?: number | string
   /**
+   * 面板圆角（覆盖「靠内容侧」两角的 --dsw-radius-panel，贴边侧仍是直角）。
+   * 数字按 px；字符串原样引用（可传 token：'var(--dsw-radius-lg)'）。
+   * 缺省 = 主题档位（28px）。小屏抽屉 / 局部容器里 28px 嫌大时用这个收小。
+   */
+  radius?: number | string
+  /**
    * 限定容器（可选）：面板**portal 到这个元素内部**，并只在它占的范围内展开。
    *
    * ⚠ 典型用法：插件面板里的详情抽屉要限制在**自己那个页签**里 ——
@@ -42,6 +49,14 @@ export interface SheetProps {
    */
   container?: HTMLElement | null
   children: ReactNode
+}
+
+/** 各方向「靠内容侧」的两个圆角角位（贴边侧是直角，不在内）。 */
+const RADIUS_CORNERS: Record<SheetSide, readonly ('borderTopLeftRadius' | 'borderTopRightRadius' | 'borderBottomLeftRadius' | 'borderBottomRightRadius')[]> = {
+  right: ['borderTopLeftRadius', 'borderBottomLeftRadius'],
+  left: ['borderTopRightRadius', 'borderBottomRightRadius'],
+  bottom: ['borderTopLeftRadius', 'borderTopRightRadius'],
+  top: ['borderBottomLeftRadius', 'borderBottomRightRadius'],
 }
 
 /** 容器在视口里的矩形（抽屉的展开范围）。 */
@@ -62,26 +77,15 @@ interface SheetBounds {
 const LEAVE_FALLBACK_MS = 800
 
 /**
- * 系统「减少动态效果」开关。
+ * 系统「减少动态效果」开关：见共享条目 use-prefers-reduced-motion。
  *
  * 开启后样式表把动画关掉（animation: none），也就不会有 animationend 事件，
  * 组件侧必须自己判断：这时关面板直接卸载，不要留一个不动的面板在屏幕上。
  */
-function usePrefersReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false)
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const sync = (): void => { setReduced(query.matches) }
-    sync()
-    query.addEventListener('change', sync)
-    return () => { query.removeEventListener('change', sync) }
-  }, [])
-  return reduced
-}
 
 /** 侧滑/底滑面板：portal + modal 层级栈（Escape 只归最上层），mask 点击关闭。 */
 export function Sheet({
-  open, onOpenChange, side = 'right', title, footer, width, container, children,
+  open, onOpenChange, side = 'right', title, footer, width, radius, container, children,
 }: SheetProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const reducedMotion = usePrefersReducedMotion()
@@ -167,7 +171,19 @@ export function Sheet({
           if (event.target !== event.currentTarget) return
           if (phase === 'closed') setMounted(false)
         }}
-        style={width !== undefined && (side === 'right' || side === 'left') ? { width: typeof width === 'number' ? width + 'px' : width } : undefined}
+        style={(() => {
+          // inline style 只放「消费端给了的」覆盖项：宽度（侧滑时）与圆角（只覆盖
+          // 靠内容侧的两角 —— inline 长属性优先于样式表的 side 规则，贴边侧不受影响）。
+          const style: Record<string, string> = {}
+          if (width !== undefined && (side === 'right' || side === 'left')) {
+            style.width = typeof width === 'number' ? `${width}px` : width
+          }
+          if (radius !== undefined) {
+            const value = typeof radius === 'number' ? `${radius}px` : radius
+            for (const corner of RADIUS_CORNERS[side]) style[corner] = value
+          }
+          return Object.keys(style).length > 0 ? style : undefined
+        })()}
       >
         <div className={css.header}>
           <div className={css.title}>{title}</div>

@@ -13,6 +13,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { act, createElement, type ReactElement } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { Calendar } from '../src/calendar.tsx'
 import { DatePicker } from '../src/date-picker.tsx'
 
@@ -148,5 +150,18 @@ describe('DatePicker mode', () => {
     expect(container!.querySelector('button')!.textContent).toContain('选择月份')
     render(createElement(DatePicker, { mode: 'day' }))
     expect(container!.querySelectorAll('button')[0].textContent).toContain('选择日期')
+  })
+})
+
+describe('calendar 样式表的悬停契约（issue 024）', () => {
+  const css = readFileSync(join(import.meta.dirname, '..', 'src', 'calendar.css'), 'utf8')
+
+  it('悬停底色排除选中格（否则点击后鼠标停在原位，浅灰 hover 底压过品牌蓝底，白字被洗没）', () => {
+    for (const rule of ['.cell:hover:not(:disabled):not([data-selected])', '.monthCell:hover:not(:disabled):not([data-selected])']) {
+      expect(css).toContain(rule)
+    }
+    // 不允许出现不带排除的旧写法
+    expect(css).not.toMatch(/\.cell:hover:not\(:disabled\)\s*\{/)
+    expect(css).not.toMatch(/\.monthCell:hover:not\(:disabled\)\s*\{/)
   })
 })

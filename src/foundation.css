@@ -1,0 +1,59 @@
+/*
+ * foundation.css — 本仓实现层的基础变量（间距刻度）。
+ *
+ * 为什么有这一层（2026-11-18 起，issue 012）：
+ *   官方 DSH 把设计 token 分工写得很清楚：
+ *     · `docs/web-styling.md`：`ui-theme` owns the `--dsw-*` static scale, semantic
+ *       aliases, typography, **motion**, gradients, shadows... Feature packages
+ *       consume semantic aliases and **do not define another global theme**；
+ *       shared colors, typography, elevation, and **motion belong to the theme package**。
+ *     · `.agents/skills/dsh-client-ui-ux/references/spacing.md` 末句：
+ *       **This skill defines no numeric scale**（官方给间距语义，不给数值）。
+ *     · 同 skill 的 SKILL.md：numeric scales stay with their implementation owners
+ *       （数值刻度归实现方）。
+ *   所以：颜色 / 字体 / 层级 / 动效一律不碰官方的面，动效直接用官方 token
+ *   （--ds-transition-duration{,-fast,-slow} / --ds-ease-in-out）；
+ *   **间距刻度是官方明确留白的那块地，本仓作为第三方插件组件的实现方补齐**。
+ *
+ * 变量名前缀 `--dsh-space-*`（官方是 `--dsw-*`）：不与官方命名空间撞车，
+ * 官方日后自己加 spacing token 也不会互相覆盖。
+ *
+ * 为什么定义在 `:root`：
+ *   消费端把全部组件样式拼进**同一个 `<style>`** 注入宿主页面，`:root` 即 `<html>`，
+ *   变量对整页生效，组件内任何位置都能取到（不依赖「必须在某个根类的子树里」这种
+ *   隐含前提，避免 var() 解析失败导致的静默失效）。
+ *   变量名带 `--dsh-` 前缀，多个插件同时注入同名变量时取值一致（刻度是规范定死的），
+ *   互相覆盖不出问题。
+ *
+ * 刻度（4px 底座，2px 半步）：
+ *   1 / 2 / 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32
+ * 语义角色、归一规则与例外见 `docs/wiki/04-间距与动效规范.md` 与 `docs/issues/012`。
+ *   `0` 不进刻度（复位值不是节奏值，`margin: 0` 保持字面量）。
+ *   `0.5px` 是发丝描边补偿（`margin-left: -0.5px`），不是间距，保持字面量。
+ *
+ * 改刻度是一次有意的决定：`tests/registry.spec.ts` 里有一张期望表钉住这里的取值，
+ * 两处必须一起改（护栏会红）。
+ */
+
+:root {
+  /* 发丝级缝隙（1px 分隔间隙） */
+  --dsh-space-1: 1px;
+  /* 图标与文字、极紧组内 */
+  --dsh-space-2: 2px;
+  /* 组内元素（紧） */
+  --dsh-space-4: 4px;
+  /* 组内元素（中）、控件内紧凑留白 */
+  --dsh-space-6: 6px;
+  /* 控件内边距、卡片内边距 */
+  --dsh-space-8: 8px;
+  /* 块内边距 */
+  --dsh-space-12: 12px;
+  /* 区块之间 */
+  --dsh-space-16: 16px;
+  /* 大块内边距 */
+  --dsh-space-20: 20px;
+  /* 区块分隔 */
+  --dsh-space-24: 24px;
+  /* 大留白 */
+  --dsh-space-32: 32px;
+}
