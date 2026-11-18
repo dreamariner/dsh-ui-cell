@@ -13,9 +13,9 @@ import {
   Input, Button,
   Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage,
   ConfigField, InlineEditor, DisclosureRow, FoldToggle,
-  ConnectionIndicator, Sidebar, Resizable, Tag,
+  ConnectionIndicator, Sidebar, SidebarNav, Resizable, Tag, useSidebarCollapsed,
 } from '../../../src/index.ts'
-import { IconDatabaseOutlineRegular, IconWarningOutlineRegular } from '../../../src/icons.tsx'
+import { IconDatabaseOutlineRegular, IconWarningOutlineRegular, IconSearchOutlineRegular, IconFileOutlineRegular } from '../../../src/icons.tsx'
 
 function CardSection() {
   return (
@@ -34,6 +34,14 @@ function CardSection() {
           </CardFooter>
         </Card>
       </div>
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        圆角取 <code>--dsw-radius-lg</code>（16px）：卡片是内容容器，这一档与上游的卡片一致
+        （GenericCommandCard / MessageItem / PlanPreview 都是 lg），也与本仓的浮层组件同档。
+        主题里的 <code>radius-panel</code>（28px）是留给模态框与浮层面板的
+        （上游 Modal / 设置面板 / 输入栏）—— 卡片用那一档会显得突兀。
+        要改的话给 Card 传 <code>className</code> 或 <code>style</code> 即可
+        （消费端自己的类要排在组件样式之后注入，同特异性后者胜）。
+      </p>
     </Demo>
   )
 }
@@ -46,7 +54,7 @@ function AlertSection() {
   <AlertTitle>记忆写入被跳过</AlertTitle>
   <AlertDescription>该会话处于只读模式。</AlertDescription>
 </Alert>`}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: 380 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-8)', width: 380 }}>
         <Alert variant="info"><AlertTitle>信息</AlertTitle><AlertDescription>新版本 0.2.2-rc.1 已发布。</AlertDescription></Alert>
         <Alert variant="success"><AlertTitle>成功</AlertTitle><AlertDescription>902 条记忆已重建索引。</AlertDescription></Alert>
         <Alert variant="warning" icon={<IconWarningOutlineRegular size={15} />}><AlertTitle>警告</AlertTitle><AlertDescription>该会话处于只读模式。</AlertDescription></Alert>
@@ -67,7 +75,7 @@ function CollapsibleSection() {
 </Collapsible>`}>
       <div style={{ width: 320 }}>
         <Collapsible trigger="高级选项" open={open} onOpenChange={setOpen}>
-          这里是折叠区内容，展开时渲染。
+          这里是折叠区内容：常驻 DOM，展开收起走 grid 高度过渡（收起后内容状态保留）。
         </Collapsible>
       </div>
     </Demo>
@@ -98,8 +106,8 @@ function ScrollAreaSection() {
     <Demo id="scroll-area" title="ScrollArea" code={`import { ScrollArea } from '../ui/scroll-area.tsx'
 
 <ScrollArea style={{ height: 120 }}>…</ScrollArea>`}>
-      <ScrollArea style={{ height: 120, width: 240, padding: 8 }}>
-        {Array.from({ length: 12 }, (_, i) => <div key={i} style={{ padding: '4px 0' }}>记忆条目 #{i + 1}</div>)}
+      <ScrollArea style={{ height: 120, width: 240, padding: 'var(--dsh-space-8)' }}>
+        {Array.from({ length: 12 }, (_, i) => <div key={i} style={{ padding: 'var(--dsh-space-4) 0' }}>记忆条目 #{i + 1}</div>)}
       </ScrollArea>
     </Demo>
   )
@@ -185,7 +193,7 @@ function ToggleGroupSection() {
 function ItemSection() {
   return (
     <Demo id="item" title="Item" wide code={`import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from '../ui/item.tsx'`}>
-      <div style={{ width: 380, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ width: 380, display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-8)' }}>
         <Item>
           <ItemMedia><IconDatabaseOutlineRegular size={16} /></ItemMedia>
           <ItemContent>
@@ -229,7 +237,7 @@ function FieldSection() {
 <Field name="title" label="标题" description="会显示在记忆列表">
   <Input />
 </Field>`}>
-      <div style={{ width: 280, display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ width: 280, display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-12)' }}>
         <Field name="t1" label="标题" description="会显示在记忆列表">
           <Input defaultValue="用户偏好" />
         </Field>
@@ -360,7 +368,10 @@ function DisclosureRowSection() {
     <Demo id="disclosure-row" title="DisclosureRow" wide code={`import { DisclosureRow } from '../ui/disclosure-row.tsx'
 
 <DisclosureRow icon={…} title="记忆条目" open={open} expandable
-  onToggle={() => setOpen(!open)} />`}>
+  onToggle={() => setOpen(!open)}>
+  {/* 内容走 children，展开收起才有动画（issue 015） */}
+  这里是折叠区内容
+</DisclosureRow>`}>
       <div style={{ width: 340 }}>
         <DisclosureRow
           icon={<IconDatabaseOutlineRegular size={14} />}
@@ -369,8 +380,11 @@ function DisclosureRowSection() {
           expandable
           onToggle={() => setOpen(!open)}
           expandOnRowClick
-        />
-        {open && <div style={{ padding: '6px 0 0 24px', fontSize: 13, color: 'var(--dsw-alias-label-secondary)' }}>用户偏好深色主题与简体中文回复。</div>}
+        >
+          <div style={{ padding: 'var(--dsh-space-6) 0 var(--dsh-space-8) var(--dsh-space-24)', fontSize: 13, color: 'var(--dsw-alias-label-secondary)' }}>
+            用户偏好深色主题与简体中文回复。
+          </div>
+        </DisclosureRow>
       </div>
     </Demo>
   )
@@ -400,7 +414,7 @@ function ConnectionIndicatorSection() {
     <Demo id="connection-indicator" title="ConnectionIndicator" wide code={`import { ConnectionIndicator } from '../ui/connection-indicator.tsx'
 
 <ConnectionIndicator state="connecting" …labels />`}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: 300 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-8)', width: 300 }}>
         <ConnectionIndicator state="connecting" disconnectedLabel="已断开" connectingLabel="连接中" recoveredLabel="已恢复" reconnectActionLabel="重连" restartActionLabel="重启" onReconnect={() => {}} />
         <ConnectionIndicator state="connecting" disconnectedLabel="已断开" connectingLabel="连接中" recoveredLabel="已恢复" reconnectActionLabel="重连" restartActionLabel="重启" onReconnect={() => {}} />
       </div>
@@ -408,19 +422,65 @@ function ConnectionIndicatorSection() {
   )
 }
 
-function SidebarSection() {
-  return (
-    <Demo id="sidebar" title="Sidebar" wide code={`import { Sidebar } from '../ui/sidebar.tsx'
+// header/footer 是槽内容，用 hook 感知收起态（context 下发，不用接 prop）。
+function DemoSidebarHeader() {
+  const collapsed = useSidebarCollapsed() ?? false
+  return <div style={{ fontWeight: 600, fontSize: 14, textAlign: 'center' }}>{collapsed ? '助' : '助手'}</div>
+}
 
-<Sidebar header={…} footer={…}>导航内容</Sidebar>`}>
-      <div style={{ width: 400, height: 180, display: 'flex' }}>
-        <Sidebar header={<div style={{ fontWeight: 600 }}>助手</div>} footer={<div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)' }}>v0.2.1</div>}>
-          {['记忆', '技能', '日记'].map((label) => (
-            <div key={label} style={{ padding: '6px 10px', borderRadius: 6, color: 'var(--dsw-alias-label-secondary)' }}>{label}</div>
-          ))}
+function DemoSidebarFooter() {
+  const collapsed = useSidebarCollapsed() ?? false
+  return <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)', textAlign: 'center' }}>{collapsed ? '…' : 'v0.2.1'}</div>
+}
+
+function SidebarSection() {
+  const [collapsed, setCollapsed] = useState(false)
+  const [nav, setNav] = useState('memories')
+  return (
+    <Demo id="sidebar" title="Sidebar" wide code={`import { Sidebar, SidebarNav, useSidebarCollapsed } from '../ui/sidebar.tsx'
+
+<Sidebar header={…} footer={…} collapsed={collapsed} onCollapsedChange={setCollapsed}>
+  <SidebarNav label="助手导航" … />  {/* 收起态自动读 Context，不用再传 */}
+</Sidebar>
+
+// 槽内任意组件用 hook 感知收起态（shadcn useSidebar() 的对应物）：
+const collapsed = useSidebarCollapsed() ?? false`}>
+      <div style={{ width: 440, height: 210, display: 'flex', border: '1px dashed var(--dsw-alias-border-l3)', borderRadius: 8, overflow: 'hidden' }}>
+        <Sidebar
+          collapsed={collapsed}
+          onCollapsedChange={setCollapsed}
+          collapsedWidth={52}
+          header={<DemoSidebarHeader />}
+          footer={<DemoSidebarFooter />}
+        >
+          <SidebarNav
+            label="助手导航"
+            value={nav}
+            onSelect={setNav}
+            items={[
+              { value: 'memories', label: '记忆', icon: <IconDatabaseOutlineRegular size={15} />, badge: 12 },
+              { value: 'skills', label: '技能', icon: <IconSearchOutlineRegular size={15} /> },
+              { value: 'diary', label: '日记', icon: <IconFileOutlineRegular size={15} />, disabled: true },
+            ]}
+          />
         </Sidebar>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--dsw-alias-label-tertiary)', fontSize: 13 }}>主内容区</div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--dsh-space-8)' }}>
+          <button className="duc-button duc-button-ghost duc-button-sm" type="button" onClick={() => setCollapsed(!collapsed)}>
+            {collapsed ? '展开侧栏' : '收起侧栏'}
+          </button>
+          <div style={{ color: 'var(--dsw-alias-label-tertiary)', fontSize: 13 }}>主内容区</div>
+        </div>
       </div>
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        壳与导航分工：<code>Sidebar</code> 管三段结构与宽度过渡（官方动效 token，
+        reduced-motion 降级），导航条目归 <code>SidebarNav</code>（选中态、分组、徽标、
+        收起态图标化，徽标缩成圆点、禁用项照常置灰）。
+        收起态经 <strong>Context 下发</strong>：<code>SidebarNav</code> 不用再传
+        <code>collapsed</code>，header/footer 这类槽内容用 <code>useSidebarCollapsed()</code>
+        也能拿到（上面「助手 / 助」「v0.2.1 / …」就是 hook 切的）；
+        显式给 prop 仍可覆盖（独立于壳使用时）。触发器由消费端接
+        （受控 <code>collapsed</code> / <code>onCollapsedChange</code>，或非受控 <code>defaultCollapsed</code>）。
+      </p>
     </Demo>
   )
 }
@@ -430,7 +490,7 @@ function ResizableSection() {
     <Demo id="resizable" title="Resizable" wide code={`import { Resizable } from '../ui/resizable.tsx'
 
 <Resizable left={…} right={…} initialLeftPercent={50} />`}>
-      <div style={{ width: 440, height: 130, border: '1px dashed var(--dsw-alias-border-l3)', borderRadius: 8, overflow: 'hidden' }}>
+      <div style={{ width: 440, height: 130, border: '1px dashed var(--dsw-alias-border-l3)', borderRadius: 8, overflow: 'hidden', display: 'flex' }}>
         <Resizable
           initialLeftPercent={45}
           left={<div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--dsw-alias-bg-layer-2)', color: 'var(--dsw-alias-label-tertiary)' }}>拖我试试</div>}

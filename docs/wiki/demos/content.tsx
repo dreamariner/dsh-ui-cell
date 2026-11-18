@@ -109,7 +109,7 @@ function CodeToolbarSection() {
           onCopy={() => { setCopied(true); window.setTimeout(() => setCopied(false), 1200) }}
           onWrap={() => setWrapped(!wrapped)}
         />
-        <pre style={{ margin: 0, padding: '10px 12px', background: 'var(--dsw-alias-bg-layer-2)', borderRadius: '0 0 var(--dsw-radius-md) var(--dsw-radius-md)', font: "12px/1.6 'SF Mono', Menlo, monospace", whiteSpace: wrapped ? 'pre-wrap' : 'pre', overflow: 'auto', color: 'var(--dsw-alias-label-primary)' }}>{'const seams = collectSeams(ctx)\nawait runBoundaryFix(seams)'}</pre>
+        <pre style={{ margin: 0, padding: 'var(--dsh-space-8) var(--dsh-space-12)', background: 'var(--dsw-alias-bg-layer-2)', borderRadius: '0 0 var(--dsw-radius-md) var(--dsw-radius-md)', font: "12px/1.6 'SF Mono', Menlo, monospace", whiteSpace: wrapped ? 'pre-wrap' : 'pre', overflow: 'auto', color: 'var(--dsw-alias-label-primary)' }}>{'const seams = collectSeams(ctx)\nawait runBoundaryFix(seams)'}</pre>
       </div>
     </Demo>
   )
@@ -155,7 +155,7 @@ function TerminalBlockSection() {
   return (
     <Demo id="terminal-block" title="TerminalBlock" wide code={`import { TerminalBlock } from '../ui/terminal-block.tsx'
 
-<TerminalBlock command="memory rebuild" cwd="/zero" exitCode={0}
+<TerminalBlock command="memory rebuild" cwd="/workspace/demo" exitCode={0}
   output="…ANSI 彩色输出（ansi-lite 解析）" />`}>
       <div style={{ width: 440 }}>
         <TerminalBlock
@@ -176,7 +176,7 @@ function TerminalBlockSection() {
             expand: (hidden) => '展开 ' + hidden + ' 行',
           }}
           command="memory rebuild --index"
-          cwd="/Users/nan/zero"
+          cwd="/workspace/demo"
           exitCode={0}
           output={'\u001B[32m✓\u001B[0m 读取 902 条记忆\n\u001B[33m!\u001B[0m 3 条待确认已跳过\n\u001B[36m→\u001B[0m 索引重建完成，耗时 1.2s\n\u001B[1;34mdsh\u001B[0m> 就绪'}
         />
@@ -229,7 +229,7 @@ function ZoomControlsSection() {
 
 <ZoomControls zoom={zoom} visible labels={labels} onZoom={setZoom}
   onActiveChange={() => {}} />`}>
-      <div style={{ width: 380, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ width: 380, display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-8)' }}>
         {/* panel 是 absolute 定位（bottom: 14px + 水平居中），需要一个定位祖先当锚定盒；
             官方用法即放在带 position 的预览容器里，这里给一个 relative 锚定盒模拟预览画布 */}
         <div style={{ position: 'relative', height: 110, borderRadius: 8, background: 'var(--dsw-alias-bg-layer-2)' }}>

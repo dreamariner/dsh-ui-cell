@@ -128,16 +128,21 @@ ${combinedCellCss}
 * { box-sizing: border-box; }
 body { margin: 0; font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #1f2328; background: #f6f7f8; }
 .doc-shell { display: flex; min-height: 100vh; }
-.doc-side { width: 240px; flex: none; border-right: 1px solid #e4e6ea; background: #fff; padding: 16px 12px; position: sticky; top: 0; height: 100vh; overflow: auto; }
-.doc-side h1 { font-size: 15px; margin: 4px 8px 2px; }
-.doc-side .ver { font-size: 11px; color: #8b949e; margin: 0 8px 14px; }
+.doc-side { width: 240px; flex: none; border-right: 1px solid #e4e6ea; background: #fff; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+/* 头部固定：标题与亮暗切换不随导航列表滚动（列表自己滚）。
+   两行网格：标题 + 图标按钮一行，版本号独占一行（不挤成两行）。 */
+.doc-side-head { flex: none; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 8px; padding: 16px 12px 10px; }
+.doc-side h1 { font-size: 15px; margin: 4px 0 2px 8px; }
+.doc-side .ver { grid-column: 1 / -1; font-size: 11px; color: #8b949e; margin: 0 0 0 8px; }
+.doc-side-nav { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 0 12px 16px; }
 .doc-side a { display: block; padding: 5px 10px; border-radius: 6px; color: #57606a; text-decoration: none; font-size: 13px; }
 .doc-side a:hover { background: #eef0f2; color: #1f2328; }
 .doc-side .group { font-size: 11px; color: #8b949e; margin: 14px 8px 4px; letter-spacing: 0.05em; }
+.doc-theme-btn { flex: none; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid #d0d4da; border-radius: 6px; background: #fff; color: #57606a; cursor: pointer; }
+.doc-theme-btn:hover { background: #eef0f2; color: #1f2328; }
 .doc-main { flex: 1 1 0; min-width: 0; padding: 28px 40px 80px; max-width: 980px; }
 .doc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .doc-top h2 { margin: 0; font-size: 20px; }
-.doc-top button { margin-left: auto; padding: 5px 12px; border: 1px solid #d0d4da; border-radius: 6px; background: #fff; cursor: pointer; font-size: 12px; }
 .doc-intro { color: #57606a; font-size: 13px; line-height: 1.7; margin: 0 0 24px; }
 .demo-section { background: #fff; border: 1px solid #e4e6ea; border-radius: 10px; padding: 18px 20px 20px; margin-bottom: 18px; scroll-margin-top: 16px; }
 .demo-section > h3 { margin: 0 0 2px; font-size: 15px; }
@@ -150,6 +155,8 @@ body[data-ds-dark-theme] { background: #0f1114; color: #e6e8eb; }
 body[data-ds-dark-theme] .doc-side a { color: #9ea7b3; }
 body[data-ds-dark-theme] .doc-side a:hover { color: #e6e8eb; background: #1e2127; }
 body[data-ds-dark-theme] .doc-top button { background: #1e2127; border-color: #33383f; color: #e6e8eb; }
+body[data-ds-dark-theme] .doc-theme-btn { background: #1e2127; border-color: #33383f; color: #e6e8eb; }
+body[data-ds-dark-theme] .doc-theme-btn:hover { background: #262a31; }
 body[data-ds-dark-theme] .demo-stage { border-color: #33383f; }
 body[data-ds-dark-theme] .demo-section .desc, body[data-ds-dark-theme] .doc-intro { color: #9ea7b3; }
 </style>

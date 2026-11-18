@@ -16,7 +16,7 @@ function ModalSection() {
       <Button variant="primary" onClick={() => setOpen(true)}>打开模态</Button>
       <Modal open={open} title="删除记忆" closeLabel="关闭" onClose={() => setOpen(false)}>
         <p style={{ margin: 0, color: 'var(--dsw-alias-label-secondary)' }}>该操作会移除 1 条记忆，且不可撤销。</p>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
+        <div style={{ display: 'flex', gap: 'var(--dsh-space-8)', justifyContent: 'flex-end', marginTop: 'var(--dsh-space-16)' }}>
           <button className="duc-button duc-button-ghost duc-button-sm" type="button" onClick={() => setOpen(false)}>取消</button>
           <button className="duc-button duc-button-primary duc-button-sm" type="button" onClick={() => setOpen(false)}>确认删除</button>
         </div>
@@ -77,7 +77,7 @@ function PopoverSection() {
       <Popover
         trigger={<Button variant="outline">点开浮层</Button>}
         content={
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-6)' }}>
             <strong style={{ fontSize: 13 }}>记忆统计</strong>
             <span style={{ fontSize: 12, color: 'var(--dsw-alias-label-secondary)' }}>902 条 · 3 条待确认</span>
           </div>
@@ -91,19 +91,32 @@ function HoverCardSection() {
   return (
     <Demo id="hover-card" title="HoverCard" code={`import { HoverCard } from '../ui/hover-card.tsx'
 
-<HoverCard anchor={<a href="#">助手</a>} content={…}
-  copyText="助手" copyLabel="复制" copiedLabel="已复制" />`}>
-      <span style={{ display: 'flex', gap: 16, alignItems: 'center', fontSize: 13 }}>
+<HoverCard anchor={<a href="#">助手</a>}
+  copyText="助手" copyLabel="复制" copiedLabel="已复制"
+  content={<div style={{ color: 'var(--dsw-alias-hovercard-label-primary)' }}>…</div>} />`}>
+      <span style={{ display: 'flex', gap: 'var(--dsh-space-16)', alignItems: 'center', fontSize: 13 }}>
         概念生命
         <HoverCard
           anchor={<a href="#" style={{ color: 'var(--dsw-alias-link)' }}>助手</a>}
-          content={<div style={{ fontSize: 12 }}>助手是运行在 DSH 上的智能体，面板与状态由本插件承载。</div>}
+          content={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-4)', fontSize: 12, lineHeight: 1.6 }}>
+              <span style={{ color: 'var(--dsw-alias-hovercard-label-primary)', fontWeight: 500 }}>助手</span>
+              <span style={{ color: 'var(--dsw-alias-hovercard-label-secondary)' }}>运行在 DSH 上的智能体，面板与状态由本插件承载。</span>
+              <span style={{ color: 'var(--dsw-alias-hovercard-label-tertiary)' }}>内容配色要用 hovercard-label-* 族，卡片底色恒暗。</span>
+            </div>
+          }
           copyText="助手是运行在 DSH 上的智能体。"
           copyLabel="复制"
           copiedLabel="已复制"
         />
         悬停查看卡片
       </span>
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        卡片底色取 <code>--dsw-alias-hovercard-bg</code>（亮暗两套主题都是深面 —— tooltip 语言，
+        浮在任何内容上都成立），所以内容配色不能用主题正文色：正文字是深色，压在恒暗面上
+        就是黑上黑。要用配套的 <code>hovercard-label-*</code> token 族
+        （primary 近白 / secondary / tertiary），上游的会话标记与工作区行都是这么配的。
+      </p>
     </Demo>
   )
 }
@@ -166,7 +179,7 @@ function ContextMenuSection() {
         ]}
         onSelect={(id) => { window.console.log('选中', id) }}
       >
-        <div style={{ width: 300, padding: 16, border: '1px dashed var(--dsw-alias-border-l3)', borderRadius: 8, fontSize: 13, color: 'var(--dsw-alias-label-secondary)' }}>
+        <div style={{ width: 300, padding: 'var(--dsh-space-16)', border: '1px dashed var(--dsw-alias-border-l3)', borderRadius: 8, fontSize: 13, color: 'var(--dsw-alias-label-secondary)' }}>
           在这个区域上右键，试试官方 Menu 的指针模式。
         </div>
       </ContextMenu>
@@ -195,32 +208,50 @@ function NavigationMenuSection() {
   return (
     <Demo id="navigation-menu" title="NavigationMenu" wide code={`import { NavigationMenu } from '../ui/navigation-menu.tsx'
 
-<NavigationMenu items={[{ id, label, current?, children? }]} />`}>
+<NavigationMenu defaultCurrentId="memories" onNavigate={(id) => …}
+  items={[{ id, label, current?, children? }]} />`}>
       <NavigationMenu
+        defaultCurrentId="memories"
         items={[
-          { id: 'memories', label: '记忆', current: true },
+          { id: 'memories', label: '记忆' },
           { id: 'scenes', label: '场景' },
           { id: 'more', label: '更多', children: [{ id: 'audit', label: '审计日志' }, { id: 'settings', label: '设置' }] },
         ]}
       />
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        下划线双模式：非受控传 <code>defaultCurrentId</code>，点击条目自迁移
+        （点「场景」试试；「更多」是下拉，选中子项下划线留在父项）；
+        声明了 <code>current: true</code> 即进入受控模式，以声明为准
+        （路由是真相的消费端用这个，点条目只回调 <code>onNavigate</code>）。
+      </p>
     </Demo>
   )
 }
 
 function SheetSection() {
   const [open, setOpen] = useState(false)
+  const [smallOpen, setSmallOpen] = useState(false)
   return (
     <Demo id="sheet" title="Sheet" code={`import { Sheet } from '../ui/sheet.tsx'
 
 <Sheet open={open} onOpenChange={setOpen} side="right" title="会话详情">
   内容
 </Sheet>
-{/* side="bottom" 即抽屉形态 */}`}>
+{/* 圆角可自定义（缺省 radius-panel 28px）；side="bottom" 即抽屉形态 */}
+<Sheet open={smallOpen} onOpenChange={setSmallOpen} radius="var(--dsw-radius-lg)">…</Sheet>`}>
       <Button variant="primary" onClick={() => setOpen(true)}>打开右侧面板</Button>
+      <Button variant="ghost" onClick={() => setSmallOpen(true)}>小圆角（lg 16px）</Button>
       <Sheet open={open} onOpenChange={setOpen} side="right" title="会话详情">
         <p style={{ margin: 0, color: 'var(--dsw-alias-label-secondary)', fontSize: 13 }}>
           侧滑面板：portal + modal 层级栈（Escape 只归最上层），mask 点击关闭。
-          side="bottom" 即抽屉（drawer）形态。
+          side="bottom" 即抽屉（drawer）形态。圆角缺省 radius-panel（28px），
+          只圆「靠内容侧」两角，贴边侧直角。
+        </p>
+      </Sheet>
+      <Sheet open={smallOpen} onOpenChange={setSmallOpen} side="right" radius="var(--dsw-radius-lg)" title="局部抽屉">
+        <p style={{ margin: 0, color: 'var(--dsw-alias-label-secondary)', fontSize: 13 }}>
+          radius=&quot;var(--dsw-radius-lg)&quot;：小屏抽屉 / 局部容器里 28px 嫌大时收小
+          （数字按 px，字符串原样引用，可传任意 radius token）。
         </p>
       </Sheet>
     </Demo>

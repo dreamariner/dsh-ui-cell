@@ -14,7 +14,24 @@ DSH 官方把设计 token 分三层：
 官方复制件里官方自己用了 static/specific/字面色的（tooltip/toast/hover-card 等），
 按「保真优先」在护栏的 `OFFICIAL_EXCEPTIONS` 逐文件登记并写明理由，升级重 diff 时跟随官方。
 
-## 二、token 的两道闸（缺一不可）
+## 二、圆角档位：按「组件的体量」选，不按好看选
+
+主题的 radius 家族在 `ui-theme/src/styles/base.css`（两套主题同值，不随换肤变）：
+
+| token | 值 | 谁在用 |
+|---|---|---|
+| `--dsw-radius-xs` | 4px | 小色块 |
+| `--dsw-radius-sm` | 8px | 胶囊 / 面包屑 / 小控件 |
+| `--dsw-radius-md` | 12px | **控件与内容块的默认档**（input / button / select / menu / alert / item / skeleton）|
+| `--dsw-radius-lg` | 16px | **卡片与浮层**（本仓 card / hover-card / toast / menu-surface；上游 GenericCommandCard / MessageItem / PlanPreview）|
+| `--dsw-radius-xl` | 20px | 上游的设置分区（AccountSection / AppearanceRow）|
+| `--dsw-radius-panel` | 28px | **模态框与浮层面板**（上游 Modal / SettingsRoot / InputBar；本仓 modal）|
+
+口径：**`radius-panel` 只给「浮到内容之上」的面板**，内容容器用 `lg` ✓。
+卡片用 panel 档会显得突兀（28px 在一张 320px 宽的卡片上，圆角占了整卡的九分之一 ✓）。
+这是本仓自有件的选档问题，不涉及官方保真件（保真件跟随上游 ✓）。
+
+## 三、token 的两道闸（缺一不可）
 
 | 闸 | 抓什么 | 怎么抓 |
 |---|---|---|
@@ -30,7 +47,7 @@ DSH 官方把设计 token 分三层：
 （组件 JS inline 设置）、`--dsl-*`（宿主页面级覆盖钩子，全部带 fallback）、
 `--shiki-*`（语法高亮的第三方契约变量，值在 本仓自带的 shiki.css）。
 
-## 三、命名空间：为什么类名要「前缀 + 组件名段」
+## 四、命名空间：为什么类名要「前缀 + 组件名段」
 
 官方 CSS Modules 的隔离是每文件哈希；复制模型把它降级成「运行时注入同一个 `<style>`」，
 哈希隔离不复存在。教训来自真实事故（2026-11-05 复审）：input 与 select 都有 `.wrap`、
@@ -47,7 +64,7 @@ button 与 input 都有 `.icon`，只加 `duc-` 前缀时 `.duc-wrap`/`.duc-icon
 改名就失配（katex 自己的 CSS、shiki 主题、宿主钩子都对不上），故 `:global(...)` 内
 既不改名也不进类名表。
 
-## 四、DSH 升级流程（升级行动清单）
+## 五、DSH 升级流程（升级行动清单）
 
 ```bash
 # 0. checkout 切到新版本
@@ -68,7 +85,7 @@ pnpm test                                     # 含「清单与上游逐字节�
 视觉/行为漂移只会「旧」，按实机验收的观感决定是否跟进。三层各自独立决策：
 官方 → 本仓（事件驱动）→ 消费者（想吃到修复时重新 add --force）。
 
-## 五、例外与裁剪（何时「不保真」是正当的）
+## 六、例外与裁剪（何时「不保真」是正当的）
 
 - **官方复制件例外**：官方自己用 static/字面色的，登记进 `OFFICIAL_EXCEPTIONS` 保真保留
 - **内容块的 DSH 私有耦合裁剪**（issue 005）：官方 markdown 家族里的流式增量解析、

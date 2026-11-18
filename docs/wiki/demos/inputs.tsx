@@ -1,5 +1,5 @@
 // inputs：输入进阶演示
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { Demo, type DemoSection } from './demo-cell.tsx'
 import {
   Select, Combobox, Slider, RadioGroup, InputOtp, Calendar, DatePicker, Form, Field, Input, Button,
@@ -59,7 +59,7 @@ function SliderSection() {
 <Slider value={value} onValueChange={setValue} min={0} max={100} />`}>
       <div style={{ width: 220 }}>
         <Slider value={value} onValueChange={setValue} min={0} max={100} />
-        <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)', marginTop: 6 }}>当前值：{value}</div>
+        <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)', marginTop: 'var(--dsh-space-6)' }}>当前值：{value}</div>
       </div>
     </Demo>
   )
@@ -95,7 +95,7 @@ function InputOtpSection() {
   onComplete={(code) => console.log(code)} />`}>
       <div>
         <InputOtp length={6} value={value} onChange={setValue} />
-        <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)', marginTop: 8 }}>
+        <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)', marginTop: 'var(--dsh-space-8)' }}>
           {value.length === 6 ? '已填满：' + value : '直接敲数字（点格子或按退格）'}
         </div>
       </div>
@@ -105,24 +105,52 @@ function InputOtpSection() {
 
 function CalendarSection() {
   const [selected, setSelected] = useState<Date | undefined>(new Date())
+  const [month, setMonth] = useState<Date | undefined>(new Date())
+  const cap = { fontSize: 12, color: 'var(--dsw-alias-label-secondary)', textAlign: 'center' } as CSSProperties
   return (
-    <Demo id="calendar" title="Calendar" code={`import { Calendar } from '../ui/calendar.tsx'
+    <Demo id="calendar" title="Calendar" wide code={`import { Calendar } from '../ui/calendar.tsx'
 
-<Calendar selected={selected} onSelect={setSelected} />`}>
-      <Calendar selected={selected} onSelect={setSelected} />
+<Calendar selected={selected} onSelect={setSelected} />
+<Calendar mode="month" selected={month} onSelect={setMonth} />`}>
+      <div style={{ display: 'flex', gap: 'var(--dsh-space-24)', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 'var(--dsh-space-4)' }}>
+          <Calendar selected={selected} onSelect={setSelected} />
+          <span style={cap}>day 日历（缺省）</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 'var(--dsh-space-4)' }}>
+          <Calendar mode="month" selected={month} onSelect={setMonth} />
+          <span style={cap}>month 年格：十二月，‹ › 按年翻，选中只看年月</span>
+        </div>
+      </div>
     </Demo>
   )
 }
 
 function DatePickerSection() {
   const [value, setValue] = useState('')
+  const [monthValue, setMonthValue] = useState('')
+  const cap = { fontSize: 12, color: 'var(--dsw-alias-label-secondary)' } as CSSProperties
   return (
-    <Demo id="date-picker" title="DatePicker" code={`import { DatePicker } from '../ui/date-picker.tsx'
+    <Demo id="date-picker" title="DatePicker" wide code={`import { DatePicker } from '../ui/date-picker.tsx'
 
-<DatePicker value={value} onChange={setValue} placeholder="选择日期" />`}>
-      <div style={{ width: 200 }}>
-        <DatePicker value={value} onChange={setValue} placeholder="选择日期" />
+<DatePicker value={value} onChange={setValue} placeholder="选择日期" />
+<DatePicker mode="month" value={monthValue} onChange={setMonthValue} />`}>
+      <div style={{ display: 'flex', gap: 'var(--dsh-space-24)', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 'var(--dsh-space-4)', width: 220 }}>
+          <DatePicker value={value} onChange={setValue} placeholder="选择日期" />
+          <span style={cap}>day（缺省）：值 YYYY-MM-DD</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 'var(--dsh-space-4)', width: 220 }}>
+          <DatePicker mode="month" value={monthValue} onChange={setMonthValue} />
+          <span style={cap}>month：值 YYYY-MM，占位自动「选择月份」</span>
+        </div>
       </div>
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        两个组件都有 <code>mode=&quot;month&quot;</code> 的月份选择形态（issue 010）：
+        Calendar 变十二月年格（‹ › 按年翻、禁用回调按月生效），
+        DatePicker 的弹层换年格、值格式换 YYYY-MM、占位自动「选择月份」。
+        今日 / 选中态与 day 模式共用同一组 token。
+      </p>
     </Demo>
   )
 }
@@ -149,7 +177,7 @@ function FormSection() {
           </Field>
           <Button variant="primary" size="sm" type="submit">提交</Button>
         </Form>
-        {submitted !== undefined && <div style={{ fontSize: 12, color: 'var(--dsw-alias-state-success-primary)', marginTop: 8 }}>已提交于 {submitted}</div>}
+        {submitted !== undefined && <div style={{ fontSize: 12, color: 'var(--dsw-alias-state-success-primary)', marginTop: 'var(--dsh-space-8)' }}>已提交于 {submitted}</div>}
       </div>
     </Demo>
   )
