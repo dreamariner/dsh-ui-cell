@@ -71,22 +71,38 @@ button 与 input 都有 `.icon`，只加 `duc-` 前缀时 `.duc-wrap`/`.duc-icon
 
 ## 五、DSH 升级流程（升级行动清单）
 
+> 完整流程、十个教训与常见上游变化对照见 **[05-DSH升级SOP.md](./05-DSH升级SOP.md)**。
+> 这里是速查版。
+
 ```bash
-# 0. checkout 切到新版本
-# 1. token 清单同步（锚自动派生自 checkout：version + HEAD commit）
+# 0. checkout 切到新版本，记下 HEAD commit（它就是新锚）
+# 1. 先看上游改了什么（不要先动代码）
+DSH_CHECKOUT=<新 checkout> pnpm upstream:diff --base <上一个基线 commit>
+#    ↑ 逐件比对：一致 / 滞后（该跟还是有意不跟）/ 上游新增或删除
+# 2. token 清单同步（锚自动派生自 checkout：version + HEAD commit）
 DSH_CHECKOUT=<新 checkout> pnpm vendor        # 重生成；--check 只校验
-# 2. 跑护栏
-pnpm test                                     # 含「清单与上游逐字节一致」（checkout 在场时实跑）
-# 3. 逐组件重 diff（registry.json 的 upstream 字段指向官方源文件）
-#    把官方改动搬进 src/（仅头注释与导入路径是 本仓侧约定，其余保真）
+# 3. 把官方改动搬进 src/（仅头注释与导入路径是 本仓侧约定，其余保真）
 #    markdown 家族可用 scripts/import-markdown-family.mjs 做机械搬运，
 #    但语义裁剪（流式臂 / DraggableImage / LinkIcon）仍要手工过一遍
-# 4. 更新 registry.json 的 dshVersion / dshCommit
-# 5. 版本号 +1、构建、提交、推 GitHub
-# 6. 消费端：pnpm add --force 重新复制想跟进的组件（不跟也不坏，见下）
+#    改完同步源文件的头注记版本（护栏查「注记版本 = 文件头版本」）
+# 4. 同步 registry 的 dependencies（上游改 import 就得改，否则消费端单加即坏）
+# 5. 跑护栏
+pnpm test && pnpm typecheck
+# 6. 重建站点 + 实机抽查（亮暗两套；改了 token 的件尤其要看）
+DSH_CHECKOUT=<新 checkout> pnpm docs:build
+# 7. 最后改锚：registry.json 的 dshVersion / dshCommit（与 token 快照一致）
+#    锚点是总结论，不是过程动作 —— 全部条目对齐后才改
+# 8. 版本号 +1、构建、提交、推 GitHub
+# 9. 消费端：pnpm add --force 重新复制想跟进的组件（不跟也不坏，见下）
 ```
 
-**可以维持旧版自己迭代**：机制上唯一会「坏」的是官方删 alias token（步骤 1 的 check 会红）；
+**升级时最容易犯的三个错**（都有护栏了，但要知道它们对应什么）：
+
+1. **注记先写、内容后补** → registry 说 rc.5、源文件还是 rc.1，注册表在撒谎
+2. **锚点中途就改** → 两个锚各走各的，说不清哪些件真跟上了
+3. **例外表只增不减** → 上游已把字面色换成 alias token，本仓还挂着例外兜着
+
+**可以维持旧版自己迭代**：机制上唯一会「坏」的是官方删 alias token（步骤 2 的 check 会红）；
 视觉/行为漂移只会「旧」，按实机验收的观感决定是否跟进。三层各自独立决策：
 官方 → 本仓（事件驱动）→ 消费者（想吃到修复时重新 add --force）。
 

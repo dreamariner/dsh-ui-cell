@@ -1,5 +1,5 @@
 // PathLabel: DSH 官方 ui-primitives 保真复制。
-// 上游来源：packages/client/ui-primitives/src/PathLabel.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// 上游来源：packages/client/ui-primitives/src/PathLabel.tsx @ dsh v0.2.2-rc.5 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** A single-line file path whose trailing characters remain visible in narrow toolbars. */
 import { useLayoutEffect, useRef, type HTMLAttributes } from 'react'

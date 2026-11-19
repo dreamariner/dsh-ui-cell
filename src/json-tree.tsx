@@ -1,5 +1,5 @@
 // 保真复制自 DSH 官方 ui-primitives。
-// 上游来源：packages/client/ui-primitives/src/JsonTree.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// 上游来源：packages/client/ui-primitives/src/JsonTree.tsx @ dsh v0.2.2-rc.5 (66491b05e3)
 import clsx from 'clsx'
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type {

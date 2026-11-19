@@ -1,5 +1,5 @@
 // input-modality.ts：Tooltip 的行为依赖（官方 helper 保真复制）。
-// 上游来源：packages/client/ui-primitives/src/input-modality.ts @ dsh v0.2.2-rc.1 (66491b05e3)
+// 上游来源：packages/client/ui-primitives/src/input-modality.ts @ dsh v0.2.2-rc.5 (66491b05e3)
 /**
  * Document-wide input tracking shared by tooltips and focus-ring styles.
  * Tooltips follow the last input; rings follow navigation or a key followed by

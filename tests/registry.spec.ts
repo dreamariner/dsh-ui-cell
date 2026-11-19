@@ -67,6 +67,30 @@ describe('registry 一致性', () => {
     expect(new Set(names).size).toBe(names.length)
   })
 
+  // 版本注记与源文件头必须说同一个版本。
+  // 2026-11-19 的 rc.5 升级踩过：registry 的 upstream 注记先写成了 rc.5，
+  // 源文件内容与头注记还停在 rc.1（tooltip / toast / button / path-label /
+  // clipboard-copy / json-tree 共 8 个文件）—— 注册表在撒谎，说不清哪些件真跟上了。
+  // 这条护栏让「注记先写、内容后补」的欠账当场暴露。
+  it('registry 注记的版本与源文件头注记一致（两边都声明版本时）', () => {
+    const bad: string[] = []
+    for (const item of registry.items) {
+      const upstream = item.upstream ?? ''
+      const regVer = upstream.match(/@ dsh v(\d+\.\d+\.\d+-rc\.\d+)/)?.[1]
+      if (regVer === undefined) continue
+      for (const file of item.files) {
+        const path = join(src, file)
+        if (!existsSync(path)) continue
+        const head = readFileSync(path, 'utf8').slice(0, 800)
+        const fileVer = head.match(/dsh v(\d+\.\d+\.\d+-rc\.\d+)/)?.[1]
+        if (fileVer !== undefined && fileVer !== regVer) {
+          bad.push(`${item.name}: ${file}（registry ${regVer} / 文件头 ${fileVer}）`)
+        }
+      }
+    }
+    expect(bad, `registry 注记与源文件头注记的版本不一致：\n${bad.join('\n')}`).toEqual([])
+  })
+
   it('每个源文件只归属一个条目（跨条目共享走 dependencies；重复列 files 会让 add 报假性已存在）', () => {
     const owner = new Map<string, string>()
     const bad: string[] = []

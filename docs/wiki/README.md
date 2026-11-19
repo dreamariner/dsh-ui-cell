@@ -11,6 +11,7 @@ shadcn 式的新手教程 + 可视组件文档站。
 | **token 纪律与升级**（两道闸 + 上游同步流程） | [02-token纪律与升级.md](./02-token纪律与升级.md) |
 | **依赖分层**（atom/content 两档 + add 的依赖交接 + bundle 影响） | [03-依赖分层.md](./03-依赖分层.md) |
 | **间距与动效规范**（官方底座 + 本仓刻度 + 归一规则 + 护栏） | [04-间距与动效规范.md](./04-间距与动效规范.md) |
+| **DSH 升级 SOP**（维护者用：八步流程 + 十个教训 + 常见上游变化对照） | [05-DSH升级SOP.md](./05-DSH升级SOP.md) |
 
 ## 站点的三个「真」
 
@@ -43,6 +44,7 @@ docs/wiki/
 ├── 02-token纪律与升级.md  # 两道闸 + 命名空间 + DSH 升级同步流程
 ├── 03-依赖分层.md        # atom/content 两档 + add 的依赖交接 + bundle 影响
 ├── 04-间距与动效规范.md   # 官方分工 + 间距刻度 + 动效档位 + 组合值例外 + 护栏
+├── 05-DSH升级SOP.md      # 维护者用：升级八步流程 + 十个教训 + 常见上游变化对照
 └── demos/               # 文档站源码：demo.tsx（shell）+ demo-cell.tsx（Demo 原语）
                           # + 五个分类的演示（atoms/containers/overlays/inputs/content）
                           # + spec.tsx（间距刻度与动效档位的可看效果）

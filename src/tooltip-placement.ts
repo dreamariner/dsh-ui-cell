@@ -1,5 +1,5 @@
 // tooltip-placement.ts：Tooltip 的行为依赖（官方 helper 保真复制）。
-// 上游来源：packages/client/ui-primitives/src/tooltip-placement.ts @ dsh v0.2.2-rc.1 (66491b05e3)
+// 上游来源：packages/client/ui-primitives/src/tooltip-placement.ts @ dsh v0.2.2-rc.5 (66491b05e3)
 /** Deterministic tooltip placement using measured border boxes and viewport coordinates. */
 /** Bubble placement relative to the anchor. */
 export type TooltipSide = 'right' | 'left' | 'bottom' | 'top'
