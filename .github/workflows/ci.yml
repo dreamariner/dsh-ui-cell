@@ -11,6 +11,9 @@
 # 有我们锚定的那个 tag，CI 自己克隆即可，不需要 secrets。
 #
 # ⚠ 不要在这里用 `|| echo` 吞掉非零退出码：护栏的全部价值就在于它会红。
+#
+# action 版本：checkout/setup-node/pnpm-action-setup 用各自的主版本（v7/v7/v6）——
+# v4 那一代的目标运行时是 Node 20，GitHub 已弃用并强制改跑 Node 24（会打告警）。
 
 name: ci
 
@@ -30,13 +33,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: 'pnpm'
@@ -63,13 +66,13 @@ jobs:
     timeout-minutes: 15
     needs: guardrails
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: 'pnpm'
@@ -125,13 +128,13 @@ jobs:
     timeout-minutes: 20
     needs: guardrails
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: 'pnpm'
