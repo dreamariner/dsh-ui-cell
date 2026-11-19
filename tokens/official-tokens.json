@@ -1,6 +1,6 @@
 {
-  "dshVersion": "0.2.2-rc.2",
-  "dshCommit": "ddac96760b6edf8fa0fe17cbdcf0b512f4c12b2c",
+  "dshVersion": "0.2.2-rc.5",
+  "dshCommit": "9c2670d3bce5275e0d1610272958121af87787bb",
   "source": "DSH packages/client/ui-theme/src/styles/*.css（整个目录，非个别文件）",
   "note": "官方 token 定义快照（pinned）。用于校验 本仓组件引用的 token 是否真实存在——拼错或官方已删除的 token 会让样式静默失效（var() 解析失败 → 声明被丢弃），格式类护栏看不出来。DSH 升级时用 scripts/vendor-tokens.mjs 重新生成。",
   "hostContextVariables": [

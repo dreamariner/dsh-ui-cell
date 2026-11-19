@@ -1,9 +1,10 @@
 // RiskConfirmation: controlled risk acknowledgement dialog.
-// 来源：packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// 来源：packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)
 // 主操作在调用方确认勾选前保持禁用；初始焦点落在勾选框（data-modal-autofocus）。
+// rc.5 起警告图标上收到 Modal 的 tone='warning'，勾选框改用共享 Checkbox 组件。
 
 import { Button } from './button.tsx'
-import { IconWarningOutlineRegular } from './icons.tsx'
+import { Checkbox } from './checkbox.tsx'
 import { Modal } from './modal.tsx'
 import css from './risk-confirmation.css'
 
@@ -45,6 +46,7 @@ export function RiskConfirmation({
       open={open}
       onClose={onCancel}
       title={title}
+      tone="warning"
       closeLabel={closeLabel}
       className={css.confirmation ?? ''}
       contentClassName={css.confirmationContent ?? ''}
@@ -64,20 +66,15 @@ export function RiskConfirmation({
         </>
       )}
     >
-      <div className={css.warning}>
-        <IconWarningOutlineRegular size={18} className={css.warningIcon} />
-        <p>{description}</p>
-      </div>
-      <label className={css.acknowledgement}>
-        <input
-          type="checkbox"
-          checked={acknowledged}
-          disabled={disabled}
-          data-modal-autofocus
-          onChange={(event) => { onAcknowledgedChange(event.currentTarget.checked) }}
-        />
-        <span>{acknowledgeLabel}</span>
-      </label>
+      <p className={css.description}>{description}</p>
+      <Checkbox
+        className={css.acknowledgement}
+        checked={acknowledged}
+        disabled={disabled}
+        modalAutofocus
+        label={acknowledgeLabel}
+        onChange={onAcknowledgedChange}
+      />
     </Modal>
   )
 }

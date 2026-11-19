@@ -3,7 +3,7 @@
   "homepage": "https://github.com/dreamariner/dsh-ui-cell",
   "dshVersion": "0.2.2-rc.1",
   "dshCommit": "66491b05e3f05ad35bcdd4f6cd7ed26041d9e3db",
-  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。",
+  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。 组件基线是混合态：animated-rows / checkbox / modal / quote-preview / risk-confirmation 五个件已重导入 DSH v0.2.2-rc.5（9c2670d3bc），其余条目仍是 rc.1 的复制件；顶层 dshVersion/dshCommit 只在全量重同步时动（沿用 rc.2 时的先例），逐条重 diff 的进度见 docs/issues。",
   "items": [
     {
       "name": "foundation",
@@ -78,7 +78,7 @@
         "icon",
         "modal-layer"
       ],
-      "upstream": "packages/client/ui-primitives/src/Modal.tsx"
+      "upstream": "packages/client/ui-primitives/src/Modal.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起新增 tone='warning'）"
     },
     {
       "name": "risk-confirmation",
@@ -91,10 +91,10 @@
       ],
       "dependencies": [
         "button",
-        "modal",
-        "icon"
+        "checkbox",
+        "modal"
       ],
-      "upstream": "packages/client/ui-primitives/src/RiskConfirmation.tsx"
+      "upstream": "packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起警告图标上收到 Modal 的 tone='warning'，勾选框改用共享 Checkbox 组件）"
     },
     {
       "name": "select",
@@ -223,7 +223,7 @@
         "checkbox.css"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/Checkbox.tsx"
+      "upstream": "packages/client/ui-primitives/src/Checkbox.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起新增 modalAutofocus）"
     },
     {
       "name": "disclosure-row",
@@ -425,7 +425,7 @@
         "animated-rows.css"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/AnimatedRows.tsx"
+      "upstream": "packages/client/ui-primitives/src/AnimatedRows.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "user-message-bubble",
@@ -1335,7 +1335,7 @@
         "icon",
         "hover-card"
       ],
-      "upstream": "packages/client/ui-primitives/src/QuotePreview.tsx @ dsh v0.2.2-rc.1 (66491b05e3)"
+      "upstream": "packages/client/ui-primitives/src/QuotePreview.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "detail-document",

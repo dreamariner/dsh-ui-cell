@@ -1,5 +1,5 @@
 // AnimatedRows: DSH 官方 ui-primitives 保真复制。
-// 上游来源：packages/client/ui-primitives/src/AnimatedRows.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// 上游来源：packages/client/ui-primitives/src/AnimatedRows.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** React-commit-driven movement and entry/exit fades for keyed rows. */
 import { Component, createRef, type AriaRole, type ReactNode } from 'react'
@@ -28,22 +28,34 @@ interface RowPosition {
 }
 
 interface RowSnapshot {
+  viewport: Viewport
   positions: Map<string, RowPosition>
   removed: Map<string, RowPosition>
 }
+
+type Viewport = Pick<DOMRect, 'top' | 'bottom' | 'left' | 'right'>
 
 function sameRows(previous: AnimatedRowsProps, next: AnimatedRowsProps): boolean {
   return previous.rowKeys.length === next.rowKeys.length
     && previous.rowKeys.every((key, index) => key === next.rowKeys[index])
 }
 
-function intersects(row: DOMRect, viewport: DOMRect): boolean {
+function visibleViewport(list: HTMLElement): Viewport {
+  const rect = list.getBoundingClientRect()
+  return {
+    top: Math.max(0, rect.top), bottom: Math.min(window.innerHeight, rect.bottom),
+    left: Math.max(0, rect.left), right: Math.min(window.innerWidth, rect.right),
+  }
+}
+
+function intersects(row: DOMRect, viewport: Viewport): boolean {
   return row.bottom > viewport.top && row.top < viewport.bottom
     && row.right > viewport.left && row.left < viewport.right
 }
 
 /**
  * Animates keyed rows only when their rendered membership or order changes.
+ * Rows must intersect both the list and the browser window before or after the commit.
  * Motion starts after the first pointer or keyboard input inside the mounted list.
  * The parent supplies a positioned container for the inert exit overlay.
  */
@@ -61,7 +73,7 @@ export class AnimatedRows extends Component<AnimatedRowsProps> {
       || typeof list.animate !== 'function'
       || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null
 
-    const viewport = list.getBoundingClientRect()
+    const viewport = visibleViewport(list)
     const positions = this.readPositions()
     const nextKeys = new Set(this.props.rowKeys)
     const removed = new Map<string, RowPosition>()
@@ -73,7 +85,7 @@ export class AnimatedRows extends Component<AnimatedRowsProps> {
       clone.style.paddingInlineStart = getComputedStyle(row.element).paddingInlineStart
       removed.set(key, { ...row, element: clone })
     }
-    return { positions, removed }
+    return { viewport, positions, removed }
   }
 
   override componentDidUpdate(previous: AnimatedRowsProps, _state: unknown, snapshot: RowSnapshot | null): void {
@@ -86,7 +98,7 @@ export class AnimatedRows extends Component<AnimatedRowsProps> {
     this.cancelMovements()
     const list = this.list.current as HTMLDivElement
     const overlay = this.overlay.current as HTMLDivElement
-    const viewport = list.getBoundingClientRect()
+    const viewport = visibleViewport(list)
     const origin = overlay.getBoundingClientRect()
     const positions = this.readPositions()
 
@@ -94,7 +106,7 @@ export class AnimatedRows extends Component<AnimatedRowsProps> {
       this.removeExit(key)
       const previousRow = snapshot.positions.get(key)
       if (!intersects(row.rect, viewport)
-        && (previousRow === undefined || !intersects(previousRow.rect, viewport))) continue
+        && (previousRow === undefined || !intersects(previousRow.rect, snapshot.viewport))) continue
       if (previousRow === undefined) {
         this.move(row.element, [{ opacity: 0 }, { opacity: 1 }], ROW_FADE_MS)
         continue

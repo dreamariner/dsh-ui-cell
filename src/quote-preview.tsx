@@ -1,5 +1,5 @@
 // 保真复制自 DSH 官方 ui-primitives。
-// 上游来源：packages/client/ui-primitives/src/QuotePreview.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// 上游来源：packages/client/ui-primitives/src/QuotePreview.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)
 //
 // 2026-11-06 搬入（issue 005）：markdown 家族原先因「零依赖纪律」暂缓，现按分层纪律
 // 归入 content 档（带 npm 重依赖）。本文件是**机械搬运 + 导入路径改写**的产物，
@@ -32,10 +32,24 @@ export interface QuotePreviewRemoval {
   readonly onRemove: () => void
 }
 
+/** Owner-supplied readable form of a quote whose exact text is long structured content. */
+export interface QuoteSummary {
+  /** Short inline label shown before `body` in place of the exact text; assistive technology reads `title` and `detail` instead. */
+  readonly label: string
+  /** First popover line, such as a file path; also the label's accessible text. */
+  readonly title: string
+  /** Secondary popover line, such as a line range. */
+  readonly detail?: string | undefined
+  /** Main text, such as a user's comment, shown inline after `label` and in full in the popover. */
+  readonly body: string
+}
+
 /** Presentation inputs for one compact quote excerpt. */
 export interface QuotePreviewProps {
-  /** Exact selected text rendered inline and exposed in a popover while clipped. */
+  /** Exact selected text rendered inline and exposed in a popover while clipped, unless `summary` replaces it. */
   readonly text: string
+  /** Readable replacement for `text`: its label renders inline and its popover opens on every hover. */
+  readonly summary?: QuoteSummary | undefined
   /** Composer-only removal action; omit for inert sent quotes. */
   readonly removal?: QuotePreviewRemoval | undefined
 }
@@ -43,10 +57,10 @@ export interface QuotePreviewProps {
 /**
  * Render one width-capped quote preview shared by editable drafts and sent messages.
  * Clipped excerpts open a content-sized, scrollable popover that fits within the viewport.
- * @param props - selected text and optional localized removal action.
- * @returns a non-navigating quote preview with a full-text popover only while clipped.
+ * @param props - selected text, optional summary, and optional localized removal action.
+ * @returns a non-navigating quote preview with a full-text popover only while clipped, or a summary popover.
  */
-export function QuotePreview({ text, removal }: QuotePreviewProps): JSX.Element {
+export function QuotePreview({ text, summary, removal }: QuotePreviewProps): JSX.Element {
   const sourceRef = useRef<HTMLSpanElement | null>(null)
   const [truncated, setTruncated] = useState(false)
   useLayoutEffect(() => {
@@ -93,7 +107,15 @@ export function QuotePreview({ text, removal }: QuotePreviewProps): JSX.Element 
             <IconCloseOutlineRegular size={12} className={css.closeMark} />
           </button>
         )}
-      <span ref={sourceRef} className={css.source} data-quote-preview-text="">{text}</span>
+      <span ref={sourceRef} className={css.source} data-quote-preview-text="">
+        {summary === undefined ? text : (
+          <>
+            <span aria-hidden="true">{summary.label}</span>
+            <span className={css.visuallyHidden}>{summary.detail === undefined ? summary.title : `${summary.title} ${summary.detail}`}</span>
+            {' '}<span className={css.inlineBody}>{summary.body}</span>
+          </>
+        )}
+      </span>
     </span>
   )
   return (
@@ -102,9 +124,17 @@ export function QuotePreview({ text, removal }: QuotePreviewProps): JSX.Element 
       grouped
       fitContent
       openDelayMs={0}
-      disabled={!truncated}
+      disabled={summary === undefined && !truncated}
       anchor={preview}
-      content={<span className={css.popoverText} data-quote-popover="" aria-hidden="true">{text}</span>}
+      content={summary === undefined
+        ? <span className={css.popoverText} data-quote-popover="" aria-hidden="true">{text}</span>
+        : (
+          <span className={css.summary} data-quote-popover="" aria-hidden="true">
+            <span className={css.summaryTitle}>{summary.title}</span>
+            {summary.detail !== undefined && <span className={css.summaryDetail}>{summary.detail}</span>}
+            <span className={css.summaryBody}>{summary.body}</span>
+          </span>
+        )}
     />
   )
 }
