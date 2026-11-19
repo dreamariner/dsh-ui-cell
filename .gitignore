@@ -1,3 +1,7 @@
 node_modules/
-lib/
+# 只忽略仓根的构建产物（lib/ 是 tsdown 的输出）。
+# 注意：不能写 `lib/` —— 那会匹配**任意层级**的 lib 目录，
+# 把 scripts/lib/（路径工具模块，vendor 与 import 脚本都要 import 它）一起忽略掉，
+# 结果是仓库克隆下来就跑不了（CI 2026-11-19 首次真跑才暴露：scripts/lib/paths.mjs 找不到）。
+/lib/
 *.tsbuildinfo
