@@ -1,6 +1,11 @@
 // 保真复制自 DSH 官方 ui-primitives。
 // 上游来源：packages/client/ui-primitives/src/markdown/JsonBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // JsonBlock: collapsible JSON block (conversation side; independent from the RPC panel's PayloadJson to avoid cross-panel coupling).
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { JsonBlock } from './json-block.tsx'
+//   <JsonBlock label="工具入参" payload={payload} defaultOpen />
+//   props：label / payload / defaultOpen / truncatedLabel
+// ────────────────────────────────────────────────────────────────────────
 
 import { useMemo, useState } from 'react'
 import css from './json-block.css'

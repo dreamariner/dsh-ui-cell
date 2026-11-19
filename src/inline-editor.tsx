@@ -2,6 +2,12 @@
 // 上游来源：packages/client/ui-primitives/src/InlineEditor.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** Multi-line inline editor for short saved-on-Enter drafts such as queued messages and goals. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { InlineEditor } from './inline-editor.tsx'
+//   <InlineEditor value={value} label="记忆内容" onChange={setValue}
+//   onSave={() => {}} onCancel={() => {}} />
+//   props：value / label / onChange / onSave / onCancel / className
+// ────────────────────────────────────────────────────────────────────────
 
 import { useLayoutEffect, useRef, type KeyboardEvent } from 'react'
 import clsx from 'clsx'

@@ -2,6 +2,12 @@
 // 上游来源：packages/client/ui-primitives/src/ImagePreview.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** Passive, contained image preview for Markdown image links. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { ImagePreview } from './image-preview.tsx'
+//   <ImagePreview src={dataUri} alt="示例图" loadingLabel="加载中…" failedLabel="加载失败" />
+//   props：src / alt / loadingLabel / failedLabel
+// ────────────────────────────────────────────────────────────────────────
+
 import { useState } from 'react'
 import { IconLoadingOutlineRegular } from './icons.tsx'
 import css from './image-preview.css'

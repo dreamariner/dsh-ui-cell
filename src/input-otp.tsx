@@ -1,5 +1,12 @@
 // input-otp：本仓自有组件（功能对齐 shadcn input-otp，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { InputOtp } from './input-otp.tsx'
+//   <InputOtp length={6} value={value} onChange={setValue}
+//   onComplete={(code) => console.log(code)} />
+//   props：length / value / defaultValue / onChange / onComplete / disabled / className / ariaLabel
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useRef, useState } from 'react'
 import clsx from 'clsx'
 import css from './input-otp.css'

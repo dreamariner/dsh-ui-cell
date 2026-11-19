@@ -13,6 +13,13 @@
 // rc.5 的门户定位从 JS 测量（上游 useAnchoredPosition）改为 CSS anchor 定位，
 // 本仓 use-anchored-position.ts 因此**不再被 menu 依赖**，但文件保留：
 // 本仓自有的 popover / combobox 仍在用它（上游没有这两个原子）。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Menu } from './menu.tsx'
+//   <Menu open={open} anchor={<Button>打开菜单</Button>}
+//   items={[{ id: 'a', label: '重建索引' }, { type: 'separator', id: 's' }, …]}
+//   props：children / shortcut / icon / current / disabled / disabledReason / danger / separatorBefore / onSelect / open / contextual / isExternalTrigger / returnFocus / exiting / autoFocus / anchor / items / submenuBackLabel / footer / selectedId / selectedIds / onClose / align / side / portal / closeOnPointerLeave / dense / compact / selection / anchorRef / anchorPoint / minWidthFromAnchor / className / listClassName
+// ────────────────────────────────────────────────────────────────────────
+
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
 import { createPortal } from 'react-dom'

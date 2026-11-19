@@ -5,6 +5,12 @@
 // 归入 content 档（带 npm 重依赖）。本文件是**机械搬运 + 导入路径改写**的产物，
 // 语义裁剪见 docs/issues/005（流式增量解析、DraggableImage、简化 LinkIcon、KaTeX CSS 文本化）。
 // 官方路径：ReadBlock.tsx → 本仓路径：read-block.tsx
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { ReadBlock } from './read-block.tsx'
+//   <ReadBlock label="src/app.ts" lines={lines} totalLines={4} lang="typescript" labels={labels} />
+//   props：label / lines / labels / totalLines / lang / maxLines / className
+// ────────────────────────────────────────────────────────────────────────
+
 import { useCallback, useMemo, useRef, useState, type CSSProperties } from 'react'
 import clsx from 'clsx'
 import { FoldToggle } from './fold-toggle.tsx'

@@ -1,5 +1,11 @@
 // 保真复制自 DSH 官方 ui-primitives。
 // 上游来源：packages/client/ui-primitives/src/DiffBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { DiffBlock } from './diff-block.tsx'
+//   <DiffBlock diffs={[{ path, oldText, newText }]} labels={labels} />
+//   props：diffs / labels / maxLines / className
+// ────────────────────────────────────────────────────────────────────────
+
 import { useCallback, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { structuredPatch } from './diff.ts'

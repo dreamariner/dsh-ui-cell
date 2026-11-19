@@ -6,6 +6,11 @@
 // 语义裁剪见 docs/issues/005（流式增量解析、DraggableImage、简化 LinkIcon、KaTeX CSS 文本化）。
 // 官方路径：QuotePreview.tsx → 本仓路径：quote-preview.tsx
 /** Shared compact presentation for draft and sent text quotes. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { QuotePreview } from './quote-preview.tsx'
+//   <QuotePreview text={longText} />
+//   <QuotePreview text={longText}
+// ────────────────────────────────────────────────────────────────────────
 
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { JSX, MouseEvent as ReactMouseEvent } from 'react'

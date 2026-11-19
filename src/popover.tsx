@@ -1,5 +1,12 @@
 // popover：本仓自有组件（功能对齐 shadcn popover，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；锚定/ dismissal 行为复用 本仓的官方行为模块。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Popover } from './popover.tsx'
+//   <Popover trigger={<Button variant="outline">点开</Button>}
+//   content={<div>任意内容</div>} />
+//   props：trigger / content / open / defaultOpen / onOpenChange / side / align / gap
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'

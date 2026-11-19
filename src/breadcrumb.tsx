@@ -1,5 +1,10 @@
 // breadcrumb：本仓自有组件（功能对齐 shadcn breadcrumb，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；token 纪律与类名约定同本仓全体。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from './breadcrumb.tsx'
+//   props：return
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './breadcrumb.css'

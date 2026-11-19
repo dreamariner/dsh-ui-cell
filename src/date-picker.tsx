@@ -1,5 +1,12 @@
 // date-picker：本仓自有组件（功能对齐 shadcn date-picker，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { DatePicker } from './date-picker.tsx'
+//   <DatePicker value={value} onChange={setValue} placeholder="选择日期" />
+//   <DatePicker mode="month" value={monthValue} onChange={setMonthValue} />
+//   props：mode / value / defaultValue / onChange / placeholder / disabled / className
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useState } from 'react'
 import clsx from 'clsx'
 import css from './date-picker.css'

@@ -6,6 +6,13 @@
 // 箭头换成 DSH 的 chevron（与本仓自有 Select 同一套处理）。上游原文件是裸 <select>，
 // DSH 升级 re-diff 时保留本仓这一层。
 /** Controlled configuration input shared by generated and custom forms. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { ConfigField } from './config-field.tsx'
+//   <ConfigField label="保留天数" value={value} secret={false} choices={[]}
+//   disabled={false} overridden invalid={false}
+//   props：label / value / secret / choices / disabled / overridden / invalid / labels / onChange / onReset
+// ────────────────────────────────────────────────────────────────────────
+
 import { useId } from 'react'
 import { IconChevronDownOutlineRegular } from './icons.tsx'
 import css from './config-field.css'

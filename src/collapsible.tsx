@@ -8,6 +8,12 @@
 // 不需要卸载时序、没有「动画没播完就卸载」的兜底问题，降级也只是 transition: none。
 // 代价是收起后 children 仍留在 DOM（状态保留，与 Accordion 一致），所以收起态加 inert
 // （焦点不进入视觉上隐藏的内容；React 18 下 inert 要以空串转发，布尔会被丢）。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Collapsible } from './collapsible.tsx'
+//   <Collapsible trigger="高级选项" open={open} onOpenChange={setOpen}>
+//   内容
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './collapsible.css'

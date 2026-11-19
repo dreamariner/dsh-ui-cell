@@ -27,6 +27,12 @@
 //
 // 依赖：shiki（精确锁 4.4.3，见 code-highlighting.ts）+ @shikijs/langs。
 // 样式：src/code-block.css（本仓约定）+ src/shiki.css（--shiki-* 变量表）。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { CodeBlock } from './code-block.tsx'
+//   <CodeBlock code={code} lang="typescript" copyLabel="复制" copiedLabel="已复制" />
+//   <CodeBlock code={diffCode} lang="diff" copyLabel="复制" copiedLabel="已复制" />
+//   props：code / lang / diff / className / contentRef / lineNumbers / showHeader / copyLabel / copiedLabel / toolbarLabels / wrap
+// ────────────────────────────────────────────────────────────────────────
 
 import { Fragment, useCallback, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode, Ref } from 'react'

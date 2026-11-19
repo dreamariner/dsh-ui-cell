@@ -13,6 +13,11 @@
  * 保留的官方行为：原始 HTML 渲染为 nothing（omitHtml）、不安全协议禁用、
  * 文件引用与本地图片两个可选词汇表（默认不接线）、delegate 注入。
  */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { MarkdownText } from './markdown-text.tsx'
+//   <MarkdownText text={md} labels={labels} />
+// ────────────────────────────────────────────────────────────────────────
+
 import { memo, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import clsx from 'clsx'

@@ -2,6 +2,12 @@
 // 上游来源：packages/client/ui-primitives/src/PathLabel.tsx @ dsh v0.2.2-rc.5 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** A single-line file path whose trailing characters remain visible in narrow toolbars. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { PathLabel } from './path-label.tsx'
+//   <PathLabel path="/workspace/demo/src/components/button.tsx" />
+//   props：path
+// ────────────────────────────────────────────────────────────────────────
+
 import { useLayoutEffect, useRef, type HTMLAttributes } from 'react'
 import clsx from 'clsx'
 import { pathPartsOf } from './path-parts.ts'

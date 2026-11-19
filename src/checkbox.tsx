@@ -2,6 +2,11 @@
 // 上游来源：packages/client/ui-primitives/src/Checkbox.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** Controlled native checkbox with a caller-owned visible and accessible label. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Checkbox } from './checkbox.tsx'
+//   <Checkbox checked={a} onChange={setA} label="启用自动整理" />
+//   props：checked / onChange / label / disabled / title / className / modalAutofocus
+// ────────────────────────────────────────────────────────────────────────
 
 import clsx from 'clsx'
 import css from './checkbox.css'

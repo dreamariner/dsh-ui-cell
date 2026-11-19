@@ -4,6 +4,11 @@
 // 上游来源：packages/client/ui-primitives/src/SegmentedControl.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // 保真说明：WAI-ARIA tabs 键盘走查（Arrow/Home/End 环绕、跳过 disabled）、roving tabindex、
 // 选中后焦点跟随、指示器的算术定位（--dsh-segment-count/index 自定义属性）全部照抄。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { SegmentedControl } from './segmented-control.tsx'
+//   <SegmentedControl value={value} onChange={setValue}
+//   options={[{ value: 'memories', label: '记忆' }, …]} />
+// ────────────────────────────────────────────────────────────────────────
 
 import { useEffect, useRef } from 'react'
 import type { CSSProperties, KeyboardEvent } from 'react'

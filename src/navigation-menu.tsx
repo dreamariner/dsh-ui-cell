@@ -5,6 +5,13 @@
 //   受控：任一条目声明 current: true → 以声明为准（路由是真相的消费端用这个）；
 //   非受控：传 defaultCurrentId 起步，点击条目自迁移（声明了才迁移，子菜单选中不迁移父项）。
 // 此前只有受控声明，演示与最简用法点条目下划线纹丝不动，像坏了。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { NavigationMenu } from './navigation-menu.tsx'
+//   <NavigationMenu defaultCurrentId="memories" onNavigate={(id) => …}
+//   items={[{ id, label, current?, children? }]} />
+//   props：items / onNavigate / defaultCurrentId / className
+// ────────────────────────────────────────────────────────────────────────
+
 import { useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './navigation-menu.css'

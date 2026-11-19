@@ -2,6 +2,12 @@
 // 上游来源：packages/client/ui-primitives/src/Tooltip.tsx @ dsh v0.2.2-rc.5 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** Anchor-preserving tooltips; an optional body portal escapes clipping containers and stacking contexts that cap the bubble's z-index. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Tooltip } from './tooltip.tsx'
+//   <Tooltip label="打开记忆面板" shortcutKeys={['⌘', 'M']} side="bottom">
+//   <Button variant="toolbar">悬停我</Button>
+//   props：ref / onPointerEnter / onPointerLeave / onPointerDown / onClick / onFocus / onBlur / useEffect / useDismissOnOutsidePointer / return
+// ────────────────────────────────────────────────────────────────────────
 
 import { cloneElement, createContext, useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
 import type { FocusEventHandler, MouseEventHandler, MutableRefObject, PointerEventHandler, ReactElement, Ref } from 'react'

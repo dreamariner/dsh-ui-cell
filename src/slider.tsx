@@ -1,5 +1,10 @@
 // slider：本仓自有组件（功能对齐 shadcn slider，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Slider } from './slider.tsx'
+//   <Slider value={value} onValueChange={setValue} min={0} max={100} />
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef } from 'react'
 import clsx from 'clsx'
 import css from './slider.css'

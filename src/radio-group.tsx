@@ -1,5 +1,11 @@
 // radio-group：本仓自有组件（功能对齐 shadcn radio-group，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { RadioGroup } from './radio-group.tsx'
+//   <RadioGroup value={value} onValueChange={setValue} name="digest"
+//   options={[{ value: 'daily', label: '每天' }, …]} />
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef } from 'react'
 import clsx from 'clsx'
 import css from './radio-group.css'

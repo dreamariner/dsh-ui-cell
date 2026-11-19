@@ -2,6 +2,11 @@
 // 上游来源：无官方对应原子；token 纪律与类名约定同本仓全体。
 // 内容区常驻 DOM（grid 0fr↔1fr 过渡），收起态加 inert（焦点不进入视觉隐藏区，
 // React 18 下 inert 以空串转发；issue 020，与 Collapsible 同款）。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Accordion } from './accordion.tsx'
+//   <Accordion type="single" items={[{ key, header, content }]} />
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './accordion.css'

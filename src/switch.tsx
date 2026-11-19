@@ -3,6 +3,11 @@
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 // Switch: two-state toggle. `label` is required and has no default, so a render
 // site cannot ship the control without an accessible name.
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Switch } from './switch.tsx'
+//   <Switch checked={on} onChange={setOn} label="自动记忆" />
+//   props：checked / onChange / label / disabled / title / className
+// ────────────────────────────────────────────────────────────────────────
 
 import clsx from 'clsx'
 import css from './switch.css'

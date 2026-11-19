@@ -5,6 +5,12 @@
 // （边长 size/√2 ≈ 0.707·size），一行 n 个全角字要放得下，字号比例就不能超过 0.707/n。
 // 原来的固定 0.42 比例在两个字时就超了（实测 32px 头像里「助手」两个字占 30px，
 // 而内切正方形只有 22.6px）→ 字的左右两端被圆形裁掉，看着像缺笔画。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Avatar } from './avatar.tsx'
+//   <Avatar fallback="林" />
+//   <Avatar src={badUrl} fallback="L" /> {/* 加载失败自动回退 */}
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useState } from 'react'
 import clsx from 'clsx'
 import css from './avatar.css'

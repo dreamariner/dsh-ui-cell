@@ -4,6 +4,13 @@
 // 收起态经 Context 下发（2026-11-19，issue 028，对应 shadcn 的 useSidebar()）：
 // 槽内内容（header/footer 里的任意组件）与 SidebarNav 都能自动感知收起态，
 // 消费端不必把 collapsed 逐层传两遍；显式 prop 仍可覆盖 context。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Sidebar, SidebarNav, useSidebarCollapsed } from './sidebar.tsx'
+//   <Sidebar header={…} footer={…} collapsed={collapsed} onCollapsedChange={setCollapsed}>
+//   <SidebarNav label="助手导航" … />  {/* 收起态自动读 Context，不用再传 */}
+//   props：header / children / footer / collapsed / defaultCollapsed / onCollapsedChange / collapsedWidth / width / className
+// ────────────────────────────────────────────────────────────────────────
+
 import { createContext, forwardRef, useContext, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './sidebar.css'

@@ -63,6 +63,11 @@ export interface RegistryItem {
    * 缺省是普通组件。
    */
   role?: 'base'
+  /**
+   * 该条目单独的宿主版本下限（比 registry 顶层更高时才写）：
+   * 引用了更新的 token 的件。add 会为它单独提示。
+   */
+  minHostDsh?: string
   upstream: string | null
 }
 
@@ -70,6 +75,16 @@ export interface Registry {
   name: string
   dshVersion: string
   dshCommit: string
+  /**
+   * 宿主 DSH 版本下限（2026-11-19 起）：本包组件**引用的 token** 里，最早出现的那一档。
+   * 低于它的宿主上，那些 token 解析失败 = 整条声明被静默丢弃 = 相关件没有配色，零报错。
+   *
+   * 与 dshVersion（组件源基线）是两件事：
+   *   - dshVersion = 组件源码抄自哪个上游版本（行为与结构的真相源）
+   *   - minHostDsh = 消费端的宿主至少要有多新（token 层面的下限）
+   * 组件源基线可以很新而宿主下限很旧（本仓当前：源基线 rc.5，宿主下限 rc.2）。
+   */
+  minHostDsh?: string
   items: RegistryItem[]
 }
 
@@ -403,6 +418,18 @@ export function addComponents(
   }
   if (baseItems.length > 0) {
     notes.push(`基础层自动带上：${baseItems.join(', ')}（间距刻度 --dsh-space-*；组件样式里的 var(--dsh-space-*) 靠它解析，漏注入会静默掉样式。样式注入时必须排第一位，add 给的顺序里它就在最前）`)
+  }
+  // 宿主版本下限：装得上不等于显示得对 —— 宿主太老时 token 解析失败 = 声明被静默丢弃
+  const minHost = registry.minHostDsh
+  if (minHost !== undefined) {
+    notes.push(`宿主要求：DSH ≥ ${minHost}（本包组件引用了 hovercard / json-tree / toast / tooltip / shadow-lv2-3 / specific-* 这批 ${minHost} 才有的 token。宿主低于此版本时这些件的配色会**静默失效** —— var() 解析失败 = 整条声明被丢弃，零报错。组件源基线是 DSH ${registry.dshVersion}，与宿主下限是两件事）`)
+  }
+  // 个别件的宿主下限高于整体时单独点名
+  const highItems = expanded
+    .map(name => registry.items.find(i => i.name === name))
+    .filter((i): i is RegistryItem => i !== undefined && i.minHostDsh !== undefined)
+  for (const item of highItems) {
+    notes.push(`${item.name} 单独要求宿主 DSH ≥ ${item.minHostDsh}（引用了更新的 token；宿主低于此版本时该件静默失效）`)
   }
 
   // 全闭包的 css 文件集合（跨条目）：css 导入改写按它判定，

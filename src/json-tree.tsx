@@ -1,5 +1,11 @@
 // 保真复制自 DSH 官方 ui-primitives。
 // 上游来源：packages/client/ui-primitives/src/JsonTree.tsx @ dsh v0.2.2-rc.5 (66491b05e3)
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { JsonTree } from './json-tree.tsx'
+//   <JsonTree data={payload} label="记忆条目" copyable expandTopLevel />
+//   props：collapsedStringLines / stringWrapping / field / initialExpanded / labels / lastElement / onClaimTabStop / onRowHover / path / renderCopy / tabStopId / value
+// ────────────────────────────────────────────────────────────────────────
+
 import clsx from 'clsx'
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type {

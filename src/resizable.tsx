@@ -15,6 +15,12 @@
 //    甚至移出窗口时事件仍然送到它，pointerup 一定收得到；再补 pointercancel 与
 //    窗口失焦两条兜底。松手之后鼠标怎么动都不再改布局（实测：原先在窗口外松开时
 //    页面收不到 pointerup，之后每次移动鼠标面板都在跟着变）。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Resizable } from './resizable.tsx'
+//   <Resizable left={…} right={…} initialLeftPercent={50} />
+//   props：left / right / initialLeftPercent / minLeftPercent / maxLeftPercent / className
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './resizable.css'

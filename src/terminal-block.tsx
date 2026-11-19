@@ -1,5 +1,12 @@
 // 保真复制自 DSH 官方 ui-primitives。
 // 上游来源：packages/client/ui-primitives/src/TerminalBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { TerminalBlock } from './terminal-block.tsx'
+//   <TerminalBlock command="memory rebuild" cwd="/workspace/demo" exitCode={0}
+//   output="…ANSI 彩色输出（ansi-lite 解析）" />
+//   props：command / cwd / home / output / exitCode / signal / running / background / maxLines / copyText / runStateDot / className / labels
+// ────────────────────────────────────────────────────────────────────────
+
 import { useCallback, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { parseAnsiLines, type AnsiLine } from './ansi.ts'

@@ -6,6 +6,12 @@
 // 只把外观收敛到 DSH token 面上：边框/背景/圆角照 Input 的规范，右侧挂 chevron。
 //
 // 与 Input 一致：样式只引用 --dsw-alias-* / --dsw-radius-*。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Select } from './select.tsx'
+//   <Select value={value} onChange={setValue}
+//   options={[{ value: 'all', label: '全部' }, …]} />
+//   props：options / className
+// ────────────────────────────────────────────────────────────────────────
 
 import { forwardRef, type SelectHTMLAttributes } from 'react'
 import clsx from 'clsx'

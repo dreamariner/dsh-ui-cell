@@ -260,6 +260,42 @@ describe('与上游同步（需要 DSH_CHECKOUT，缺省跳过）', () => {
     expect(out).toContain('一致')
   })
 
+  // 宿主下限必须**可信**：本包组件引用的每个 token，都得存在于 minHostDsh 对应的那份
+  // 快照里。少了快照 → 下限无法验证；少了 token → 下限定低了（宿主上会静默失效）。
+  // 快照来自上游历史（git show <commit>:tokens/official-tokens.json），随仓留档。
+  it('宿主下限可信：引用的每个 token 都存在于 minHostDsh 对应的快照', () => {
+    const minHost = registry.minHostDsh
+    expect(minHost, 'registry 缺 minHostDsh（宿主版本下限）').toBeDefined()
+    const snapshotPath = join(import.meta.dirname, '..', 'tokens', `official-tokens@${minHost}.json`)
+    expect(existsSync(snapshotPath), `缺宿主下限对应的 token 快照：tokens/official-tokens@${minHost}.json（上限定得太低或快照没留档）`).toBe(true)
+    const snapshot = JSON.parse(readFileSync(snapshotPath, 'utf8')) as { tokens: Record<string, string[]> }
+    const known = new Set(Object.values(snapshot.tokens).flat())
+
+    // 本仓组件用到的每个 token
+    const used = new Set<string>()
+    for (const file of readdirSync(src)) {
+      if (!file.endsWith('.css')) continue
+      const text = readFileSync(join(src, file), 'utf8')
+      for (const m of text.matchAll(/var\((--dsw-[a-z0-9-]+)/g)) used.add(m[1])
+    }
+    const missing = [...used].filter(t => !known.has(t))
+    expect(missing, `这些 token 在宿主下限 ${minHost} 的快照里不存在（宿主上会静默失效）：\n${missing.join('\n')}`).toEqual([])
+  })
+
+  it('宿主下限不高于组件源基线（下限比基线新说不通）', () => {
+    // 版本号比较：逐段比数字，rc.N 里的 N 也算一段
+    const seg = (v: string) => v.replace('-rc.', '.').split('.').map(x => parseInt(x, 10))
+    const a = seg(registry.minHostDsh!)
+    const b = seg(registry.dshVersion)
+    for (let i = 0; i < Math.max(a.length, b.length); i++) {
+      const x = a[i] ?? 0
+      const y = b[i] ?? 0
+      if (x === y) continue
+      expect(x, `宿主下限 ${registry.minHostDsh} 不应高于组件源基线 ${registry.dshVersion}`).toBeLessThanOrEqual(y)
+      break
+    }
+  })
+
   it('清单记录了来源与基线（基线锚由 vendor 从 checkout 派生，升级重跑自动更新）', () => {
     const manifest = JSON.parse(
       readFileSync(join(import.meta.dirname, '..', 'tokens', 'official-tokens.json'), 'utf8'),

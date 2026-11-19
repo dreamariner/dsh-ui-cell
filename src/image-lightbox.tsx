@@ -1,6 +1,13 @@
 // ImageLightbox: DSH 官方 ui-primitives 保真复制。
 // 上游来源：packages/client/ui-primitives/src/ImageLightbox.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { ImageLightbox } from './image-lightbox.tsx'
+//   <ImageLightbox src={src} alt="示例" labels={{ dialog: '图片预览', close: '关闭' }}
+//   onClose={() => setOpen(false)} />
+//   props：src / alt / labels / onClose / contextMenuProps
+// ────────────────────────────────────────────────────────────────────────
+
 import type { HTMLAttributes } from 'react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'

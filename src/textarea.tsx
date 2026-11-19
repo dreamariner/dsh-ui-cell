@@ -3,6 +3,11 @@
 // 官方 ui-primitives 用 InlineEditor 处理多行内联编辑，但那是「内联编辑态」的完整控件
 // （含提交/取消与键盘流），不适合「面板里的说明/备注输入框」这种轻量场景。
 // 本组件是纯受控多行输入：token 化的边框与背景，尺寸由调用方给（默认 3 行）。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Textarea } from './textarea.tsx'
+//   <Textarea rows={4} value={text} onChange={(event) => setText(event.target.value)} />
+//   props：className
+// ────────────────────────────────────────────────────────────────────────
 
 import { forwardRef, type TextareaHTMLAttributes } from 'react'
 import clsx from 'clsx'

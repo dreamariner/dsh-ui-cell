@@ -1,6 +1,13 @@
 // FoldToggle: DSH 官方 ui-primitives 保真复制。
 // 上游来源：packages/client/ui-primitives/src/FoldToggle.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { FoldToggle } from './fold-toggle.tsx'
+//   <FoldToggle expanded={expanded} hidden={12} labels={{
+//   collapseAria: '收起', expandAria: (n) => '展开 ' + n + ' 行',
+//   props：className / expanded / hidden / labels / onToggle
+// ────────────────────────────────────────────────────────────────────────
+
 interface FoldToggleProps {
   className: string | undefined
   expanded: boolean

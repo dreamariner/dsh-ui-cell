@@ -1,5 +1,11 @@
 // pagination：本仓自有组件（功能对齐 shadcn pagination，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；锚定/ dismissal 行为复用 本仓的官方行为模块。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Pagination } from './pagination.tsx'
+//   <Pagination page={page} totalPages={24} onPageChange={setPage} />
+//   props：page / totalPages / onPageChange / siblingCount / className
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef } from 'react'
 import clsx from 'clsx'
 import css from './pagination.css'

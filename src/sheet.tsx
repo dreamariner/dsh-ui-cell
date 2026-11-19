@@ -12,6 +12,12 @@
 // ⚠ **相位必须在渲染期切**（见下面那段 prevOpen 比较）：若改用 effect 切相位，
 //   DOM 会比 open 晚一个提交才出现，于是 useModalLayer 的 layout effect 跑在
 //   DOM 出现之前 → 层级栈不注册 → **Escape 关不掉、焦点也不进对话框**。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Sheet } from './sheet.tsx'
+//   <Sheet open={open} onOpenChange={setOpen} side="right" title="会话详情">
+//   内容
+//   props：open / onOpenChange / side / title / footer / width / radius / container / children
+// ────────────────────────────────────────────────────────────────────────
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'

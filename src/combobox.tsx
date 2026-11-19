@@ -1,5 +1,12 @@
 // combobox：本仓自有组件（功能对齐 shadcn combobox，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；锚定/ dismissal 行为复用 本仓的官方行为模块。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Combobox } from './combobox.tsx'
+//   <Combobox value={value} onValueChange={setValue} options={…}
+//   placeholder="输入以筛选…" />
+//   props：value / defaultValue / onValueChange / options / placeholder / emptyQueryShowsAll / disabled
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'

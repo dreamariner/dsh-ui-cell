@@ -10,6 +10,13 @@
 //     close → phase='closed'，DOM 留着播出场动画，播完（animationend）才卸载
 //   相位切换在渲染期做（React 官方「按 props 调整 state」写法）。
 //   偏离登记在 registry 的 upstream 字段：DSH 升级 re-diff 时保留本仓这段。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { DisclosureRow } from './disclosure-row.tsx'
+//   <DisclosureRow icon={…} title="记忆条目" open={open} expandable
+//   onToggle={() => setOpen(!open)}>
+//   props：icon / title / open / expandable / onToggle / running / expandOnRowClick / previewChevron / keepContentWhenOpen / collapsedContent / headerAccessory / children / className / rowClassName / contentClassName / contentLayoutClassName / leadingClassName / chevronClassName / titleClassName
+// ────────────────────────────────────────────────────────────────────────
+
 import { memo, useEffect, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import clsx from 'clsx'
 import { IconChevronDownOutlineRegular, IconChevronUpOutlineRegular } from './icons.tsx'

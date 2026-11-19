@@ -1,5 +1,11 @@
 // form：本仓自有组件（功能对齐 shadcn form，样式沿用 DSH 设计 token）。
 // 上游来源：无官方对应原子；行为手写、零第三方依赖。（字段壳见 field；本件只管 form 元素语义与提交期状态）
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Form } from './form.tsx'
+//   <Form onSubmit={async () => { … }} disableWhilePending>
+//   <Field …>控件</Field>
+// ────────────────────────────────────────────────────────────────────────
+
 import { forwardRef, useState } from 'react'
 import clsx from 'clsx'
 import css from './form.css'

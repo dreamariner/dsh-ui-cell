@@ -13,6 +13,12 @@
 // 规范：颜色走 currentColor、aria-hidden、尺寸由 size prop 给（不写进组件名）。
 
 /** Shared props for every product icon component. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { IconDatabaseOutlineRegular } from './icons.tsx'
+//   <IconDatabaseOutlineRegular size={16} />
+//   props：size / className
+// ────────────────────────────────────────────────────────────────────────
+
 export interface IconProps {
   /** Square edge in px; defaults to the glyph's own drawn size. */
   size?: number | undefined

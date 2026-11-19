@@ -3,7 +3,8 @@
   "homepage": "https://github.com/dreamariner/dsh-ui-cell",
   "dshVersion": "0.2.2-rc.5",
   "dshCommit": "9c2670d3bce5275e0d1610272958121af87787bb",
-  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff，不是整包覆盖；重 diff 用 scripts/diff-upstream.mjs（--base <commit> 按上游变更集驱动）。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。 组件基线：0.2.2-rc.5（9c2670d3bc）。全 53 个有上游出处的条目已逐条比对：内容与上游一致，或偏离已写进各自的 upstream 字段（图标 sprite 化不跟、markdown 家族裁剪、disclosure-row 相位机、config-field 控件改写等）。",
+  "minHostDsh": "0.2.2-rc.2",
+  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff，不是整包覆盖；重 diff 用 scripts/diff-upstream.mjs（--base <commit> 按上游变更集驱动）。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。 组件基线：0.2.2-rc.5（9c2670d3bc）。全 53 个有上游出处的条目已逐条比对：内容与上游一致，或偏离已写进各自的 upstream 字段（图标 sprite 化不跟、markdown 家族裁剪、disclosure-row 相位机、config-field 控件改写等）。 顶层 minHostDsh 是**宿主 token 下限**（消费端的宿主至少要有多新），与 dshVersion（组件源基线，本仓抄自哪个上游版本）是两件事：本仓当前源基线 rc.5、宿主下限 rc.2（引用的 token 在 rc.2 清单里就齐了）。",
   "items": [
     {
       "name": "foundation",

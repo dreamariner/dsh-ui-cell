@@ -2,6 +2,11 @@
 //
 // 上游来源：packages/client/ui-primitives/src/Input.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、icon 槽位、原生属性透传与 ref 全部照抄官方实现。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Input } from './input.tsx'
+//   <Input value={text} onChange={(event) => setText(event.target.value)} placeholder="搜索记忆…" />
+//   <Input value={text} onChange={(event) => setText(event.target.value)} icon={<IconSearchOutlineRegular size={13} />} />
+// ────────────────────────────────────────────────────────────────────────
 
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
 import clsx from 'clsx'

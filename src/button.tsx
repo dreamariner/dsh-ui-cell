@@ -4,6 +4,12 @@
 // 保真说明：DOM 结构、variant/size 枚举、原生属性透传与 ref 全部照抄官方实现；
 // 唯一改动是类名前缀（.button → .duc-button 等，见 add 脚本的前缀化规则）。
 // 样式只引用 --dsw-alias-* / --dsw-radius-* token（DSH 插件开发规范）。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Button } from './button.tsx'
+//   <Button variant="primary">主操作</Button>
+//   <Button variant="ghost">次操作</Button>
+//   props：variant / size / icon / className / children
+// ────────────────────────────────────────────────────────────────────────
 
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import clsx from 'clsx'

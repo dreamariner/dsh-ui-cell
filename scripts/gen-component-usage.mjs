@@ -13,7 +13,7 @@
 // 用法：node scripts/gen-component-usage.mjs [--check]
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { basename, dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -101,12 +101,115 @@ function extractPropNames(source) {
   return [...names]
 }
 
+
+/**
+ * 从 demo 的 code 段里挑出「最小用法」几行：
+ * import 行（路径改成本仓同目录形式：消费端复制后所有件都在同一个 ui/ 目录）
+ * + 前两行有内容的用法。
+ */
+function usageExample(code, ourFile) {
+  const lines = code.trim().split('\n')
+  const imports = []
+  const usages = []
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (line === '') continue
+    if (line.startsWith('import ')) {
+      // 文档站里是 '../ui/xxx.tsx'，消费端复制后是同目录 './xxx.tsx'
+      imports.push(line.replace(/from '\.\.\/ui\//, "from './"))
+      continue
+    }
+    if (line.startsWith('{/*') || line.startsWith('/*') || line.startsWith('//')) continue
+    usages.push(line)
+    if (usages.length >= 2) break
+  }
+  return [...imports, ...usages]
+}
+
+/** 用法块（写进组件源文件头；带标记以便幂等替换）。 */
+const USAGE_BEGIN = '// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）'
+const USAGE_END = '// ' + '─'.repeat(72)
+/**
+ * 用法块的正则（用来把已有块删掉再插入，保证幂等）。
+ * 注意：**不能**写成模板字符串里嵌正则字面量 —— 那个正则的字符类里有 `${}`，
+ * 在模板字符串的插值里会被提前截断，解析出来的模式是错的（表现为块被不断复制）。
+ */
+const escRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+// 全局：历史上手滑重复插入过多个块，删除时一次清干净（幂等的前提）
+const USAGE_BLOCK_RE = new RegExp(
+  '\\n?' + escRegExp(USAGE_BEGIN) + '[\\s\\S]*?\\n' + escRegExp(USAGE_END) + '\\n',
+  'g',
+)
+
+function buildUsageBlock(exampleLines, props) {
+  const block = [USAGE_BEGIN]
+  for (const line of exampleLines) block.push(`//   ${line}`)
+  if (props.length > 0) block.push(`//   props：${props.join(' / ')}`)
+  block.push(USAGE_END)
+  return block
+}
+
+/**
+ * 把用法块注入源文件头（放在既有来源注记之后、import 之前）。
+ * 幂等：已有的块先删掉再插，所以反复跑不会堆叠。
+ */
+function injectUsageBlock(source, block) {
+  const cleaned = source.replace(USAGE_BLOCK_RE, '\n')
+  const lines = cleaned.split('\n')
+  let i = 0
+  while (i < lines.length) {
+    const t = lines[i].trim()
+    if (t === '') { i++; continue }
+    if (t.startsWith('//')) { i++; continue }
+    if (t.startsWith('/*')) {
+      let j = i
+      let closed = false
+      while (j < lines.length) { if (lines[j].includes('*/')) { closed = true; break } j++ }
+      if (!closed) break
+      i = j + 1
+      continue
+    }
+    break
+  }
+  const head = lines.slice(0, i)
+  const tail = lines.slice(i)
+  while (head.length > 0 && head[head.length - 1].trim() === '') head.pop()
+  return [...head, ...block, '', ...tail].join('\n')
+}
+
 /** 条目的主 tsx（拿它的 props）。 */
 function mainTsxOf(item) {
   const tsx = (item.files ?? []).find(f => f.endsWith('.tsx'))
   if (!tsx) return undefined
   const abs = join(SRC, tsx)
   return existsSync(abs) ? abs : undefined
+}
+
+// 先把每个条目的用法块算出来（写回源文件头）
+const usageBlocks = new Map()
+for (const [file, group] of DEMO_GROUPS) {
+  const abs = join(DEMOS, file)
+  if (!existsSync(abs)) continue
+  for (const demo of extractDemos(readFileSync(abs, 'utf8'))) {
+    const item = itemsByName.get(demo.id)
+    if (!item) continue
+    const tsx = mainTsxOf(item)
+    if (!tsx) continue
+    const props = extractPropNames(readFileSync(tsx, 'utf8'))
+    const example = usageExample(demo.code, basename(tsx))
+    usageBlocks.set(tsx, buildUsageBlock(example, props))
+  }
+}
+
+// 写回源文件（幂等：块会被替换而不是堆叠）
+const drifted = []
+for (const [abs, block] of usageBlocks) {
+  const current = readFileSync(abs, 'utf8')
+  const next = injectUsageBlock(current, block)
+  if (next !== current) {
+    if (checkOnly) drifted.push(relative(ROOT, abs))
+    else writeFileSync(abs, next)
+  }
 }
 
 const lines = []
@@ -190,9 +293,13 @@ if (checkOnly) {
     console.error('[gen-usage] 生成物与 demo 不同步：跑 `pnpm skill:usage` 重新生成')
     process.exit(1)
   }
+  if (drifted.length > 0) {
+    console.error(`[gen-usage] 组件源文件头的用法块与 demo 不同步（跑 pnpm skill:usage）：\n${drifted.map(f => `    - ${f}`).join('\n')}`)
+    process.exit(1)
+  }
   console.log('[gen-usage] 生成物与 demo 一致')
   process.exit(0)
 }
 
 writeFileSync(OUT, text)
-console.log(`[gen-usage] 已生成 ${basename(OUT)}（${total} 个组件的用法）`)
+console.log(`[gen-usage] 已生成 ${basename(OUT)}（${total} 个组件的用法），并写回 ${usageBlocks.size} 个组件源文件头的用法块`)

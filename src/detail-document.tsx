@@ -5,6 +5,11 @@
 // 归入 content 档（带 npm 重依赖）。本文件是**机械搬运 + 导入路径改写**的产物，
 // 语义裁剪见 docs/issues/005（流式增量解析、DraggableImage、简化 LinkIcon、KaTeX CSS 文本化）。
 // 官方路径：DetailDocument.tsx → 本仓路径：detail-document.tsx
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { DetailDocument } from './detail-document.tsx'
+//   <DetailDocument state={{ status: 'found', markdown: text }} labels={labels} onRetry={() => {}} />
+// ────────────────────────────────────────────────────────────────────────
+
 import { useMemo, type ReactNode } from 'react'
 import { Button } from './button.tsx'
 import { MarkdownText, type MarkdownLabels, type MarkdownPathImages } from './markdown-text.tsx'

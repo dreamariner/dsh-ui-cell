@@ -1,6 +1,13 @@
 // 保真复制自 DSH 官方 ui-primitives。
 // 上游来源：packages/client/ui-primitives/src/CodeToolbar.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 /** Shared language, wrapping, and clipboard controls for code cards. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { CodeToolbar } from './code-toolbar.tsx'
+//   <CodeToolbar lang="typescript" labels={{ codeLabel: '代码', wrapLabel: '换行', unwrapLabel: '不换行' }}
+//   copyLabel="复制" copiedLabel="已复制" copied={copied} wrapped={wrapped}
+//   props：lang / title / status / labels / copyLabel / copiedLabel / copied / wrapped / onCopy / onWrap
+// ────────────────────────────────────────────────────────────────────────
+
 import {
   IconCheckOutlineRegular, IconCopyOutlineRegular, IconNowrapFillRegular, IconWrapFillRegular,
 } from './icons.tsx'

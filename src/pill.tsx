@@ -5,6 +5,12 @@
 // (view switcher tabs, filters) and a static span otherwise — TerminalBlock's
 // exit status is the read-only case. The 11px read-only badge is `Tag`; size
 // separates the two as much as interactivity does.
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Pill } from './pill.tsx'
+//   <Pill active>激活</Pill>
+//   <Pill onClick={() => set(!active)}>可点击</Pill>
+//   props：active / className / children
+// ────────────────────────────────────────────────────────────────────────
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import clsx from 'clsx'

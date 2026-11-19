@@ -1,6 +1,12 @@
 // Modal: a centered, body-portaled modal over a blurred page mask.
 // 来源：packages/client/ui-primitives/src/Modal.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)
 // 行为保真：portal 渲染、Escape 关闭、焦点陷阱与焦点归还、mask 点击关闭、aria-modal 语义。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { Modal } from './modal.tsx'
+//   <Modal open={open} title="删除记忆" closeLabel="关闭" onClose={() => setOpen(false)}>…</Modal>
+//   <Modal open={warnOpen} title="连接已断开" tone="warning" closeLabel="关闭" onClose={() => setWarnOpen(false)}>…</Modal>
+//   props：open / onClose / title / tone / description / children / footer / className / contentClassName / shortcutModal / onKeyDownCapture / backdropBlur
+// ────────────────────────────────────────────────────────────────────────
 
 import { useRef } from 'react'
 import type { KeyboardEventHandler, ReactNode } from 'react'

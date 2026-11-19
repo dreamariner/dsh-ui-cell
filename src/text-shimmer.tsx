@@ -15,6 +15,12 @@
 // DSH 应用自己的跑动状态就是这么改这个 token 的（ChatView.module.css 的 `.running`
 // 把它指向 `--dsw-alias-label-deep-diving-shimmer`）。
 /** Text activity animation shared by a row and its nested text fragments. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { TextShimmer } from './text-shimmer.tsx'
+//   <TextShimmer active>正在生成记忆摘要…</TextShimmer>
+//   props：children / active / className / contentClassName
+// ────────────────────────────────────────────────────────────────────────
+
 import { createContext, memo, useContext, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './text-shimmer.css'

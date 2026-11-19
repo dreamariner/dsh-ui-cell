@@ -2,6 +2,11 @@
 // 上游来源：packages/client/ui-primitives/src/ShortcutKeys.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** Shared shortcut keycaps; callers supply the effective platform presentation. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { ShortcutKeys } from './shortcut-keys.tsx'
+//   <ShortcutKeys keys={['⌘', 'K']} />
+// ────────────────────────────────────────────────────────────────────────
+
 import css from './shortcut-keys.css'
 import clsx from 'clsx'
 

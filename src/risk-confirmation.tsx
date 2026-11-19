@@ -2,6 +2,12 @@
 // 来源：packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)
 // 主操作在调用方确认勾选前保持禁用；初始焦点落在勾选框（data-modal-autofocus）。
 // rc.5 起警告图标上收到 Modal 的 tone='warning'，勾选框改用共享 Checkbox 组件。
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { RiskConfirmation } from './risk-confirmation.tsx'
+//   <RiskConfirmation open={open} acknowledged={ack} onAcknowledgedChange={setAck}
+//   title="清空全部记忆" … />
+//   props：open / title / description / acknowledgeLabel / cancelLabel / closeLabel / confirmLabel / acknowledged / disabled / onAcknowledgedChange / onCancel / onConfirm
+// ────────────────────────────────────────────────────────────────────────
 
 import { Button } from './button.tsx'
 import { Checkbox } from './checkbox.tsx'

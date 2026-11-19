@@ -2,6 +2,12 @@
 // 上游来源：packages/client/ui-primitives/src/ZoomControls.tsx @ dsh v0.2.2-rc.1 (66491b05e3)
 // DOM 结构、行为与 token 引用照抄官方；类名前缀化由 add 转换器处理。
 /** Floating controls shared by every zoomable document renderer. */
+// ── 用法（生成物，勿手改：改 docs/wiki/demos/ 后跑 pnpm skill:usage）
+//   import { ZoomControls } from './zoom-controls.tsx'
+//   <ZoomControls zoom={zoom} visible labels={labels} onZoom={setZoom}
+//   onActiveChange={() => {}} />
+// ────────────────────────────────────────────────────────────────────────
+
 import clsx from 'clsx'
 import { forwardRef, useEffect, useImperativeHandle, useState, type ReactNode } from 'react'
 import { Button } from './button.tsx'
