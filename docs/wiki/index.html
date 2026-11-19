@@ -1704,7 +1704,7 @@ body[data-ds-dark-theme] {
 }
 
 .duc-tooltip-bubble[data-portal] { z-index: 1100; }
-:global(:where(html[data-platform='darwin'])) .duc-tooltip-bubble { -webkit-app-region: no-drag; }
+:where(html[data-platform='darwin']) .duc-tooltip-bubble { -webkit-app-region: no-drag; }
 .duc-tooltip-bubble[data-pinned] { pointer-events: auto; }
 .duc-tooltip-label { min-width: 0; }
 
@@ -2049,7 +2049,7 @@ body[data-ds-dark-theme] {
 }
 
 @media (pointer: coarse) {
-  :global(html:not([data-input-modality='keyboard'])) .duc-menu-shortcut {
+  html:not([data-input-modality='keyboard']) .duc-menu-shortcut {
     display: none;
   }
 }
@@ -2237,7 +2237,7 @@ body[data-ds-dark-theme] {
   background: var(--dsw-alias-menu-group-header-fill);
 }
 
-:global(html:not([data-platform='darwin'])) .duc-menu-group-heading {
+html:not([data-platform='darwin']) .duc-menu-group-heading {
   border-radius: var(--dsw-radius-md);
 }
 
@@ -3363,8 +3363,8 @@ button.duc-disclosure-row-leading {
 }
 
 /* The display:contents portal has no box to subtract from native drag regions. */
-:global(:where(html[data-platform='darwin'])) .duc-hover-card-card,
-:global(:where(html[data-platform='darwin'])) .duc-hover-card-bridge {
+:where(html[data-platform='darwin']) .duc-hover-card-card,
+:where(html[data-platform='darwin']) .duc-hover-card-bridge {
   -webkit-app-region: no-drag;
 }
 
@@ -6247,7 +6247,7 @@ body[data-ds-dark-theme] {
  * 与上游的差异：
  *   1. 文件名从 `CodeBlock.module.css` 改为 本仓约定的 `code-block.css`
  *      （复制时由 add 转成 `<name>-css.ts`，类名表机制接管哈希隔离）；
- *   2. `:global(__KEEP__line)` 原样保留（shiki 输出的行 span 是全局契约）。
+ *   2. `__KEEP__line` 原样保留（shiki 输出的行 span 是全局契约）。
  *
  * rc.5 增补（2026-11-19，issue 029）：diff 围栏的行色规则（`.diffAdd` / `.diffDel` /
  * `.diffMarker` / `.diffContext` / `.diffHunk` / `.diffMeta` 与 `.diffLine` 布局），
@@ -6378,7 +6378,7 @@ body[data-ds-dark-theme] {
   white-space: normal;
 }
 
-.duc-code-block-numbered :where(pre) code > :global(.line) {
+.duc-code-block-numbered :where(pre) code > .line {
   position: relative;
   display: block;
   min-height: 1lh;
@@ -6387,7 +6387,7 @@ body[data-ds-dark-theme] {
   white-space: var(--dsl-code-block-line-white-space, pre-wrap);
 }
 
-.duc-code-block-numbered :where(pre) code > :global(.line)::before {
+.duc-code-block-numbered :where(pre) code > .line::before {
   position: absolute;
   inset-inline-start: 0;
   width: var(--dsl-code-block-line-number-width);
@@ -6759,7 +6759,7 @@ body[data-ds-dark-theme] {
  * 上游来源：packages/client/ui-primitives/src/markdown/MarkdownText.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 搬入（issue 005）：文件名从官方约定改为 本仓约定（X.module.css → X.css），
- * 类名表机制接管哈希隔离；:global(...) 内的类名原样保留（第三方契约）。
+ * 类名表机制接管哈希隔离；... 内的类名原样保留（第三方契约）。
  */
 /* Visual baseline: deepsuite `@deepseek/md` markdown.css, adapted to CSS
    Modules. Cite pills and header anchors are absent (no matching DOM).
@@ -6906,7 +6906,7 @@ body[data-ds-dark-theme] {
 }
 
 /* Keep list-nested code-block vertical margins (design: +4px vs other last children). */
-.duc-markdown-text-markdown li > *:last-child:not(:global(.md-code-block)) {
+.duc-markdown-text-markdown li > *:last-child:not(.md-code-block) {
   margin-bottom: 0;
 }
 
@@ -6948,7 +6948,7 @@ body[data-ds-dark-theme] {
   font-family: var(--ds-font-family-code);
 }
 
-.duc-markdown-text-markdown :global(.katex-display) {
+.duc-markdown-text-markdown .katex-display {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -6975,18 +6975,18 @@ body[data-ds-dark-theme] {
    Other engines and overlay scrollbars may reserve a different height.
    Wheel and trackpad scrolling need the pointer over the table, which is
    already the hover that re-enables scrolling. */
-.duc-markdown-text-tableScroll:global(.md-table-wide):focus-visible {
+.duc-markdown-text-tableScroll.md-table-wide:focus-visible {
   overflow-x: scroll;
   padding-bottom: 0;
 }
 
 @media (hover: hover) {
-  .duc-markdown-text-tableScroll:global(.md-table-wide) {
+  .duc-markdown-text-tableScroll.md-table-wide {
     overflow-x: hidden;
     padding-bottom: var(--dsh-scrollbar-width, 5px);
   }
 
-  .duc-markdown-text-tableScroll:global(.md-table-wide):hover {
+  .duc-markdown-text-tableScroll.md-table-wide:hover {
     overflow-x: scroll;
     padding-bottom: 0;
   }
@@ -7179,12 +7179,12 @@ body[data-ds-dark-theme] {
   box-decoration-break: clone;
 }
 
-.duc-markdown-text-markdown.duc-markdown-text-compact :global(.md-code-block) {
+.duc-markdown-text-markdown.duc-markdown-text-compact .md-code-block {
   margin: 4px 0;
   color: inherit;
 }
 
-.duc-markdown-text-compact :global(.md-code-block) > :has(> [data-code-block-banner]) {
+.duc-markdown-text-compact .md-code-block > :has(> [data-code-block-banner]) {
   position: static;
   z-index: auto;
 }
@@ -7215,19 +7215,19 @@ body[data-ds-dark-theme] {
   font-weight: 600;
 }
 
-.duc-markdown-text-compact :global(.katex) {
+.duc-markdown-text-compact .katex {
   font-size: 1em;
 }
 
 /* Keep KaTeX's inline baseline and scroll the containing block only when needed. */
-.duc-markdown-text-compact :is(p, h1, h2, h3, h4, h5, h6, ul, ol):has(:global(.katex)) {
+.duc-markdown-text-compact :is(p, h1, h2, h3, h4, h5, h6, ul, ol):has(.katex) {
   overflow-x: auto;
   overflow-y: hidden;
   /* KaTeX descenders can paint one pixel below a fractional line-box edge. */
   padding-bottom: 1px;
 }
 
-.duc-markdown-text-compact :global(.katex-display) {
+.duc-markdown-text-compact .katex-display {
   margin: 4px 0;
 }
 
@@ -7277,7 +7277,7 @@ body[data-ds-dark-theme] {
  * 上游来源：packages/client/ui-primitives/src/ReadBlock.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 搬入（issue 005）：文件名从官方约定改为 本仓约定（X.module.css → X.css），
- * 类名表机制接管哈希隔离；:global(...) 内的类名原样保留（第三方契约）。
+ * 类名表机制接管哈希隔离；... 内的类名原样保留（第三方契约）。
  */
 .duc-read-block-line {
   display: flex;
@@ -7330,7 +7330,7 @@ body[data-ds-dark-theme] {
  * 上游来源：packages/client/ui-primitives/src/WebBlock.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 搬入（issue 005）：文件名从官方约定改为 本仓约定（X.module.css → X.css），
- * 类名表机制接管哈希隔离；:global(...) 内的类名原样保留（第三方契约）。
+ * 类名表机制接管哈希隔离；... 内的类名原样保留（第三方契约）。
  */
 .duc-web-block-block {
   --dsl-web-radius: var(--dsw-radius-lg);
@@ -7348,11 +7348,11 @@ body[data-ds-dark-theme] {
   margin-bottom: 8px;
 }
 
-.duc-web-block-answer > :global(div) > :first-child {
+.duc-web-block-answer > div > :first-child {
   margin-top: 0;
 }
 
-.duc-web-block-answer > :global(div) > :last-child {
+.duc-web-block-answer > div > :last-child {
   margin-bottom: 0;
 }
 
@@ -7491,7 +7491,7 @@ body[data-ds-dark-theme] {
  * 上游来源：packages/client/ui-primitives/src/QuotePreview.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 搬入（issue 005）：文件名从官方约定改为 本仓约定（X.module.css → X.css），
- * 类名表机制接管哈希隔离；:global(...) 内的类名原样保留（第三方契约）。
+ * 类名表机制接管哈希隔离；... 内的类名原样保留（第三方契约）。
  */
 .duc-quote-preview-quote {
   display: inline-flex;
@@ -7637,7 +7637,7 @@ body[data-ds-dark-theme] {
  * 上游来源：packages/client/ui-primitives/src/DetailDocument.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 搬入（issue 005）：文件名从官方约定改为 本仓约定（X.module.css → X.css），
- * 类名表机制接管哈希隔离；:global(...) 内的类名原样保留（第三方契约）。
+ * 类名表机制接管哈希隔离；... 内的类名原样保留（第三方契约）。
  */
 .duc-detail-document-section {
   display: flex;
@@ -8380,7 +8380,7 @@ Error generating stack: `+i.message+`
 }
 
 .duc-tooltip-bubble[data-portal] { z-index: 1100; }
-:global(:where(html[data-platform='darwin'])) .duc-tooltip-bubble { -webkit-app-region: no-drag; }
+:where(html[data-platform='darwin']) .duc-tooltip-bubble { -webkit-app-region: no-drag; }
 .duc-tooltip-bubble[data-pinned] { pointer-events: auto; }
 .duc-tooltip-label { min-width: 0; }
 
@@ -8723,7 +8723,7 @@ Error generating stack: `+i.message+`
 }
 
 @media (pointer: coarse) {
-  :global(html:not([data-input-modality='keyboard'])) .duc-menu-shortcut {
+  html:not([data-input-modality='keyboard']) .duc-menu-shortcut {
     display: none;
   }
 }
@@ -9902,8 +9902,8 @@ button.duc-disclosure-row-leading {
 }
 
 /* The display:contents portal has no box to subtract from native drag regions. */
-:global(:where(html[data-platform='darwin'])) .duc-hover-card-card,
-:global(:where(html[data-platform='darwin'])) .duc-hover-card-bridge {
+:where(html[data-platform='darwin']) .duc-hover-card-card,
+:where(html[data-platform='darwin']) .duc-hover-card-bridge {
   -webkit-app-region: no-drag;
 }
 `,yr=qE;var wo=$(I(),1),r5=100,a5=420,i5=24,WE=300,oi=8,Jn=8;function $s({anchor:e,content:t,openDelayMs:n=500,disabled:r=!1,grouped:a=!1,copyText:i,copyLabel:o,copiedLabel:s,variant:l="compact",widthAnchorRef:c,inline:u=!1,fitContent:d=!1}){let p=(0,Ke.useRef)(null),m=(0,Ke.useRef)(null),f=(0,Ke.useRef)(null),w=(0,Ke.useRef)(null),k=(0,Ke.useRef)(null),y=(0,Ke.useRef)(null),g=(0,Ke.useRef)(0),v=(0,Ke.useRef)(!1),_=(0,Ke.useRef)(!0),[E,C]=(0,Ke.useState)("closed"),A=E!=="closed",P=E==="closing",[R,T]=(0,Ke.useState)(null),U=R!==null,[W,H]=(0,Ke.useState)(!1),X=(0,Ke.useContext)(sy),G=a?X:null,[V]=(0,Ke.useState)(()=>Symbol("hover-card")),pe=(0,Ke.useCallback)(()=>{k.current!==null&&(clearTimeout(k.current),k.current=null),y.current=null,H(!1)},[]),Ne=(0,Ke.useCallback)(()=>{g.current+=1,pe(),C(ye=>l==="preview"&&ye!=="closed"?"closing":"closed")},[pe,l]),{arm:Pe,cancel:N}=xs(Ne),ce=(0,Ke.useCallback)(()=>{w.current!==null&&(clearTimeout(w.current),w.current=null)},[]),je=(0,Ke.useCallback)(()=>{ce(),N(),g.current+=1,pe(),C("closed")},[ce,N,pe]),j=A&&U;(0,Ke.useLayoutEffect)(()=>{if(!(!j||G===null))return G.shown(V,je,f.current),()=>{G.release(V)}},[G,V,j,je]),(0,Ke.useEffect)(()=>{if(!P)return;let ye=setTimeout(()=>{C("closed")},r5);return()=>{clearTimeout(ye)}},[P]),(0,Ke.useEffect)(()=>{r&&(ce(),N(),Ne())},[r,N,Ne]),(0,Ke.useEffect)(()=>(_.current=!0,()=>{_.current=!1,g.current+=1,ce(),k.current!==null&&(clearTimeout(k.current),k.current=null)}),[]),(0,Ke.useEffect)(()=>{if(!A||l!=="preview"&&!u)return;let ye=Qe=>{Qe.key==="Escape"&&(u&&Qe.stopPropagation(),ce(),N(),Ne())};return window.addEventListener("keydown",ye,u),()=>{window.removeEventListener("keydown",ye,u)}},[A,l,u,N,Ne]),(0,Ke.useLayoutEffect)(()=>{if(!A){T(null);return}let ye=()=>{let st=p.current;if(st===null)return;if(st.closest("[inert], [hidden]")!==null){je();return}let qe=st.getBoundingClientRect(),Nn=m.current?.offsetHeight??0;if(l==="preview"){let ir=c?.current?.getBoundingClientRect()??qe,gn=Math.max(0,Math.min(ir.width-i5*2,window.innerWidth-Jn*2)),le=Jl(Jn,qe,oi),Ie=Math.max(le,qe.bottom+oi),et=Math.max(0,qe.top-oi-le),We=Math.max(0,window.innerHeight-Ie-Jn),zt=et>=Math.min(a5,We),Zt=Math.min(a5,zt?et:We);T({left:Math.max(Jn,Math.min(ir.left+i5,window.innerWidth-gn-Jn)),top:zt?Math.max(le,qe.top-Math.min(Nn,Zt)-oi):Ie,width:gn,maxHeight:Zt});return}if(u){let ir=Math.max(Nn,m.current?.scrollHeight??0),gn=Math.max(0,Math.min(WE,window.innerWidth-Jn*2)),le=d?Math.min(m.current?.offsetWidth??gn,gn):gn,Ie=Jl(Jn,qe,oi),et=Math.max(Ie,qe.bottom+oi),We=Math.max(0,qe.top-oi-Ie),zt=Math.max(0,window.innerHeight-et-Jn),Zt=ir>zt&&We>zt,Te=Zt?We:zt,gt=Math.max(Jn,Math.min(qe.left,window.innerWidth-le-Jn)),_r=Zt?qe.top-oi-Math.min(ir,Te):et,Wr=Zt?_r+Math.min(ir,Te):qe.bottom,q=Math.min(qe.left,gt);T({left:gt,top:_r,...d?{}:{width:le},maxWidth:gn,maxHeight:Te,bridge:{left:q,top:Wr,width:Math.max(qe.right,gt+le)-q,height:Math.max(0,(Zt?qe.top:_r)-Wr)}});return}let ya=qe.top+Nn>window.innerHeight-Jn?window.innerHeight-Nn-Jn:qe.top;T({left:qe.right+oi,top:ya})};ye();let Qe=new MutationObserver(ye);for(let st=p.current?.parentElement;st!=null;st=st.parentElement)Qe.observe(st,{attributes:!0,attributeFilter:["inert","hidden"]});let ot=(l==="preview"||u)&&typeof ResizeObserver<"u"?new ResizeObserver(ye):null;for(let st of[m.current,p.current,c?.current])st!=null&&ot?.observe(st);return window.addEventListener("scroll",ye,!0),window.addEventListener("resize",ye),()=>{ot?.disconnect(),Qe.disconnect(),window.removeEventListener("scroll",ye,!0),window.removeEventListener("resize",ye)}},[A,l,c,U,u,d,je]),(0,Ke.useLayoutEffect)(()=>{if(!A||R===null||l==="preview"||u)return;let ye=m.current?.offsetHeight??0;R.top+ye>window.innerHeight-Jn&&T({left:R.left,top:window.innerHeight-ye-Jn})},[A,R,l,u]);let $e=async ye=>{if(W||v.current)return;v.current=!0;let Qe=g.current,ot=await Na(ye);v.current=!1;let st=m.current;if(!ot||!_.current||Qe!==g.current||st===null)return;let qe=st.offsetHeight;y.current=qe>0?qe:null,H(!0),k.current=setTimeout(pe,1e3)},Ye=i!==void 0,on=ye=>{f.current?.contains(ye.target)||(ce(),N(),Ne())},Ve=A&&R!==null&&(0,wo.jsx)("div",{ref:m,className:z(yr.card,l==="preview"&&yr.preview,u&&yr.media,u&&d&&yr.fitContent,Ye&&yr.copyable,W&&yr.feedback),"data-closing":P||void 0,style:{left:R.left,top:R.top,width:R.width,maxWidth:R.maxWidth,maxHeight:R.maxHeight,minHeight:W&&y.current!==null?y.current:void 0,"--dsh-hover-preview-fade":`${r5}ms`},role:Ye?"button":void 0,tabIndex:Ye?0:void 0,"aria-label":Ye?`${o}: ${i}`:void 0,onClick:Ye?ye=>{let Qe=window.getSelection();if(Qe!==null&&!Qe.isCollapsed){for(let ot=0;ot<Qe.rangeCount;ot+=1)if(Qe.getRangeAt(ot).intersectsNode(ye.currentTarget))return}$e(i)}:void 0,onKeyDown:Ye?ye=>{ye.key!=="Enter"&&ye.key!==" "||(ye.preventDefault(),$e(i))}:void 0,children:W?(0,wo.jsx)("span",{className:yr.copied,"aria-hidden":"true",children:s}):t});return(0,wo.jsxs)("span",{ref:p,className:z(yr.root,u&&yr.inline),onFocus:u?ye=>{!r&&ye.target.matches(":focus-visible")&&(N(),C("open"))}:void 0,onBlur:u?ye=>{ye.currentTarget.contains(ye.relatedTarget)||(ce(),N(),Ne())}:void 0,onPointerEnter:ye=>{if(!(r||ye.pointerType==="touch")&&!(ye.pointerType==="mouse"&&!window.matchMedia("(any-hover: hover)").matches)){if(N(),A){C("open");return}ce(),G?.isWarm()?C("open"):w.current=setTimeout(()=>{C("open")},n)}},onPointerLeave:()=>{ce(),A&&Pe()},onPointerDownCapture:on,onClickCapture:on,children:[e,A&&Ye&&(0,wo.jsx)("span",{className:yr.status,role:"status",children:W?s:""}),Ve!==!1&&(0,o5.createPortal)((0,wo.jsxs)("span",{ref:f,className:yr.portal,children:[R.bridge!==void 0&&(0,wo.jsx)("span",{className:yr.bridge,style:R.bridge,"data-hovercard-bridge":"","aria-hidden":!0}),Ve]}),document.body)]})}var gd=$(Y(),1),s5=$(mr(),1);var UE={backdrop:"duc-image-lightbox-backdrop",stage:"duc-image-lightbox-stage",mask:"duc-image-lightbox-mask",image:"duc-image-lightbox-image",close:"duc-image-lightbox-close"},VE=`/* Full-viewport layer that blocks background clicks, including on the Windows caption. */
@@ -12782,7 +12782,7 @@ XID_Start XIDS`.split(/\s/).map(e=>[Tc(e),e])),bj=new Map([["s",Ut(383)],[Ut(383
  * \u4E0E\u4E0A\u6E38\u7684\u5DEE\u5F02\uFF1A
  *   1. \u6587\u4EF6\u540D\u4ECE \`CodeBlock.module.css\` \u6539\u4E3A \u672C\u4ED3\u7EA6\u5B9A\u7684 \`code-block.css\`
  *      \uFF08\u590D\u5236\u65F6\u7531 add \u8F6C\u6210 \`<name>-css.ts\`\uFF0C\u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF09\uFF1B
- *   2. \`:global(__KEEP__line)\` \u539F\u6837\u4FDD\u7559\uFF08shiki \u8F93\u51FA\u7684\u884C span \u662F\u5168\u5C40\u5951\u7EA6\uFF09\u3002
+ *   2. \`__KEEP__line\` \u539F\u6837\u4FDD\u7559\uFF08shiki \u8F93\u51FA\u7684\u884C span \u662F\u5168\u5C40\u5951\u7EA6\uFF09\u3002
  *
  * rc.5 \u589E\u8865\uFF082026-11-19\uFF0Cissue 029\uFF09\uFF1Adiff \u56F4\u680F\u7684\u884C\u8272\u89C4\u5219\uFF08\`.diffAdd\` / \`.diffDel\` /
  * \`.diffMarker\` / \`.diffContext\` / \`.diffHunk\` / \`.diffMeta\` \u4E0E \`.diffLine\` \u5E03\u5C40\uFF09\uFF0C
@@ -12913,7 +12913,7 @@ XID_Start XIDS`.split(/\s/).map(e=>[Tc(e),e])),bj=new Map([["s",Ut(383)],[Ut(383
   white-space: normal;
 }
 
-.duc-code-block-numbered :where(pre) code > :global(.line) {
+.duc-code-block-numbered :where(pre) code > .line {
   position: relative;
   display: block;
   min-height: 1lh;
@@ -12922,7 +12922,7 @@ XID_Start XIDS`.split(/\s/).map(e=>[Tc(e),e])),bj=new Map([["s",Ut(383)],[Ut(383
   white-space: var(--dsl-code-block-line-white-space, pre-wrap);
 }
 
-.duc-code-block-numbered :where(pre) code > :global(.line)::before {
+.duc-code-block-numbered :where(pre) code > .line::before {
   position: absolute;
   inset-inline-start: 0;
   width: var(--dsl-code-block-line-number-width);
@@ -13570,7 +13570,7 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
  * \u4E0A\u6E38\u6765\u6E90\uFF1Apackages/client/ui-primitives/src/markdown/MarkdownText.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 \u642C\u5165\uFF08issue 005\uFF09\uFF1A\u6587\u4EF6\u540D\u4ECE\u5B98\u65B9\u7EA6\u5B9A\u6539\u4E3A \u672C\u4ED3\u7EA6\u5B9A\uFF08X.module.css \u2192 X.css\uFF09\uFF0C
- * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B:global(...) \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
+ * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B... \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
  */
 /* Visual baseline: deepsuite \`@deepseek/md\` markdown.css, adapted to CSS
    Modules. Cite pills and header anchors are absent (no matching DOM).
@@ -13717,7 +13717,7 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
 }
 
 /* Keep list-nested code-block vertical margins (design: +4px vs other last children). */
-.duc-markdown-text-markdown li > *:last-child:not(:global(.md-code-block)) {
+.duc-markdown-text-markdown li > *:last-child:not(.md-code-block) {
   margin-bottom: 0;
 }
 
@@ -13759,7 +13759,7 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
   font-family: var(--ds-font-family-code);
 }
 
-.duc-markdown-text-markdown :global(.katex-display) {
+.duc-markdown-text-markdown .katex-display {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -13786,18 +13786,18 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
    Other engines and overlay scrollbars may reserve a different height.
    Wheel and trackpad scrolling need the pointer over the table, which is
    already the hover that re-enables scrolling. */
-.duc-markdown-text-tableScroll:global(.md-table-wide):focus-visible {
+.duc-markdown-text-tableScroll.md-table-wide:focus-visible {
   overflow-x: scroll;
   padding-bottom: 0;
 }
 
 @media (hover: hover) {
-  .duc-markdown-text-tableScroll:global(.md-table-wide) {
+  .duc-markdown-text-tableScroll.md-table-wide {
     overflow-x: hidden;
     padding-bottom: var(--dsh-scrollbar-width, 5px);
   }
 
-  .duc-markdown-text-tableScroll:global(.md-table-wide):hover {
+  .duc-markdown-text-tableScroll.md-table-wide:hover {
     overflow-x: scroll;
     padding-bottom: 0;
   }
@@ -13990,12 +13990,12 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
   box-decoration-break: clone;
 }
 
-.duc-markdown-text-markdown.duc-markdown-text-compact :global(.md-code-block) {
+.duc-markdown-text-markdown.duc-markdown-text-compact .md-code-block {
   margin: 4px 0;
   color: inherit;
 }
 
-.duc-markdown-text-compact :global(.md-code-block) > :has(> [data-code-block-banner]) {
+.duc-markdown-text-compact .md-code-block > :has(> [data-code-block-banner]) {
   position: static;
   z-index: auto;
 }
@@ -14026,19 +14026,19 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
   font-weight: 600;
 }
 
-.duc-markdown-text-compact :global(.katex) {
+.duc-markdown-text-compact .katex {
   font-size: 1em;
 }
 
 /* Keep KaTeX's inline baseline and scroll the containing block only when needed. */
-.duc-markdown-text-compact :is(p, h1, h2, h3, h4, h5, h6, ul, ol):has(:global(.katex)) {
+.duc-markdown-text-compact :is(p, h1, h2, h3, h4, h5, h6, ul, ol):has(.katex) {
   overflow-x: auto;
   overflow-y: hidden;
   /* KaTeX descenders can paint one pixel below a fractional line-box edge. */
   padding-bottom: 1px;
 }
 
-.duc-markdown-text-compact :global(.katex-display) {
+.duc-markdown-text-compact .katex-display {
   margin: 4px 0;
 }
 
@@ -14076,7 +14076,7 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
  * \u4E0A\u6E38\u6765\u6E90\uFF1Apackages/client/ui-primitives/src/ReadBlock.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 \u642C\u5165\uFF08issue 005\uFF09\uFF1A\u6587\u4EF6\u540D\u4ECE\u5B98\u65B9\u7EA6\u5B9A\u6539\u4E3A \u672C\u4ED3\u7EA6\u5B9A\uFF08X.module.css \u2192 X.css\uFF09\uFF0C
- * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B:global(...) \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
+ * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B... \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
  */
 .duc-read-block-line {
   display: flex;
@@ -14128,7 +14128,7 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
  * \u4E0A\u6E38\u6765\u6E90\uFF1Apackages/client/ui-primitives/src/QuotePreview.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 \u642C\u5165\uFF08issue 005\uFF09\uFF1A\u6587\u4EF6\u540D\u4ECE\u5B98\u65B9\u7EA6\u5B9A\u6539\u4E3A \u672C\u4ED3\u7EA6\u5B9A\uFF08X.module.css \u2192 X.css\uFF09\uFF0C
- * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B:global(...) \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
+ * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B... \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
  */
 .duc-quote-preview-quote {
   display: inline-flex;
@@ -14272,7 +14272,7 @@ l0,-`+(n+144)+`c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
  * \u4E0A\u6E38\u6765\u6E90\uFF1Apackages/client/ui-primitives/src/DetailDocument.module.css @ dsh v0.2.2-rc.1 (66491b05e3)
  *
  * 2026-11-06 \u642C\u5165\uFF08issue 005\uFF09\uFF1A\u6587\u4EF6\u540D\u4ECE\u5B98\u65B9\u7EA6\u5B9A\u6539\u4E3A \u672C\u4ED3\u7EA6\u5B9A\uFF08X.module.css \u2192 X.css\uFF09\uFF0C
- * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B:global(...) \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
+ * \u7C7B\u540D\u8868\u673A\u5236\u63A5\u7BA1\u54C8\u5E0C\u9694\u79BB\uFF1B... \u5185\u7684\u7C7B\u540D\u539F\u6837\u4FDD\u7559\uFF08\u7B2C\u4E09\u65B9\u5951\u7EA6\uFF09\u3002
  */
 .duc-detail-document-section {
   display: flex;

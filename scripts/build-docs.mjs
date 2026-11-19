@@ -34,7 +34,7 @@ await esbuild.build({
   external: ['node:*'],
   logLevel: 'silent',
 })
-const { buildStyleModule, prefixCss, loadRegistry } = await import(pathToFileURL(join(GEN, 'add.mjs')).href)
+const { buildStyleModule, prefixCss, unwrapGlobals, loadRegistry } = await import(pathToFileURL(join(GEN, 'add.mjs')).href)
 const registry = loadRegistry(ROOT)
 
 // ── ② 主题 token：从 checkout 的 ui-theme styles 全量拼装（官方明暗两套同源）──
@@ -66,7 +66,7 @@ for (const item of registry.items) {
     // （code-card.css 属于 code-toolbar 条目），而 CLI 的 buildStyleModule 与
     // tsx 里的 css.xxx 访问都按文件名算 —— 这里必须一致，否则类名对不上、样式失效。
     const base = file.replace(/\.css$/, '')
-    cellStyles.push(`/* ===== ${item.name}/${file} ===== */\n` + (raw ? cssText : prefixCss(cssText, 'duc-', base)))
+    cellStyles.push(`/* ===== ${item.name}/${file} ===== */\n` + unwrapGlobals(raw ? cssText : prefixCss(cssText, 'duc-', base)))
   }
 }
 const combinedCellCss = cellStyles.join('\n')

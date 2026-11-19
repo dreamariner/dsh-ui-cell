@@ -141,9 +141,35 @@ export function finalClassName(componentName: string, name: string, prefix: stri
  * CSS 里的 `:global(...)`：官方 CSS Modules 用来声明**不参与哈希**的全局类名
  * （markdown 家族有 11 处，如 `:global(.katex)` / `:global(.md-code-block)` /
  * `:global(.line)`）。这些是第三方契约（katex 自己的 CSS、shiki 主题、宿主钩子），
- * **改名就失配**。故：`:global(...)` 内的类名既不进类名表也不改名。
+ * **改名就失配**。故：`:global(...)` 内的类名既不进类名表也不改名；
+ * 发射层（buildStyleModule）再把外壳剥掉（见 unwrapGlobals）。
  */
-const GLOBAL_BLOCK = /:global\(([^)]*)\)/g
+
+/**
+ * 找出文本里全部 `:global(...)` 的跨度（平衡括号扫描）。
+ *
+ * 为什么不用 `[^)]*` 正则：嵌套括号会把边界截在第一个 `)` 上，
+ * tooltip 的 `:global(:where(html[data-platform='darwin']))` 与 menu 的
+ * `:global(html:not([data-input-modality='keyboard']))` 都是嵌套形态，
+ * 括号必须配对数出来。括号不配对（CSS 病理状态）时保守不认。
+ */
+function globalSpans(text: string): Array<{ start: number; end: number }> {
+  const spans: Array<{ start: number; end: number }> = []
+  const re = /:global\(/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(text)) !== null) {
+    let depth = 1
+    let i = m.index + m[0].length
+    for (; i < text.length; i++) {
+      const ch = text[i]
+      if (ch === '(') depth++
+      else if (ch === ')') { depth--; if (depth === 0) break }
+    }
+    if (depth !== 0) break
+    spans.push({ start: m.index, end: i })
+  }
+  return spans
+}
 
 /**
  * 把 `:global(...)` 段整体保护起来（占位 → 还原）。
@@ -158,11 +184,39 @@ const GLOBAL_SLOT = (i: number) => `\uE000${i}\uE001`
 
 function protectGlobals(css: string): { text: string; restore: (s: string) => string } {
   const saved: string[] = []
-  const text = css.replace(GLOBAL_BLOCK, (whole) => {
-    saved.push(whole)
-    return GLOBAL_SLOT(saved.length - 1)
-  })
+  let text = ''
+  let cursor = 0
+  for (const { start, end } of globalSpans(css)) {
+    if (start < cursor) continue // 嵌套 :global 已被外层整体保护
+    text += css.slice(cursor, start)
+    saved.push(css.slice(start, end + 1))
+    text += GLOBAL_SLOT(saved.length - 1)
+    cursor = end + 1
+  }
+  text += css.slice(cursor)
   return { text, restore: (s) => s.replace(/\uE000(\d+)\uE001/g, (_all, i) => saved[Number(i)] ?? '') }
+}
+
+/**
+ * 发射前剥壳：`:global(X)` → `X`（buildStyleModule 的 styles 文本出口用）。
+ *
+ * 为什么必须剥：官方源里的 `:global(...)` 由官方 client 预设的 lightningcss 在构建期处理；
+ * 复制出去的 styles 是**运行期 <style> 注入的纯 CSS 文本**，没有任何构建管线再碰它，
+ * 浏览器不认识 `:global` 这个伪类（未知伪类 = 整条选择器无效 = 该规则被**静默丢弃**，
+ * 零报错）。外壳只是「内层不参与哈希」的构建期声明，内层本来就是全局契约
+ * （katex / shiki / 宿主 html 属性钩子），剥掉后直接写就是合法纯 CSS，语义不变。
+ */
+export function unwrapGlobals(css: string): string {
+  let out = ''
+  let cursor = 0
+  for (const { start, end } of globalSpans(css)) {
+    if (start < cursor) continue
+    out += css.slice(cursor, start)
+    out += css.slice(start + ':global('.length, end)
+    cursor = end + 1
+  }
+  out += css.slice(cursor)
+  return out
 }
 
 /**
@@ -233,7 +287,7 @@ export function buildStyleModule(cssText: string, prefix: string, componentName:
 // 源：dsh-ui-cell/src/${componentName}.css @ **原样注入**（第三方契约的类名不能加前缀）。
 
 /** 样式文本（注入 <style> 用）。 */
-export const styles = ${JSON.stringify(cssText)}
+export const styles = ${JSON.stringify(unwrapGlobals(cssText))}
 
 /** 原样注入的文件没有类名表（空表，避免误用）。 */
 export const css: Record<string, string> = {}
@@ -242,10 +296,11 @@ export const css: Record<string, string> = {}
   }
   const names = cssClassNames(cssText)
   const table = names.map(name => `  '${name}': '${finalClassName(componentName, name, prefix)}',`).join('\n')
-  const body = prefixCss(cssText, prefix, componentName)
+  const body = unwrapGlobals(prefixCss(cssText, prefix, componentName))
   return `// ${componentName} 样式（由 dsh-ui-cell add 生成，勿手改）。
 // 源：dsh-ui-cell/src/${componentName}.css @ ${prefix} 前缀 + 组件名段（keyframes 同规则改名）。
 // 第三方插件的 client 构建无 CSS 管线，样式走运行时 <style> 注入（见插件的 panel-css 约定）。
+// 源里的 :global(...) 外壳已剥掉（运行期注入的纯 CSS 不认这个伪类，内层契约类名原样保留）。
 
 /** 类名表：键是原类名，值是加前缀与组件名段后的最终类名。 */
 export const css: Record<string, string> = {

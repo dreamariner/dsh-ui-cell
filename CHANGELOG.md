@@ -2,6 +2,21 @@
 
 本文件记**发出去的版本**。开发中的变更看 `docs/issues/`（每条一个 issue，收尾即归档）。
 
+## 0.6.1 — 2026-11-20
+
+### 修复（消费端重新 `add --force` 才能吃到）
+
+- **发射的 styles 文本剥掉 `:global(...)` 外壳**（issue 038）：复制件的 styles 是
+  运行期 `<style>` 注入的**纯 CSS 文本**，没有任何构建管线再处理它；浏览器不认
+  `:global`（未知伪类 = 整条选择器无效 = 该规则被**静默丢弃**，零报错）。此前
+  tooltip / menu / menu-group / hover-card / markdown 家族 / code-block / read-block /
+  web-block / quote-preview / detail-document 共 26 处存在（如 tooltip 的 macOS
+  no-drag、menu 的键盘输入模态判定、markdown 的 katex 与表格宽屏钩子）。
+  发射前 `:global(X)` → `X`，内层第三方契约类名不改名（katex / shiki / 宿主钩子照旧）。
+  文档站的聚合样式同步剥壳。源 css 不动（上游保真不受影响）。
+  **要重新 add 的条目**：tooltip / menu / hover-card / markdown-text / read-block /
+  web-block / quote-preview / detail-document / code-block。
+
 ## 0.6.0 — 2026-11-19
 
 **组件源基线抬到 DSH 0.2.2-rc.5**（此前是 rc.1）：上游 35 个文件变更（+1436/-515）逐件重 diff，

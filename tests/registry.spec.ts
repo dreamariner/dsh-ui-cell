@@ -760,6 +760,42 @@ describe('类名前缀化', () => {
     expect(out).toContain('.duc-markdown-text-tableScroll')
     expect(out).toContain('.duc-markdown-text-numbered')
   })
+
+  // 2026-11-20（issue 039）：发射层的 styles 是运行期 <style> 注入的**纯 CSS 文本**，
+  // 没有任何构建管线再碰它。`:global(...)` 是 CSS Modules 的构建期声明，浏览器不认
+  // （未知伪类 = 整条选择器无效 = 该规则被静默丢弃，零报错）。曾在 tooltip / menu /
+  // hover-card / markdown 家族等 26 处存在，0.6.1 起发射前剥壳（`:global(X)` → `X`，
+  // 内层契约类名不改名）。prefixCss 仍保留外壳（上面的测试），剥壳只发生在发射出口。
+  it('发射的 styles 文本不含 :global（剥壳；嵌套括号形态也要剥对）', () => {
+    for (const item of registry.items) {
+      if (item.status !== 'ready') continue
+      for (const file of item.files) {
+        if (!file.endsWith('.css')) continue
+        if (!/:global\(/.test(readFileSync(join(src, file), 'utf8'))) continue
+        const base = file.replace(/\.css$/, '')
+        const module = buildStyleModule(readFileSync(join(src, file), 'utf8'), 'duc-', base)
+        const m = module.match(/export const styles = ("(?:[^"\\]|\\.)*")/)!
+        expect(m, `${item.name}/${file} 没抓到 styles 字面量`).toBeTruthy()
+        expect(JSON.parse(m[1]!), `${item.name}/${file} 的 styles 仍含 :global`).not.toContain(':global(')
+      }
+    }
+  })
+
+  it('剥壳后的选择器语义不变（嵌套括号逐形态断言）', () => {
+    // tooltip：:global(:where(html[...])) 嵌套形态
+    const tooltip = buildStyleModule(readFileSync(join(src, 'tooltip.css'), 'utf8'), 'duc-', 'tooltip')
+    expect(tooltip).toContain(":where(html[data-platform='darwin']) .duc-tooltip-bubble")
+    // menu / menu-group：:global(html:not([...])) 嵌套形态
+    const menu = buildStyleModule(readFileSync(join(src, 'menu.css'), 'utf8'), 'duc-', 'menu')
+    expect(menu).toContain("html:not([data-input-modality='keyboard']) .duc-menu-shortcut")
+    const menuGroup = buildStyleModule(readFileSync(join(src, 'menu-group.css'), 'utf8'), 'duc-', 'menu-group')
+    expect(menuGroup).toContain("html:not([data-platform='darwin']) .duc-menu-group-heading")
+    // markdown：简单形态，内层契约类名原样保留
+    const md = buildStyleModule(readFileSync(join(src, 'markdown-text.css'), 'utf8'), 'duc-', 'markdown-text')
+    const mdStyles = JSON.parse(md.match(/export const styles = ("(?:[^"\\]|\\.)*")/)![1]!)
+    expect(mdStyles).toContain('.katex-display')
+    expect(mdStyles).not.toContain(':global(')
+  })
 })
 
 describe('命名一致性（003 改名 dsh-ui-cell，007 起护栏固化）', () => {
