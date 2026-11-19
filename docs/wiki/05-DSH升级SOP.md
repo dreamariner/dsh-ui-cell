@@ -3,7 +3,7 @@
 > 面向**本仓维护者**。DSH 上游发新版本时按本篇走一遍，走完锚点才算升级完成。
 > 消费端（插件侧）不需要做这些：组件源已复制进插件，上游变更不会回头影响它们。
 
-## 零、先记住这三条（都是踩过的坑）
+## 零、先记住这四条（都是踩过的坑）
 
 1. **锚点是总结论，不是过程动作**。`dshVersion` / `dshCommit` 只在**全部条目对齐之后**改一次。
    中途改锚点 = 注册表开始对尚未跟上的件说谎。
@@ -11,6 +11,9 @@
    只改注记 = 注册表在撒谎（2026-11-19 的 rc.5 升级留了 8 个文件的欠账）。
 3. **用工具跑，不用眼力跑**。`pnpm upstream:diff` 是唯一可靠的比对手段；
    手搓 `diff` 会被命名差异与拆件淹没，真缺口反而看不见。
+4. **发布成功看 registry，不看 npm 退出码**。npm 在 token 失效（PUT 401）后仍可能
+   `exit 0`，只看退出码会把「没发出去」误判成「发成功了」。判据只有一个：
+   `npm view @dreamariner/dsh-ui-cell versions` 里有没有当前版本。详见「一之四」。
 
 ## 一、流程（按序做，每步都有验收）
 
@@ -145,6 +148,92 @@ DSH_CHECKOUT=<checkout> pnpm upstream:check   # 实际偏离集合 == 登记集�
 此前**只能在本机跑**（本机要备一份 DSH checkout）。公开上游仓有我们锚定的那个 tag，
 CI 自己克隆即可，零 secrets。
 
+## 一之四、发布到 npm（发版清单）
+
+DSH 升级的最后一步：把当前状态发成 npm 包。以下是 2026-11-19 发 0.6.0 时实测过的流程。
+
+### 前置检查（逐项过，任何一项红就别发）
+
+| 检查 | 命令 | 期望 |
+|---|---|---|
+| 工作树干净 | `git status --porcelain` | 无输出 |
+| 已推送 | `git status -sb` | `## main...origin/main`（无 ahead） |
+| 护栏全绿 | `pnpm test && pnpm typecheck` | 全过 |
+| 上游保真 | `DSH_CHECKOUT=<checkout> pnpm upstream:check` | 偏离集合与登记一致 |
+| 用法速查没漂移 | `pnpm skill:usage:check` | 一致 |
+| token 清单 | `DSH_CHECKOUT=<checkout> pnpm vendor:check` | 逐字节一致 |
+| CI 绿 | `gh run list --limit 1` | 三个 job 全 success |
+| 版本没发过 | `npm view @dreamariner/dsh-ui-cell versions` | 不含当前版本 |
+| 打包清单 | `pnpm publish --dry-run` | 无警告（**也要求工作树干净**，见下） |
+
+### 发布
+
+```bash
+pnpm publish            # publishConfig.access=public 已配，不用加 --access public
+git tag 0.6.0 && git push origin 0.6.0
+```
+
+> tag 命名跟仓库既有约定（本仓是 `0.5.0`，**没有 `v` 前缀**）。
+
+> ⚠ **工作树必须干净**：pnpm 的 publish 默认带 git 检查，工作树脏会直接拒绝
+> （`ERR_PNPM_GIT_UNCLEAN Unclean working tree`）；`--dry-run` 也一样被拦。
+> 先提交再发，别用 `--no-git-checks` 绕过。
+
+### ⚠ 发布成功的判据：**看 registry，不看 npm 退出码**
+
+2026-11-19 实测踩到：npm 的 token 失效了，publish 时日志里是
+
+```
+http fetch PUT 401 https://registry.npmjs.org/@dreamariner%2fdsh-ui-cell
+...
+npm notice Your package is being processed and may take a few minutes to become available.
+http fetch PUT 202 ...      ← 网页登录重新认证后的第二次尝试，成功
+verbose exit 0 / info ok
+```
+
+**npm 在 401 之后仍然 `exit 0`**，只看退出码会把「没发出去」误判成「发成功了」。
+判据只有一个：
+
+```bash
+npm view @dreamariner/dsh-ui-cell versions    # 有没有当前版本
+npm view @dreamariner/dsh-ui-cell dist-tags   # latest 是否指向它
+```
+
+若日志里出现 `PUT 401`：npm 会弹**网页登录**（`verbose web auth opening url pair`），
+在浏览器里完成认证后 npm 会自动重试并拿到 `202`。
+
+### 传播要多久
+
+npm 自己的提示是 "may take a few minutes"，实测从 `PUT 202` 到 registry 元数据可见
+**约 3 分钟**（分三层）：
+
+| 层 | 典型耗时 |
+|---|---|
+| registry 元数据（`registry.npmjs.org` 的 package 文档） | 1–5 分钟 |
+| CDN 边缘（`npm view` / `npm install` 命中的那层） | 通常跟着一起，有时晚几十秒 |
+| **本地 npm 缓存** | 可能更久：`_cacache` 里的元数据有 TTL |
+
+查不到时先分清是哪种：**本地缓存** → `npm cache clean --force` 或
+`npm view <pkg> --prefer-online`；**还在传播** → 等 1–2 分钟。
+
+### 发布后必做：从 registry 真实安装一次
+
+本地产物绿 ≠ 发出去的包可用（`.gitignore` 那个坑就是本机一直绿、克隆下来是坏的）：
+
+```bash
+rm -rf /tmp/verify && mkdir -p /tmp/verify && cd /tmp/verify
+npm init -y && npm i -D @dreamariner/dsh-ui-cell
+node -p "require('@dreamariner/dsh-ui-cell/package.json').version"   # 期望的版本
+npx dsh-ui-cell --help                                               # CLI 可用
+npx dsh-ui-cell add button input modal --to my-plugin               # add 能跑
+# 再在 my-plugin 里写个用上这些件的 tsx，tsc --noEmit 编译通过
+```
+
+### 最后两笔
+
+- **父仓的 submodule 指针**：本仓在 `dreamariner/` 下，父仓要推进指针（父仓里若已有其它未推提交，自己决定什么时候一起推）
+- **站点**：文档站是提交进仓的生成物，Pages 直接指向 `docs/wiki`；改了站点源要**重建再推**，发版本身不需要额外动作
+
 ## 二、本轮（rc.1 → rc.5）的十个教训
 
 | # | 教训 | 实证 | 现在的护栏 |
@@ -190,3 +279,5 @@ CI 自己克隆即可，零 secrets。
 - ❌ 以为「护栏没报 = 没问题」：护栏只查**能形式化**的东西，
   「这段上游变化是否落在我们的裁剪范围内」只能人读 diff 判断
 - ❌ 忘了消费端：源文件改了不等于消费端更新了，要给出 `add --force` 清单
+- ❌ 拿 npm 的退出码当发布成功的证据（401 之后它照样 `exit 0`），看 registry
+- ❌ 本机绿就当发出去的包是好的：从 registry 真装一次才算数（`.gitignore` 那个坑）
