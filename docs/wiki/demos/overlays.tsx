@@ -8,12 +8,18 @@ import {
 
 function ModalSection() {
   const [open, setOpen] = useState(false)
+  const [warnOpen, setWarnOpen] = useState(false)
   return (
     <Demo id="modal" title="Modal" code={`import { Modal } from '../ui/modal.tsx'
 
 <Modal open={open} title="删除记忆" closeLabel="关闭" onClose={() => setOpen(false)}>…</Modal>
+
+{/* rc.5 新增：tone='warning' —— 标题前加琥珀警告图标，标题与正文间距收紧 */}
+<Modal open={warnOpen} title="连接已断开" tone="warning" closeLabel="关闭" onClose={() => setWarnOpen(false)}>…</Modal>
+
 {/* portal + 焦点陷阱 + Escape + 焦点归还；只有最上层拥有 Escape */}`}>
       <Button variant="primary" onClick={() => setOpen(true)}>打开模态</Button>
+      <Button variant="outline" onClick={() => setWarnOpen(true)}>警告态模态</Button>
       <Modal open={open} title="删除记忆" closeLabel="关闭" onClose={() => setOpen(false)}>
         <p style={{ margin: 0, color: 'var(--dsw-alias-label-secondary)' }}>该操作会移除 1 条记忆，且不可撤销。</p>
         <div style={{ display: 'flex', gap: 'var(--dsh-space-8)', justifyContent: 'flex-end', marginTop: 'var(--dsh-space-16)' }}>
@@ -21,6 +27,20 @@ function ModalSection() {
           <button className="duc-button duc-button-primary duc-button-sm" type="button" onClick={() => setOpen(false)}>确认删除</button>
         </div>
       </Modal>
+      <Modal open={warnOpen} title="连接已断开" tone="warning" closeLabel="关闭" onClose={() => setWarnOpen(false)}>
+        <p style={{ margin: 0, color: 'var(--dsw-alias-label-secondary)' }}>
+          宿主与后台的连接中断，未保存的改动已暂存。
+        </p>
+        <div style={{ display: 'flex', gap: 'var(--dsh-space-8)', justifyContent: 'flex-end', marginTop: 'var(--dsh-space-16)' }}>
+          <button className="duc-button duc-button-ghost duc-button-sm" type="button" onClick={() => setWarnOpen(false)}>稍后再说</button>
+          <button className="duc-button duc-button-primary duc-button-sm" type="button" onClick={() => setWarnOpen(false)}>重新连接</button>
+        </div>
+      </Modal>
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        上游 rc.5 给模态加了 <code>tone=&quot;warning&quot;</code>：标题前出现琥珀色警告图标，
+        标题与正文的间距收紧一档（警告态通常要更快被读到）。
+        <code>RiskConfirmation</code> 就是靠它上收警告图标的（见下）。
+      </p>
     </Demo>
   )
 }
@@ -47,6 +67,13 @@ function RiskConfirmationSection() {
         onCancel={() => setOpen(false)}
         onConfirm={() => setOpen(false)}
       />
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        上游 rc.5 把这个组件重写了：警告图标<strong>上收到 Modal 的
+        <code>tone=&quot;warning&quot;</code></strong>（不再自己画一个图标），
+        勾选框改用共享的 <code>Checkbox</code> 组件（带 <code>modalAutofocus</code>：
+        初始焦点落在勾选框上，而不是 React 的 <code>autoFocus</code>）。
+        本仓两处都跟了。
+      </p>
     </Demo>
   )
 }
@@ -141,7 +168,10 @@ function MenuSection() {
 
 <Menu open={open} anchor={<Button>打开菜单</Button>}
   items={[{ id: 'a', label: '重建索引' }, { type: 'separator', id: 's' }, …]}
-  onSelect={…} onClose={() => setOpen(false)} />`}>
+  onSelect={…} onClose={() => setOpen(false)} />
+
+{/* rc.5 起条目可带 submenu：悬停 / 聚焦 / 点击 / ArrowRight 打开 */}
+<Menu items={[{ id: 'export', label: '导出', submenu: [{ id: 'md', label: 'Markdown' }] }]} />`}>
       <Menu
         open={open}
         anchor={
@@ -151,6 +181,17 @@ function MenuSection() {
         }
         items={[
           { id: 'rebuild', label: '重建索引', shortcut: { keys: ['⌘', 'R'] } },
+          // rc.5 新增：子菜单（悬停 / 聚焦 / 点击 / ArrowRight 都能打开）
+          {
+            id: 'export',
+            label: '导出',
+            submenu: [
+              { id: 'export-md', label: 'Markdown' },
+              { id: 'export-json', label: 'JSON' },
+              { type: 'separator', id: 'export-sep' },
+              { id: 'export-clip', label: '复制到剪贴板', shortcut: { keys: ['⌘', '⇧', 'C'] } },
+            ],
+          },
           { id: 'dedup', label: '去重合并' },
           { type: 'separator', id: 's1' },
           { type: 'label', id: 'danger-zone', text: '危险区' },
@@ -159,6 +200,13 @@ function MenuSection() {
         onSelect={(id) => { setPicked(id); setOpen(false) }}
         onClose={() => setOpen(false)}
       />
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        上游 rc.5 把菜单族重写了：条目可带 <code>submenu</code>，
+        <strong>悬停、聚焦、点击、ArrowRight</strong> 都能打开；<strong>ArrowLeft</strong> 返回父级，
+        <strong>Escape</strong> 先关子菜单而不是直接关整个菜单；子菜单走 body portal
+        （不再被父级容器的 overflow 裁掉），定位改用 CSS anchor（不再用 JS 测量）。
+        试试：鼠标移到「导出」上，或用方向键走到它按 Right。
+      </p>
     </Demo>
   )
 }

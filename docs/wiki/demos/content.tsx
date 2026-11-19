@@ -4,7 +4,7 @@ import { Demo, type DemoSection } from './demo-cell.tsx'
 import {
   JsonTree, JsonBlock, SearchBlock, CodeToolbar, DiffBlock, TerminalBlock,
   ImagePreview, ImageLightbox, ZoomControls, Button,
-  CodeBlock, MarkdownText, ReadBlock, DetailDocument,
+  CodeBlock, MarkdownText, ReadBlock, DetailDocument, QuotePreview,
 } from '../../../src/index.ts'
 
 const CODE_TOOLBAR_LABELS = { codeLabel: '代码', wrapLabel: '换行', unwrapLabel: '不换行' }
@@ -278,11 +278,71 @@ function MarkdownTextSection() {
 /** 代码块：shiki 语法高亮（content 档）。 */
 function CodeBlockSection() {
   const code = 'export function main(): number {\n  const answer: number = 42\n  return answer\n}'
+  // rc.5 新增：```diff 围栏按 unified-diff 逐行渲染（行色按标记列，
+  // 文件的新旧两侧各自按其头部声明的语言 tokenize）。
+  const diffCode = [
+    '--- a/src/answer.ts',
+    '+++ b/src/answer.ts',
+    '@@ -1,3 +1,3 @@',
+    ' const answer: number = 41',
+    '-return answer',
+    '+return 42',
+  ].join('\n')
   return (
     <Demo id="code-block" title="CodeBlock" wide code={`import { CodeBlock } from '../ui/code-block.tsx'
 
-<CodeBlock code={code} lang="typescript" copyLabel="复制" copiedLabel="已复制" />`}>
+<CodeBlock code={code} lang="typescript" copyLabel="复制" copiedLabel="已复制" />
+
+{/* rc.5 起 diff / patch 围栏自动走逐行渲染；也可显式 diff 强制 */}
+<CodeBlock code={diffCode} lang="diff" copyLabel="复制" copiedLabel="已复制" />`}>
       <CodeBlock code={code} lang="typescript" copyLabel="复制" copiedLabel="已复制" />
+      <div style={{ marginTop: 'var(--dsh-space-16)' }}>
+        <CodeBlock code={diffCode} lang="diff" copyLabel="复制" copiedLabel="已复制" />
+      </div>
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        上游 rc.5 给代码块加了 <code>diff</code> 形态：<code>diff</code> / <code>patch</code>
+        围栏按 unified-diff 逐行渲染，行色按标记列分（新增 / 删除 / 上下文 / hunk），
+        文件的新旧两侧各自按其头部声明的语言 tokenize。本仓同步该能力
+        （解析与分侧 tokenize 在 <code>diff-fence.ts</code>）；不传 <code>diff</code> 时
+        由 <code>lang</code> 自动选中该形态。
+      </p>
+    </Demo>
+  )
+}
+
+/** 引用预览：原文截断 + 悬浮全文；rc.5 新增 summary 形态（可读摘要替代长结构化原文）。 */
+function QuotePreviewSection() {
+  const longText = 'const answer = await fetch("/api/memory/stream", { headers: { accept: "application/json" } }).then(r => r.json()).then(payload => payload.items.map(item => item.summary).join("\n"))'
+  const summary = {
+    label: '引用',
+    title: 'src/api/memory.ts',
+    detail: '第 42-58 行',
+    body: '拉取记忆流并把每条的摘要拼成一段文本。',
+  }
+  return (
+    <Demo id="quote-preview" title="QuotePreview" wide code={`import { QuotePreview } from '../ui/quote-preview.tsx'
+
+<QuotePreview text={longText} />
+
+{/* rc.5 新增：summary 形态 —— 原文太长时用可读摘要代替，悬浮看详情 */}
+<QuotePreview text={longText}
+  summary={{ label: '引用', title: 'src/api/memory.ts', detail: '第 42-58 行', body: '拉取记忆流并把每条的摘要拼成一段文本。' }} />`}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--dsh-space-16)', alignItems: 'flex-start' }}>
+        <div>
+          <span style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)', marginRight: 'var(--dsh-space-8)' }}>原文：</span>
+          <QuotePreview text={longText} />
+        </div>
+        <div>
+          <span style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)', marginRight: 'var(--dsh-space-8)' }}>摘要形态：</span>
+          <QuotePreview text={longText} summary={summary} />
+        </div>
+      </div>
+      <p style={{ margin: 'var(--dsh-space-12) 0 0', fontSize: 12, lineHeight: 1.8, color: 'var(--dsw-alias-label-tertiary)' }}>
+        两种形态：<strong>原文</strong>被截断时才在悬浮层给全文（内容大的浮层，按视口裁剪）；
+        上游 rc.5 新增的 <code>summary</code> 形态则是<strong>用可读摘要替代原文</strong>
+        ——长结构化内容（代码、路径、原始响应）直接摆进正文没法读，摘要行代替它，
+        悬浮看详情（标题、范围、说明）。
+      </p>
     </Demo>
   )
 }
@@ -345,6 +405,7 @@ export const contentSections: DemoSection = {
     { id: 'markdown-text', title: 'MarkdownText' },
     { id: 'code-block', title: 'CodeBlock' },
     { id: 'read-block', title: 'ReadBlock' },
+    { id: 'quote-preview', title: 'QuotePreview' },
     { id: 'detail-document', title: 'DetailDocument' },
   ],
   node: (
@@ -361,6 +422,7 @@ export const contentSections: DemoSection = {
       <MarkdownTextSection />
       <CodeBlockSection />
       <ReadBlockSection />
+      <QuotePreviewSection />
       <DetailDocumentSection />
     </>
   ),
