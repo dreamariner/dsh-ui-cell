@@ -21,7 +21,8 @@
     "prepare": "tsdown",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "docs:build": "node scripts/build-docs.mjs"
+    "docs:build": "node scripts/build-docs.mjs",
+    "upstream:diff": "node scripts/diff-upstream.mjs"
   },
   "keywords": [
     "dsh",
