@@ -126,7 +126,11 @@ ${combinedCellCss}
 <style>
 /* ===== 文档站骨架（自带样式，不占组件命名空间） ===== */
 * { box-sizing: border-box; }
-body { margin: 0; font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #1f2328; background: #f6f7f8; }
+/* font-size 14px：模拟宿主的内容字号（DSH 应用的 --dsh-content-font-size 默认 14px）。
+   组件**内部**文字都钉在 --dsw-font-* 档位，不受影响；受影响的只有 demo 里的
+   插槽内容（消费端自己写的 DOM，Modal 正文、卡片段落……）—— 它们在真插件里
+   继承宿主的 14px，这里若不设就会落到浏览器默认 16px，比真应用大两号。 */
+body { margin: 0; font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: 14px; color: #1f2328; background: #f6f7f8; }
 .doc-shell { display: flex; min-height: 100vh; }
 .doc-side { width: 240px; flex: none; border-right: 1px solid #e4e6ea; background: #fff; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 /* 头部固定：标题与亮暗切换不随导航列表滚动（列表自己滚）。

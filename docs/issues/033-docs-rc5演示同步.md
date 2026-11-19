@@ -32,6 +32,23 @@ chart / web-block / quote-preview），另有若干「有演示但没体现新�
 | **CodeBlock** | 新增 diff 围栏逐行渲染（行色按标记列，新旧两侧各自 tokenize） | 演示区加一个 unified-diff 代码块，说明段点出解析在 `diff-fence.ts` |
 | **RiskConfirmation** | 警告图标上收到 Modal 的 `tone='warning'`、勾选框换共享 `Checkbox`（带 `modalAutofocus`） | 演示原本就有（内部变化自动生效），说明段补上这两处 |
 
+## 顺带修的一处站点保真偏差
+
+复审时看到警告态模态的**正文偏大**，查下来不是 rc.5 带来的（上游 rc.5 的
+Modal.module.css 只加了 warning 三条规则，字号与尺寸一字未改），而是**站点自己的问题**：
+
+- Modal 的 `.body` 区域**不设字号**（上游如此）→ 插槽内容继承宿主 body 字号；
+- 宿主 DSH 应用的内容字号是 `--dsh-content-font-size`，默认 **14px**；
+- 而**文档站的 body 压根没写 font-size** → 浏览器默认 **16px** → 比真应用大两号。
+
+后果：站点上所有「消费端自己写的插槽文本」（Modal 正文、卡片段落……）都比真插件大 2px，
+标题与正文同档（16 vs 16），层次也塌了。
+
+修法：站点 `body` 显式设 `font-size: 14px`（模拟宿主），并在 wiki 的演示约定里加第四条
+「插槽内容不必自己写字号」。组件自身的字号一律不动（那是组件的账）。
+
+实测（站点 body 14px 后）：正文 14px 一行放下，标题仍 16px/500，模态宽度 380px 不变。
+
 ## 实机核对
 
 - Modal warning、Menu 子菜单、QuotePreview summary、CodeBlock diff 四处均已渲染
