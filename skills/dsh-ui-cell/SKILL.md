@@ -1,7 +1,7 @@
 ---
 name: dsh-ui-cell
-description: DSH 插件接入 dsh-ui-cell 组件的操作手册（shadcn 式复制分发：add 复制源码进插件、类名 duc- 前缀、样式转 TS 运行时注入、npm 依赖交接）。触发场景：给 DSH 插件新增或修改 client 面板、控件、内容块；被要求使用 dsh-ui-cell 组件；执行 add 后做接线（样式注入、依赖安装、raw 样式拼接、foundation 基础层必须第一个注入）；add 产物编译报错的排查；组件升级后重新复制；原子件（atom）与内容块（content）的选型；写组件样式时的间距与动效取值。当任务提到 DSH 插件 UI、panel-css、duc- 类名或前缀冲突、间距、动效、--dsh-space-* 时也应触发。
-version: 1.4.0
+description: DSH 插件接入 dsh-ui-cell 组件的操作手册（shadcn 式复制分发：add 复制源码进插件、类名 duc- 前缀、样式转 TS 运行时注入、npm 依赖交接）。触发场景：给 DSH 插件新增或修改 client 面板、控件、内容块；被要求使用 dsh-ui-cell 组件；执行 add 后做接线（样式注入、依赖安装、raw 样式拼接、foundation 基础层必须第一个注入）；add 产物编译报错的排查；组件升级后重新复制；原子件（atom）与内容块（content）的选型；写组件样式时的间距、圆角与动效取值。当任务提到 DSH 插件 UI、panel-css、duc- 类名或前缀冲突、间距、圆角、动效、--dsh-space-* 时也应触发。
+version: 1.5.0
 author: Jianan
 ---
 
@@ -60,6 +60,10 @@ npx dsh-ui-cell add button input --to <插件根目录>
   terminal-block 复用 pill / state-dot / command-text）必须排在被复用件之后，
   排反了会被底件外观整个盖掉（实证：某消费插件筛选行药丸化，2026-11-10）。
   add 的 note 给出本次闭包的顺序，照抄即可；多次 add 按同规则插进已有聚合模块
+- **Sidebar 的收起态经 Context 下发**：`Sidebar` 自动下发收起态，`SidebarNav`
+  自动读取（**不要把 `collapsed` 传两遍**：壳一次、nav 一次）；header / footer 这类
+  槽内容用导出的 `useSidebarCollapsed()` 感知（不在 `Sidebar` 内时返回 `undefined`，
+  自己定缺省值）；显式传 `collapsed` 仍可覆盖 Context（`SidebarNav` 独立于壳使用）
 
 ## ④ 高频坑（每条都有实证）
 
@@ -73,6 +77,8 @@ npx dsh-ui-cell add button input --to <插件根目录>
 | 重新 add 后新旧类名对不上 | 上次用旧默认 `duk-`，本次默认 `duc-` | add 加 `--prefix duk-` 保持同一命名空间，或择机整体迁移 |
 | --force 之后本地改动消失 | 覆盖是设计行为 | add 前先 diff / 备份本地修改 |
 | TextShimmer 明明在动，文字上却看不到那道扫光 | `--dsw-alias-label-shimmer` 是**绝对值**（亮色 30% 黑 / 暗色 45% 白），不随被作用的文字走；压在正文色上等于同色叠加 | 给它一个跟底色有对比的值：`style={{ '--dsw-alias-label-shimmer': 'var(--dsw-alias-label-secondary)' }}`（DSH 应用的跑动状态就是改这个 token 的，见组件头注） |
+| 面板 / 抽屉关掉后赖着不走（几百毫秒才消失），无报错 | 消费端自己关了动画（`* { animation: none }` 或动画样式没注入）：`animationend` 永不触发，组件只能等兜底定时器（disclosure-row 400ms / sheet 800ms）。注意 `usePrefersReducedMotion()` 只看**系统**开关，读不到「样式被关了」 | 别全局关动画；交给系统的 `prefers-reduced-motion` 降级（那条路径组件认）。真要关就一并写 `@media (prefers-reduced-motion: reduce)` 块 |
+| 小控件的边框看着没闭合（竖边在、横边断） | `0.5px` 边框的**水平段被设备像素对齐整段吞掉**（布局 Y 落在分数像素上时），滚动一下又「好了」= 抽签 | 小而高对比的控件（OTP 格子这类）边框用 ≥1px；`0.5px` 只留给大面积面板的横边 |
 
 版本边界：shiki 精确锁 4.4.3（不要浮动它）；KaTeX 字体走 jsdelivr CDN，离线环境公式
 结构可读但无字体；React 18 / 19 均可（唯一相对官方放宽的类型签名在
@@ -91,11 +97,19 @@ markdown-viewport-highlighting）。
 
 - **间距只用 `var(--dsh-space-*)`**（刻度 1/2/4/6/8/12/16/20/24/32），
   不写 px 字面量；缩进、让位这类**由图标尺寸推导**的组合值可登记例外，但要写明构成
+- **圆角按体量选档**：`--dsw-radius-md`（控件与内容块）/ `lg`（卡片与浮层）/
+  `panel`（**只给浮到内容之上的面板**，如 Modal / Sheet）。内容容器用 panel 档会显突兀
+  （28px 在 320px 宽的卡片上占掉九分之一）
 - **过渡只许官方三档**：即时反馈 `--ds-transition-duration-fast`、
   状态切换 `--ds-transition-duration`、大面积位移 `--ds-transition-duration-slow`，
   缓动统一 `var(--ds-ease-in-out)`；不写字面时长与字面曲线
 - **循环节律**（呼吸 / 旋转 / 闪烁）可写字面时长与 `linear` / `steps()`，但必须配降级
-- **带动画的组件必须有 `prefers-reduced-motion` 降级块**
+- **带动画的组件必须有 `prefers-reduced-motion` 降级块**；
+  系统开关与「样式把动画关掉」是两回事，后者组件侧读不到，只能靠兜底定时器收尾
+- **小控件的边框用 ≥1px**：`0.5px` 的水平段会被设备像素对齐整段吞掉（竖边正常、横边消失），
+  `0.5px` 只留给大面积面板的横边
+- **悬停样式不能盖住选中态**：写悬停规则时显式 `:not([data-selected])`，
+  否则点完选中、鼠标没移开的那一瞬是「白字压浅底」的脏中间态（用户读作闪一下）
 - **控件的字不许跟随宿主字号**（不写 `font: inherit`，钉在 `--dsw-font-*` 档位）；
   「标签 + 控件」成对出现时要同档（标签 13px、控件 14px）
 - **原生 `<select>` 要收掉浏览器自绘箭头**（`appearance: none` + DSH chevron）：
@@ -115,9 +129,10 @@ markdown-viewport-highlighting）。
 ## ⑦ 深读（按需展开）
 
 - 本包 `references/spacing-motion.md`：**写自有组件时的间距与动效规则**（间距刻度、
-  官方动效三档映射、组合值例外、降级要求），以及消费端 foundation 必须第一个注入
-- 本包 `references/interaction.md`：**写拖拽类组件的规则**（跟手的算式、百分比与渲染宽度对齐、
-  松手三路收尾、命中区与可访问值）
+  圆角档位、发丝线口径、官方动效三档映射、组合值例外、降级要求、进出场收尾），
+  以及消费端 foundation 必须第一个注入
+- 本包 `references/interaction.md`：**交互状态规则**（拖拽的跟手算式、百分比与渲染宽度对齐、
+  松手三路收尾、命中区与可访问值；悬停与选中并存时的特异性打架）
 - 包内 `AGENTS.md`：token 纪律红线（只引 `--dsw-alias-*` 等稳定面）、行为保真清单
   （Modal 焦点陷阱 / 键盘走查不得简化）、基线锚
 - 包内 `README.md`：机制总览（为什么复制式分发、css 表为什么以原类名为键）
