@@ -36,7 +36,19 @@ DSH 官方插件开发规范明文禁止第三方插件 load 官方 Harness Clie
 dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force]
 ```
 
+> **两个版本，各管一件事**（看清了再装）：
+> **宿主下限 DSH ≥ 0.2.2-rc.2**（`registry.json` 的 `minHostDsh`）—— 低于它，
+> json-tree / hover-card / toast / tooltip 等件的配色会**静默失效**（token 解析失败 =
+> 整条声明被丢弃，零报错）；**组件源基线 DSH 0.2.2-rc.5**（`dshVersion`）—— 组件源码
+> 抄自哪个上游版本，它比宿主下限新，不必与宿主对齐。`add` 的 note 里也会写这条。
+
 组件依赖自动解析闭包：`add risk-confirmation` 会同时复制 `button` / `modal` / `icon`（deps 先于本体），产物无悬空导入。
+
+**想知道某个组件怎么用**：`add` 之后读复制到插件里的源文件头部就有一段用法块
+（import + 最小示例 + 可接的 props 字段名，随包分发的 `skills/dsh-ui-cell/references/components.md`
+里也有 77 个组件的速查）。⚠ 别凭 shadcn 的直觉写：本仓的表单是 `Form` + `Field` + `Label`
+三个件（**没有** shadcn 的 `FormField` / `FormLabel` / `FormControl`），`Select` 走
+`options` 数组（不是子元素）。
 
 复制后插件侧做两件事：
 
@@ -48,6 +60,8 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force]
 `css` 表以**原类名为键、最终类名为值**（`'primary': 'duc-button-primary'`；与组件同名的根类免组件段，`'button': 'duc-button'`），所以官方组件里 `css[variant]` 这类动态索引访问不用改写也能正确工作。值里带组件名段的原因：消费端把全部组件样式拼进**同一个 `<style>`**，官方 CSS Modules 的 per-file 哈希隔离在这里不存在，只加插件前缀时 input 与 select 的 `.wrap` 会互覆（复审实证过）。`@keyframes` 名是文档级命名空间，同规则改名。
 
 ## 组件
+
+97 个条目（原子件 88 + 内容块 9），清单见 `registry.json`。变更历史见 [CHANGELOG.md](./CHANGELOG.md)。
 
 **97 个条目全部 ready**（权威清单与依赖闭包见 `registry.json`；每条带 `upstream` 出处或 `本仓自有` 标注）：
 
