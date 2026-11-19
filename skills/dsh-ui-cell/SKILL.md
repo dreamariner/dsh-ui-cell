@@ -1,7 +1,7 @@
 ---
 name: dsh-ui-cell
-description: DSH 插件接入 dsh-ui-cell 组件的操作手册（shadcn 式复制分发：add 复制源码进插件、类名 duc- 前缀、样式转 TS 运行时注入、npm 依赖交接）。触发场景：给 DSH 插件新增或修改 client 面板、控件、内容块；被要求使用 dsh-ui-cell 组件；执行 add 后做接线（样式注入、依赖安装、raw 样式拼接、foundation 基础层必须第一个注入）；add 产物编译报错的排查；组件升级后重新复制；原子件（atom）与内容块（content）的选型；写组件样式时的间距、圆角与动效取值。当任务提到 DSH 插件 UI、panel-css、duc- 类名或前缀冲突、间距、圆角、动效、--dsh-space-* 时也应触发。
-version: 1.5.0
+description: DSH 插件接入 dsh-ui-cell 组件的操作手册（shadcn 式复制分发：add 复制源码进插件、类名 duc- 前缀、样式转 TS 运行时注入、npm 依赖交接）。触发场景：给 DSH 插件新增或修改 client 面板、控件、内容块；被要求使用 dsh-ui-cell 组件；执行 add 后做接线（样式注入、依赖安装、raw 样式拼接、foundation 基础层必须第一个注入）；add 产物编译报错的排查；组件升级后重新复制；原子件（atom）与内容块（content）的选型；写组件样式时的间距、圆角与动效取值；核对宿主 DSH 版本是否满足本包基线。当任务提到 DSH 插件 UI、panel-css、duc- 类名或前缀冲突、间距、圆角、动效、--dsh-space-*、宿主 DSH 版本、组件升级时也应触发。
+version: 1.6.0
 author: Jianan
 ---
 
@@ -11,6 +11,11 @@ dsh-ui-cell 是 DSH 插件专用的 shadcn 式组件源：`add` 把组件**源�
 （复制即独立，源码归插件所有），类名加 `duc-` 前缀与组件名段，CSS 转成 TS 字符串
 运行时注入。官方 primitives 保真件 + shadcn 对齐件 + 内容块共 97 个条目，权威清单
 在包内 `registry.json`（名字、状态、文件、依赖闭包、npm 依赖、上游出处）。
+
+> **宿主要求**：本包当前基线是 **DSH 0.2.2-rc.5**，插件的宿主 DSH 需 **≥ rc.5**。
+> 低版本宿主上引用了 rc.5 才有的 token 的件（json-tree 的 `--dsw-alias-json-tree-*`
+> 族）会**静默失效**（var() 解析失败 → 整条声明被丢弃 → JSON 树没有配色，零报错）。
+> 基线版本看包内 `registry.json` 的 `dshVersion`。
 
 本 skill 管「在插件里把它用对」；仓库纪律（token 红线、行为保真、基线锚）见包内
 `AGENTS.md`。两份都随 npm 包分发（`@dreamariner/dsh-ui-cell`），node_modules 里就有。
@@ -28,6 +33,8 @@ dsh-ui-cell 是 DSH 插件专用的 shadcn 式组件源：`add` 把组件**源�
 ## ② 标准接入（六步）
 
 ```bash
+# 0. 先确认宿主 DSH 版本 ≥ 本包基线（registry.json 的 dshVersion，当前 0.2.2-rc.5）
+#    低于基线：引用了 rc.5 才有的 token 的件（json-tree）会静默失效
 # 1. 复制（组件依赖自动解析闭包，deps 先于本体；产物无悬空导入）
 npx dsh-ui-cell add button input --to <插件根目录>
 #    常用参数：--prefix <pfx>（默认 duc-）  --force（覆盖已存在文件）  --with-deps（缺失 npm 依赖直接写进消费端 package.json，默认只提示）
@@ -79,6 +86,7 @@ npx dsh-ui-cell add button input --to <插件根目录>
 | TextShimmer 明明在动，文字上却看不到那道扫光 | `--dsw-alias-label-shimmer` 是**绝对值**（亮色 30% 黑 / 暗色 45% 白），不随被作用的文字走；压在正文色上等于同色叠加 | 给它一个跟底色有对比的值：`style={{ '--dsw-alias-label-shimmer': 'var(--dsw-alias-label-secondary)' }}`（DSH 应用的跑动状态就是改这个 token 的，见组件头注） |
 | 面板 / 抽屉关掉后赖着不走（几百毫秒才消失），无报错 | 消费端自己关了动画（`* { animation: none }` 或动画样式没注入）：`animationend` 永不触发，组件只能等兜底定时器（disclosure-row 400ms / sheet 800ms）。注意 `usePrefersReducedMotion()` 只看**系统**开关，读不到「样式被关了」 | 别全局关动画；交给系统的 `prefers-reduced-motion` 降级（那条路径组件认）。真要关就一并写 `@media (prefers-reduced-motion: reduce)` 块 |
 | 小控件的边框看着没闭合（竖边在、横边断） | `0.5px` 边框的**水平段被设备像素对齐整段吞掉**（布局 Y 落在分数像素上时），滚动一下又「好了」= 抽签 | 小而高对比的控件（OTP 格子这类）边框用 ≥1px；`0.5px` 只留给大面积面板的横边 |
+| JSON 树 / 某个件**没有配色**，但零报错 | 宿主 DSH 低于本包基线（当前 rc.5）：引用了 rc.5 才有的 token（json-tree 的 `--dsw-alias-json-tree-*` 族）→ var() 解析失败 → 整条声明被静默丢弃 | 升宿主到 rc.5+；或先查 `registry.json` 的 `dshVersion` 与宿主实际版本 |
 
 版本边界：shiki 精确锁 4.4.3（不要浮动它）；KaTeX 字体走 jsdelivr CDN，离线环境公式
 结构可读但无字体；React 18 / 19 均可（唯一相对官方放宽的类型签名在
@@ -89,6 +97,15 @@ markdown-viewport-highlighting）。
 - 消费端永远不追上游：想吃新版本才 `add --force` 重新复制；不吃的部分维持现状
 - 官方 DSH 升级时的逐组件重 diff 是 dsh-ui-cell 仓的职责，消费端只面对 registry 的版本
 - 重新 add 前先把插件里对复制件的本地修改整理成清单（或打 diff），覆盖后按清单重放
+- **换新版本包前先看宿主要求**：新包的 `registry.json` 的 `dshVersion` 就是宿主下限，
+  宿主升不上去就别急着换（rc.5 起 json-tree 用了 rc.5 才有的 alias token）
+- **0.6.0（DSH rc.5 基线）相对 0.5.0 变了这些件**，要吃到得 `add --force` 重新复制：
+  `menu`（含新拆出的 menu-row / submenu-panel / use-menu-submenu / menu-submenu-position）、
+  `code-block`（新增 diff 围栏逐行渲染）、`icon`、`json-tree`（配色改用 alias token）、
+  `modal`（新增 `tone="warning"`）、`checkbox`（新增 `modalAutofocus`）、
+  `risk-confirmation`、`quote-preview`（新增 `summary` 形态）、
+  `animated-rows`、`context-menu`、`anchored-position`、`tooltip`、`toast`、`button`。
+  不换也不坏，只是吃不到新能力（旧件仍在插件里）。
 
 ## ⑥ 写自有组件时的间距与动效
 
@@ -132,7 +149,7 @@ markdown-viewport-highlighting）。
   圆角档位、发丝线口径、官方动效三档映射、组合值例外、降级要求、进出场收尾），
   以及消费端 foundation 必须第一个注入
 - 本包 `references/interaction.md`：**交互状态规则**（拖拽的跟手算式、百分比与渲染宽度对齐、
-  松手三路收尾、命中区与可访问值；悬停与选中并存时的特异性打架）
+  松手三路收尾、命中区与可访问值；悬停与选中并存时的特异性打架；层级菜单的子菜单打开与收尾契约）
 - 包内 `AGENTS.md`：token 纪律红线（只引 `--dsw-alias-*` 等稳定面）、行为保真清单
   （Modal 焦点陷阱 / 键盘走查不得简化）、基线锚
 - 包内 `README.md`：机制总览（为什么复制式分发、css 表为什么以原类名为键）
