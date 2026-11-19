@@ -159,7 +159,7 @@ function JsonCopyAction({ store, target, persistent, labels, onCopy, onClose }: 
             void onCopy(target, mode as CopyMode)
           }}
           onClose={onClose}
-          getAnchorRect={() => (buttonRef.current as HTMLButtonElement).getBoundingClientRect()}
+          anchorRef={buttonRef}
         />
       )}
     </span>

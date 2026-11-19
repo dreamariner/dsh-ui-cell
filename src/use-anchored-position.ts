@@ -1,5 +1,12 @@
-// use-anchored-position.ts：Menu 的行为依赖（官方 helper 保真复制）。
+// use-anchored-position.ts：浮层锚定定位（官方 helper 保真复制）。
 // 上游来源：packages/client/ui-primitives/src/useAnchoredPosition.ts @ dsh v0.2.2-rc.1 (66491b05e3)
+//
+// ⚠ 上游在 v0.2.2-rc.5 **删除了**本文件：Menu 的门户定位改走 CSS anchor positioning，
+// 上游也没有 Popover / Combobox 这类原子。本仓**保留**它，因为本仓自有的
+// popover / combobox（本仓自有件，非官方复制件）仍以 JS 测量做定位。
+// menu 自 rc.5 起不再依赖本文件（门户定位改由 CSS anchor 承担）。
+// 本仓偏离登记：文件内容与 rc.1 上游逐字节一致，此后不再随上游升级重 diff
+// （要重 diff 请先确认上游是否复活了本文件）。
 /** Synchronous placement for body-portaled panels with a viewport fixed-position containing block. */
 import { useLayoutEffect, useState, type CSSProperties, type RefObject } from 'react'
 import { overlayTopMargin } from './overlay-top-margin.ts'

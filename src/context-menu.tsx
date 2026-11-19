@@ -34,10 +34,7 @@ export function ContextMenu({ items, onSelect, children, disabled = false }: Con
           portal
           anchor={<span />}
           items={items}
-          getAnchorRect={() => {
-            const rect = new DOMRect(point.x, point.y, 0, 0)
-            return rect
-          }}
+          anchorPoint={point}
           onSelect={(id) => { setPoint(undefined); onSelect?.(id) }}
           onClose={() => setPoint(undefined)}
         />

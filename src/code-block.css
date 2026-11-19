@@ -1,13 +1,18 @@
 /* 代码块的视觉基线（深suite `@deepseek/md` 的 code-block.css）。
  *
  * 上游来源：packages/client/ui-primitives/src/markdown/CodeBlock.module.css
- *           @ dsh v0.2.2-rc.1 (66491b05e3)
+ *           @ dsh v0.2.2-rc.5 (9c2670d3bc)
  * 高亮颜色不在这里：走 shiki 的 `--shiki-*` 变量表（src/shiki.css）。
  *
  * 与上游的差异：
  *   1. 文件名从 `CodeBlock.module.css` 改为 本仓约定的 `code-block.css`
  *      （复制时由 add 转成 `<name>-css.ts`，类名表机制接管哈希隔离）；
  *   2. `:global(.line)` 原样保留（shiki 输出的行 span 是全局契约）。
+ *
+ * rc.5 增补（2026-11-19，issue 029）：diff 围栏的行色规则（`.diffAdd` / `.diffDel` /
+ * `.diffMarker` / `.diffContext` / `.diffHunk` / `.diffMeta` 与 `.diffLine` 布局），
+ * 逐条照抄上游；用到的都是 alias 层 token（`--dsw-alias-file-diff-*` 与
+ * `--dsw-alias-label-*`），无需改写。
  */
 
 .block {
@@ -150,4 +155,68 @@
   text-align: end;
   content: counter(source-line);
   user-select: none;
+}
+
+/* diff 围栏铺满整行的行色（取 Sidebar 文件 diff 的行色）；
+   行自身的内边距让标记列避开左侧色条。 */
+.diffFence :where(pre) {
+  padding: 8px 0 16px;
+}
+
+.diffLine {
+  display: inline-block;
+  width: 100%;
+}
+
+/* 带行号槽时 `.line` 已经是整行块级，保留它的 padding 盒即可，
+   不再叠一层 100% 宽度。 */
+.numbered .diffLine {
+  display: block;
+  width: auto;
+}
+
+.diffFence .diffLine {
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* 不换行的围栏横向滚动：行铺满可滚动宽度（不只是可见框），
+   底色与左侧色条滚过去也还在。 */
+.diffFence[data-code-wrap='false'] .diffLine {
+  width: max-content;
+  min-width: 100%;
+}
+
+.diffAdd {
+  background: var(--dsw-alias-file-diff-added-bg);
+  box-shadow: inset 3px 0 0 var(--dsw-alias-file-diff-added-marker);
+}
+
+.diffDel {
+  background: var(--dsw-alias-file-diff-deleted-bg);
+  box-shadow: inset 3px 0 0 var(--dsw-alias-file-diff-deleted-marker);
+}
+
+.diffMarker {
+  margin-inline-end: 1ch;
+}
+
+.diffAdd .diffMarker {
+  color: var(--dsw-alias-file-diff-added-marker);
+}
+
+.diffDel .diffMarker {
+  color: var(--dsw-alias-file-diff-deleted-marker);
+}
+
+.diffContext {
+  color: var(--dsw-alias-label-secondary);
+}
+
+.diffHunk {
+  color: var(--dsw-alias-label-secondary);
+}
+
+.diffMeta {
+  color: var(--dsw-alias-label-tertiary);
 }

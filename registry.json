@@ -1,8 +1,8 @@
 {
   "name": "dsh-ui-cell",
   "homepage": "https://github.com/dreamariner/dsh-ui-cell",
-  "dshVersion": "0.2.2-rc.1",
-  "dshCommit": "66491b05e3f05ad35bcdd4f6cd7ed26041d9e3db",
+  "dshVersion": "0.2.2-rc.5",
+  "dshCommit": "9c2670d3bce5275e0d1610272958121af87787bb",
   "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。 组件基线是混合态：animated-rows / checkbox / modal / quote-preview / risk-confirmation 五个件已重导入 DSH v0.2.2-rc.5（9c2670d3bc），其余条目仍是 rc.1 的复制件；顶层 dshVersion/dshCommit 只在全量重同步时动（沿用 rc.2 时的先例），逐条重 diff 的进度见 docs/issues。",
   "items": [
     {
@@ -78,7 +78,7 @@
         "icon",
         "modal-layer"
       ],
-      "upstream": "packages/client/ui-primitives/src/Modal.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起新增 tone='warning'）"
+      "upstream": "packages/client/ui-primitives/src/Modal.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "risk-confirmation",
@@ -94,7 +94,7 @@
         "checkbox",
         "modal"
       ],
-      "upstream": "packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起警告图标上收到 Modal 的 tone='warning'，勾选框改用共享 Checkbox 组件）"
+      "upstream": "packages/client/ui-primitives/src/RiskConfirmation.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "select",
@@ -131,7 +131,7 @@
         "icons.tsx"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/icons/index.tsx"
+      "upstream": "packages/client/ui-primitives/src/icons/index.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)（本仓只带常用图标子集且走 inline path 不跟官方 sprite；上游 rc.5 新增的 layers / eye / eye-off / upload 四个图形与 users-outline 坐标调整，本仓未收录的图形不受影响）"
     },
     {
       "name": "tooltip",
@@ -148,7 +148,7 @@
         "shortcut-keys",
         "dismiss-on-outside-pointer"
       ],
-      "upstream": "packages/client/ui-primitives/src/Tooltip.tsx"
+      "upstream": "packages/client/ui-primitives/src/Tooltip.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)（rc.5 起气泡文字色由 --dsw-static-neutral-bluish-00 改为 --dsw-alias-tooltip-label）"
     },
     {
       "name": "menu",
@@ -161,7 +161,11 @@
         "menu-group.tsx",
         "menu-group.css",
         "menu-surface.tsx",
-        "menu-surface.css"
+        "menu-surface.css",
+        "menu-row.tsx",
+        "submenu-panel.tsx",
+        "use-menu-submenu.ts",
+        "menu-submenu-position.ts"
       ],
       "dependencies": [
         "icon",
@@ -170,10 +174,9 @@
         "focus",
         "keyboard-composition",
         "shortcut-keys",
-        "tooltip",
-        "anchored-position"
+        "tooltip"
       ],
-      "upstream": "packages/client/ui-primitives/src/Menu.tsx"
+      "upstream": "packages/client/ui-primitives/src/Menu.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)（rc.5 起上游把 Menu 拆为 MenuRow / SubmenuPanel / useMenuSubmenu / menu-submenu-position，本仓沿用 kebab 命名共用一份 menu.css；子菜单卡片改 body portal + CSS anchor 定位，上游 rc.5 删除的 useAnchoredPosition 在本仓保留给自有 popover / combobox）"
     },
     {
       "name": "switch",
@@ -223,7 +226,7 @@
         "checkbox.css"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/Checkbox.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起新增 modalAutofocus）"
+      "upstream": "packages/client/ui-primitives/src/Checkbox.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "disclosure-row",
@@ -368,7 +371,7 @@
       "dependencies": [
         "icon"
       ],
-      "upstream": "packages/client/ui-primitives/src/Toast.tsx"
+      "upstream": "packages/client/ui-primitives/src/Toast.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)（rc.5 起动作文字色由 --dsw-static-deepseek-400 改为 --dsw-alias-toast-action）"
     },
     {
       "name": "hover-card",
@@ -425,7 +428,7 @@
         "animated-rows.css"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/AnimatedRows.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)"
+      "upstream": "packages/client/ui-primitives/src/AnimatedRows.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "user-message-bubble",
@@ -791,7 +794,7 @@
       "dependencies": [
         "overlay-top-margin"
       ],
-      "upstream": "packages/client/ui-primitives/src/useAnchoredPosition.ts"
+      "upstream": "packages/client/ui-primitives/src/useAnchoredPosition.ts（上游 rc.5 已删除该文件，改 CSS anchor 定位；本仓保留此件，供自有 popover / combobox 使用，不再被 menu 依赖）"
     },
     {
       "name": "dismiss-on-outside-pointer",
@@ -1155,7 +1158,7 @@
         "shiki": "4.4.3",
         "@shikijs/langs": "4.4.3"
       },
-      "upstream": "packages/client/ui-primitives/src/markdown/highlight.ts @ dsh v0.2.2-rc.1（本仓自有：静态语法集，不带懒加载与流式会话）",
+      "upstream": "packages/client/ui-primitives/src/markdown/highlight.ts @ dsh 0.2.2-rc.5 (9c2670d3bc)（本仓自有：静态语法集，不带懒加载与流式会话；上游 rc.5 新增的 Perl 语法补丁同样不跟，理由同 Go 补丁）",
       "rawStyles": [
         "shiki.css"
       ]
@@ -1168,14 +1171,15 @@
       "tier": "content",
       "files": [
         "code-block.tsx",
-        "code-block.css"
+        "code-block.css",
+        "diff-fence.ts"
       ],
       "dependencies": [
         "code-toolbar",
         "code-highlighting",
         "clipboard"
       ],
-      "upstream": "packages/client/ui-primitives/src/markdown/CodeBlock.tsx @ dsh v0.2.2-rc.1"
+      "upstream": "packages/client/ui-primitives/src/markdown/CodeBlock.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)（rc.5 新增 diff 围栏逐行渲染，本仓新增 diff-fence.ts 对应件）"
     },
     {
       "name": "diff-block",
@@ -1283,7 +1287,7 @@
         "@types/mdast": "^4.0.0",
         "micromark-util-types": "^2.0.0"
       },
-      "upstream": "packages/client/ui-primitives/src/markdown/（本仓保真复制；裁流式臂 / DraggableImage / 官方 LinkIcon；KaTeX CSS 文本化）",
+      "upstream": "packages/client/ui-primitives/src/markdown/ @ dsh 0.2.2-rc.5 (9c2670d3bc)（本仓保真复制；裁流式臂 / DraggableImage / 官方 LinkIcon；KaTeX CSS 文本化；上游 rc.5 新增的 FenceBlocks 拆分、copy-tex 与 MarkdownDelegate 新钩子本仓不跟）",
       "rawStyles": [
         "katex.css"
       ]
@@ -1335,7 +1339,7 @@
         "icon",
         "hover-card"
       ],
-      "upstream": "packages/client/ui-primitives/src/QuotePreview.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)"
+      "upstream": "packages/client/ui-primitives/src/QuotePreview.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "detail-document",

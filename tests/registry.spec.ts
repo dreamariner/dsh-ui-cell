@@ -411,6 +411,9 @@ describe('依赖分层（tier / npmDependencies，2026-11-06 起 issue 005）', 
       const text = readFileSync(join(src, file), 'utf8')
       for (const m of text.matchAll(/from\s+'([^']+)'/g)) {
         const spec = m[1]!
+        // 只认包名形状的 specifier（npm 包名不含空格等字符）：否则源码里
+        // 'rename from ' 这类英文字面量会被误判成 import 声明（误报）。
+        if (!/^(@[\w-]+\/)?[\w.-]+(\/[\w.-]+)*$/.test(spec)) continue
         if (spec.startsWith('.') || spec.startsWith('node:')) continue
         // 取包名（@scope/name 的第二段）
         const pkg = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0]!

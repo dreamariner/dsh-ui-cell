@@ -36,7 +36,7 @@ export { Textarea } from './textarea.tsx'
 export type { TextareaProps } from './textarea.tsx'
 
 // ── icon/icons.tsx ──
-export { ICON_REGULAR_STROKE, IconDatabaseOutlineRegular, IconWarningOutlineRegular, IconCloseOutlineRegular, IconChevronDownOutlineRegular, IconSearchOutlineRegular, IconCheckOutlineRegular, IconRefreshOutlineRegular, IconCheckCircleOutlineRegular, IconLoadingOutlineRegular, IconChevronUpOutlineRegular, IconPlusOutlineRegular, IconCopyOutlineRegular, IconWrapLinesOutlineRegular, IconNowrapFillRegular, IconWrapFillRegular, IconGlobeOutlineRegular, IconFileOutlineRegular } from './icons.tsx'
+export { ICON_REGULAR_STROKE, IconDatabaseOutlineRegular, IconWarningOutlineRegular, IconCloseOutlineRegular, IconChevronDownOutlineRegular, IconSearchOutlineRegular, IconCheckOutlineRegular, IconRefreshOutlineRegular, IconCheckCircleOutlineRegular, IconLoadingOutlineRegular, IconChevronUpOutlineRegular, IconPlusOutlineRegular, IconChevronLeftOutlineRegular, IconChevronRightOutlineRegular, IconCopyOutlineRegular, IconWrapLinesOutlineRegular, IconNowrapFillRegular, IconWrapFillRegular, IconGlobeOutlineRegular, IconFileOutlineRegular } from './icons.tsx'
 export type { IconProps } from './icons.tsx'
 
 // ── tooltip/tooltip.tsx ──
@@ -59,6 +59,18 @@ export { MenuGroup, observeStickyMenuGroups } from './menu-group.tsx'
 // ── menu/menu-surface.tsx ──
 export { MENU_TRANSITION_MS, MenuSurface } from './menu-surface.tsx'
 export type { MenuSurfaceProps } from './menu-surface.tsx'
+
+// ── menu/menu-row.tsx ──
+export { MenuRow, menuIconColumns, renderMenuDecoration } from './menu-row.tsx'
+
+// ── menu/submenu-panel.tsx ──
+export { SubmenuPanel } from './submenu-panel.tsx'
+
+// ── menu/use-menu-submenu.ts ──
+export { menuHoverAllowed, useMenuSubmenu } from './use-menu-submenu.ts'
+
+// ── menu/menu-submenu-position.ts ──
+export { SUBMENU_GAP, SUBMENU_MARGIN, submenuNeedsPage } from './menu-submenu-position.ts'
 
 // ── switch/switch.tsx ──
 export { Switch } from './switch.tsx'
@@ -307,7 +319,7 @@ export { Resizable } from './resizable.tsx'
 export type { ResizableProps } from './resizable.tsx'
 
 // ── sidebar/sidebar.tsx ──
-export { Sidebar, useSidebarCollapsed } from './sidebar.tsx'
+export { useSidebarCollapsed, Sidebar } from './sidebar.tsx'
 export type { SidebarProps } from './sidebar.tsx'
 
 // ── sidebar-nav/sidebar-nav.tsx ──
@@ -348,6 +360,10 @@ export type { HighlightSpan } from './code-highlighting.ts'
 // ── code-block/code-block.tsx ──
 export { CodeBlock } from './code-block.tsx'
 export type { CodeBlockProps } from './code-block.tsx'
+
+// ── code-block/diff-fence.ts ──
+export { DIFF_FENCE_LANGUAGES, isDiffFenceLanguage, parseDiffFence, isDiffContent, diffFenceTokens } from './diff-fence.ts'
+export type { DiffRow, DiffFence } from './diff-fence.ts'
 
 // ── diff-block/diff-block.tsx ──
 export { DEFAULT_DIFF_MAX_LINES, diffTotals, DiffBlock } from './diff-block.tsx'
@@ -425,7 +441,7 @@ export type { WebSourceView, WebSearchBlockProps, WebFetchBlockProps, WebBlockPr
 
 // ── quote-preview/quote-preview.tsx ──
 export { QuotePreview } from './quote-preview.tsx'
-export type { QuotePreviewRemoval, QuotePreviewProps } from './quote-preview.tsx'
+export type { QuotePreviewRemoval, QuoteSummary, QuotePreviewProps } from './quote-preview.tsx'
 
 // ── detail-document/detail-document.tsx ──
 export { detailDocumentState, useDetailDocumentLabels, DetailDocument } from './detail-document.tsx'

@@ -4,6 +4,8 @@
 // ⚠ 0.2.2 起官方图标改为文档级 sprite（<use href="#dsw-icon-*">，ui-theme 维护 symbol 表）。
 // 本仓刻意**不跟**：插件可能独立于宿主 sprite 运行，inline path 才符合「复制即独立」；
 // 五个图标的 path 已与 artwork.ts 逐字节比对，零变化，以下 inline 实现继续有效。
+// 0.2.2-rc.5 另补 chevron-left / chevron-right（Menu 子菜单的返回与进入箭头），
+// 这两个 path 在 rc.1 与 rc.5 的 artwork.ts 之间逐字节未变。
 // 官方 icons/ 共 190 个图标（全量复制体积大、且多数用不上），本仓只带首批必需的几个，
 // 需要更多时按官方复制规范从 checkout 补：复制对应 const Icon*Artwork 函数体 +
 // Regular/Medium 两个导出，命名保持 Icon{Name}Outline{Regular|Medium}。
@@ -138,6 +140,18 @@ export const IconChevronUpOutlineRegular = ({ size = 14, className }: IconProps)
 /** Regular one-pixel plus-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
 export const IconPlusOutlineRegular = ({ size = 16, className }: IconProps) => (
   <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1} aria-hidden="true"><path d="M8 2V14" stroke="currentColor"></path><path d="M2 8H14" stroke="currentColor"></path></svg>
+)
+
+// ── 0.2.2-rc.5 补充（Menu 子菜单的返回/进入箭头；自 artwork.ts svg(1) 提取 inline，Regular 权重）──
+
+/** Regular one-pixel chevron-left-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconChevronLeftOutlineRegular = ({ size = 14, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1} aria-hidden="true"><path d="M10 4L6.70711 7.29289C6.31658 7.68342 6.31658 8.31658 6.70711 8.70711L10 12" stroke="currentColor"></path></svg>
+)
+
+/** Regular one-pixel chevron-right-outline artwork（自 artwork.ts svg(1) 提取，权重已内联）. */
+export const IconChevronRightOutlineRegular = ({ size = 14, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1} aria-hidden="true"><path d="M6 12L9.29289 8.70711C9.68342 8.31658 9.68342 7.68342 9.29289 7.29289L6 4" stroke="currentColor"></path></svg>
 )
 
 // ── 0.2.2-rc.1 内容块补充（自 artwork.ts svg(1) 提取 inline，Regular 权重）──
