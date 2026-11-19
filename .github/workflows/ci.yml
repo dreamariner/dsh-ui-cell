@@ -52,6 +52,11 @@ jobs:
       - name: 护栏与单测
         run: pnpm test
 
+      # 组件用法速查（skills/dsh-ui-cell/references/components.md）是从文档站 demo
+      # 生成的：改了 demo 没重生成，速查表就与真组件脱节（消费端照着旧用法写代码）
+      - name: 用法速查与 demo 同步
+        run: pnpm skill:usage:check
+
   # ============ 2. 构建 + 发布面清单 ============
   build:
     runs-on: ubuntu-latest

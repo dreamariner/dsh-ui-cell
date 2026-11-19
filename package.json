@@ -23,7 +23,9 @@
     "typecheck": "tsc --noEmit",
     "docs:build": "node scripts/build-docs.mjs",
     "upstream:diff": "node scripts/diff-upstream.mjs",
-    "upstream:check": "node scripts/diff-upstream.mjs --expect docs/upstream-deviations.json"
+    "upstream:check": "node scripts/diff-upstream.mjs --expect docs/upstream-deviations.json",
+    "skill:usage": "node scripts/gen-component-usage.mjs",
+    "skill:usage:check": "node scripts/gen-component-usage.mjs --check"
   },
   "keywords": [
     "dsh",

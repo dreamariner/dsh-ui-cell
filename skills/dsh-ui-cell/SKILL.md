@@ -47,6 +47,8 @@ npx dsh-ui-cell add button input --to <插件根目录>
      组件样式靠它解析，**样式注入时必须拼在最前**，漏了就是静默失败（间距全没，零报错）
    - 「已存在未覆盖」：目标文件已存在且未加 `--force`；先确认它是不是插件的本地改动，再决定覆盖与否
 3. 组件 import：`import { Button } from '<插件根>/src/client/ui/button.tsx'`
+   （**先查用法**：本包 `references/components.md` 是逐组件的用法速查 —— 一句话说明 +
+   最小可用片段 + 可接的 props 字段名 + 依赖；完整 API 与行为保真看复制进插件的源码头部注释）
 4. 样式注入（panel-css 模式）：每个组件生成 `<name>-css.ts`，导出 `styles`（样式文本）与 `css`（类名表）；把用到的 `styles` 拼进插件已有的 `<style>` 注入器，**`foundation-css.ts` 排第一**
 5. baseline 三件套：`react` / `react-dom` / `clsx` 是所有组件的共同前提，**不会**出现在缺失提示里，消费端必须自带
 6. 验证：在插件根跑 `tsc --noEmit`，add 产物必须能独立编译（React 18 与 19 的类型都已验证）
@@ -145,6 +147,9 @@ markdown-viewport-highlighting）。
 
 ## ⑦ 深读（按需展开）
 
+- 本包 `references/components.md`：**逐组件用法速查**（按分组：原子件 / 容器与布局 /
+  浮层与反馈 / 输入进阶 / 内容块；每条一句话说明 + 最小可用片段 + props 字段名 + 依赖）。
+  生成物，改 demo 后跑 `pnpm skill:usage` 重生成
 - 本包 `references/spacing-motion.md`：**写自有组件时的间距与动效规则**（间距刻度、
   圆角档位、发丝线口径、官方动效三档映射、组合值例外、降级要求、进出场收尾），
   以及消费端 foundation 必须第一个注入

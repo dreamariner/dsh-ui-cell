@@ -14,6 +14,7 @@
 //   5. 组件间依赖显式建模且与实际导入一致
 //      （复审曾实证：单加 risk-confirmation 产出 3 个悬空导入的坏产物，CLI 退出码还是 0）
 import { existsSync, readFileSync, readdirSync, rmSync, mkdtempSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -246,6 +247,17 @@ describe('与上游同步（需要 DSH_CHECKOUT，缺省跳过）', () => {
       },
     )
     expect(out).toContain('通过')
+  })
+
+  // 组件用法速查（skills/dsh-ui-cell/references/components.md）是**从 demo 生成**的：
+  // 改了 demo 没重新生成，速查表就与真组件脱节（消费端照着旧用法写代码）。
+  it('组件用法速查与文档站 demo 同步（生成物不许漂移）', () => {
+    const out = execFileSync(
+      process.execPath,
+      [join(import.meta.dirname, '..', 'scripts', 'gen-component-usage.mjs'), '--check'],
+      { cwd: join(import.meta.dirname, '..'), encoding: 'utf8' },
+    )
+    expect(out).toContain('一致')
   })
 
   it('清单记录了来源与基线（基线锚由 vendor 从 checkout 派生，升级重跑自动更新）', () => {
