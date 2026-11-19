@@ -409,4 +409,36 @@ for (const row of rows) {
 
 const bad = rows.filter(r => r.status !== 'same').length
 console.log(bad > 0 ? `\n[diff-upstream] ${bad} 个条目与上游不一致\n` : '\n[diff-upstream] 全部一致\n')
+
+// ── 偏离登记制：实际偏离集合必须等于已登记集合 ──────────────────────────────
+// 偏离不是永久豁免：上游改了对应文件，本清单就会失配 → 强制重新审视一遍
+// （跟，还是继续不跟并更新理由）。
+const expectIdx = args.indexOf('--expect')
+if (expectIdx >= 0) {
+  const expectPath = args[expectIdx + 1]
+  if (!expectPath) {
+    console.error('[diff-upstream] --expect 需要一个登记文件路径')
+    process.exit(2)
+  }
+  const expected = JSON.parse(readFileSync(expectPath, 'utf8'))
+  const expectedNames = new Set((expected.deviations ?? []).map(d => d.entry))
+  const actualNames = new Set(rows.filter(r => r.status !== 'same').map(r => r.name))
+
+  const unregistered = [...actualNames].filter(n => !expectedNames.has(n))
+  const stale = [...expectedNames].filter(n => !actualNames.has(n))
+
+  console.log('[diff-upstream] 偏离登记核对：')
+  console.log(`[diff-upstream]   已登记 ${expectedNames.size} 个 | 实际 ${actualNames.size} 个`)
+  if (unregistered.length > 0) {
+    console.error(`[diff-upstream] ✗ 未登记的偏离（要么跟上上游，要么写进登记文件并说明理由）：\n${unregistered.map(n => `    - ${n}`).join('\n')}`)
+  }
+  if (stale.length > 0) {
+    console.error(`[diff-upstream] ✗ 登记了但已不再偏离（上游或本仓改了，要更新登记文件）：\n${stale.map(n => `    - ${n}`).join('\n')}`)
+  }
+  if (unregistered.length === 0 && stale.length === 0) {
+    console.log('[diff-upstream]   ✓ 实际偏离集合与登记一致')
+  }
+  process.exit(unregistered.length > 0 || stale.length > 0 ? 1 : 0)
+}
+
 process.exit(bad > 0 ? 1 : 0)

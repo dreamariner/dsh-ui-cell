@@ -22,7 +22,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "docs:build": "node scripts/build-docs.mjs",
-    "upstream:diff": "node scripts/diff-upstream.mjs"
+    "upstream:diff": "node scripts/diff-upstream.mjs",
+    "upstream:check": "node scripts/diff-upstream.mjs --expect docs/upstream-deviations.json"
   },
   "keywords": [
     "dsh",

@@ -72,7 +72,7 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force]
 - **类名一律带插件前缀 + 组件名段**：复制进插件后必须重命名，且最终类名必须**跨组件唯一**（同一 `<style>` 命名空间）。`add` 负责这件事（`.button` → `duc-button`，input 的 `.wrap` → `duc-input-wrap`，keyframes 同规则），不要手抄组件绕过。
 - **行为保真清单**：Modal 的焦点陷阱/Escape/焦点归还、SegmentedControl 的键盘走查与 roving tabindex、Modal 的层级栈——官方点名要保的用户依赖行为，不得简化。
 - **不改 DSH 内核**：组件源从 checkout 只读复制。
-- **基线锚**：`registry.json` 的 `dshVersion` / `dshCommit` 标注组件源基线（人工维护，DSH 升级时更新并按各条目 `upstream` 逐组件重 diff，改的是本仓 `src/`，消费者已复制走不受影响）；`tokens/official-tokens.json` 的同名字段由 `pnpm vendor` 从 checkout 自动派生（根 package.json 的 version + HEAD commit），不手改。
+- **基线锚**：`registry.json` 的 `dshVersion` / `dshCommit` 标注组件源基线（人工维护，DSH 升级时更新并按各条目 `upstream` 逐组件重 diff，改的是本仓 `src/`，消费者已复制走不受影响）；`tokens/official-tokens.json` 的同名字段由 `pnpm vendor` 从 checkout 自动派生（根 package.json 的 version + HEAD commit），不手改。重 diff 用 `pnpm upstream:diff`（`--base <commit>` 按上游变更集驱动），**有意偏离逐条登记**在 `docs/upstream-deviations.json`，`pnpm upstream:check` 断言实际偏离集合与登记一致（多一条少一条都红 —— 偏离不是永久豁免，上游改了对应文件就会逼你重新审视）。完整升级流程见 [`docs/wiki/05-DSH升级SOP.md`](./docs/wiki/05-DSH升级SOP.md)。
 
 ## 生态划分（同名与近邻声明）
 
@@ -84,7 +84,9 @@ dsh-ui-cell add <component...> --to <pluginDir> [--prefix duc-] [--force]
 - `registry.json` — 组件清单（名字、状态、文件、dependencies 依赖闭包、上游出处、DSH 基线）
 - `src/` — 权威组件源码（tsx + css，类名保留上游原名便于 diff）；`src/foundation.css` 是基础层（间距刻度）
 - `cli/` — `add` 实现（复制 + 前缀化[组件名段] + keyframes 改名 + CSS→TS 转换 + 依赖闭包解析 + 基础层带入 + 依赖分层交接[tier/npmDependencies/rawStyles 原样注入]）
-- `docs/wiki/` — 组件 Wiki（新手教程 + token 纪律 + 依赖分层 + 间距与动效规范 + 可视文档站 index.html，组件用法与实时效果）
+- `docs/wiki/` — 组件 Wiki（新手教程 + token 纪律 + 依赖分层 + 间距与动效规范 + **DSH 升级 SOP** + 可视文档站 index.html，组件用法与实时效果）
+- `docs/upstream-deviations.json` — 与上游的已登记偏离清单（每条带理由；CI 靠它区分「有意偏离」与「没跟上」）
+- `.github/workflows/ci.yml` — CI 三个 job：护栏测试、构建与发布面清单、上游保真核对（克隆公开上游的基线 tag 逐件比对 + 文档站新鲜度）
 - `tests/` — 自守护栏：`registry.spec.ts`（registry 一致性 + token 纪律 + 存在性 + 命名空间唯一性 + 依赖闭包 + 分层交接 + 间距动效规范）与 `markdown.spec.tsx`（内容块渲染回归）
 - `AGENTS.md` — 定位与红线（改本仓前先读）
 - `skills/dsh-ui-cell/SKILL.md` — Agent 接入手册（随 npm 包分发；消费端拷进插件的 `.agents/skills/`），`references/spacing-motion.md` 是写自有组件时的间距与动效规则

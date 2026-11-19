@@ -268,6 +268,20 @@ describe('与上游同步（需要 DSH_CHECKOUT，缺省跳过）', () => {
     expect(registry.dshVersion, 'registry 的 dshVersion 与 pinned 快照不一致').toBe(manifest.dshVersion)
     expect(registry.dshCommit, 'registry 的 dshCommit 与 pinned 快照不一致').toBe(manifest.dshCommit)
   })
+
+  // 偏离登记文件（docs/upstream-deviations.json）的基线也要跟着锚点走。
+  // 登记文件里写着「基于 rc.5 的这 10 条偏离」，锚点却已经到 rc.6 时，
+  // 那份登记就是过期误导（CI 的 upstream:diff 会失配，但本地读文件的人会被误导）。
+  it('偏离登记文件的基线与 registry 锚点一致', () => {
+    const deviations = JSON.parse(
+      readFileSync(join(import.meta.dirname, '..', 'docs', 'upstream-deviations.json'), 'utf8'),
+    ) as { baseline: { dshVersion: string; dshCommit: string }; deviations: { entry: string; reason: string }[] }
+    expect(deviations.baseline.dshVersion, '偏离登记文件的基线版本与 registry 锚点不一致').toBe(registry.dshVersion)
+    expect(deviations.baseline.dshCommit, '偏离登记文件的基线 commit 与 registry 锚点不一致').toBe(registry.dshCommit)
+    // 每条偏离都要写理由（没有理由的偏离等于没登记）
+    const noReason = deviations.deviations.filter(d => !d.reason || d.reason.trim() === '').map(d => d.entry)
+    expect(noReason, `这些偏离没写理由：\n${noReason.join('\n')}`).toEqual([])
+  })
 })
 
 describe('上游 rc.5 的具体改动已落地（2026-11-19 审计，issue 030）', () => {

@@ -116,6 +116,35 @@ DSH_CHECKOUT=<checkout> pnpm docs:build
 `tokens/official-tokens.json` 的同名字段一致。然后再跑一次 `pnpm upstream:diff`，
 结果应当是「一致 N / 偏离 M（全部已登记）」。
 
+## 一之二、偏离登记制（CI 靠它区分「有意偏离」与「没跟上」）
+
+本仓与上游的**有意偏离**逐条登记在 [`docs/upstream-deviations.json`](../upstream-deviations.json)
+（每条带理由，基线字段记着它是基于哪个上游版本写的）：
+
+```bash
+DSH_CHECKOUT=<checkout> pnpm upstream:check   # 实际偏离集合 == 登记集合？
+```
+
+- **多一条**（实际有偏离但没登记）→ 红：要么跟上上游，要么登记并写理由
+- **少一条**（登记了但已不偏离）→ 红：上游或本仓改了，要更新登记文件
+
+**偏离不是永久豁免**：上游改了对应文件，登记就失配 → 每次升级都会逼你把每条偏离
+重新审视一遍（还成立吗？理由还准确吗？）。
+
+## 一之三、CI 做了什么（护栏不只在本机跑）
+
+`.github/workflows/ci.yml`，三个 job（2026-11-19 起）：
+
+| job | 做什么 | 抓住什么 |
+|---|---|---|
+| guardrails | `pnpm typecheck` + `pnpm test` | 157 条护栏的主体 |
+| build | tsdown 产物 + `npm pack` 清单 | 「装上不能用」（bin 指向的产物没落盘）、包里漏文件 |
+| upstream-fidelity | 克隆公开上游的基线 tag → token 清单逐字节一致 + 逐件保真（偏离须已登记）+ 文档站新鲜度 | 上游保真三条纪律此前只能本机跑 |
+
+上游保真那三条（token 清单逐字节一致、逐件内容一致或已登记偏离、文档站是最新构建）
+此前**只能在本机跑**（本机要备一份 DSH checkout）。公开上游仓有我们锚定的那个 tag，
+CI 自己克隆即可，零 secrets。
+
 ## 二、本轮（rc.1 → rc.5）的十个教训
 
 | # | 教训 | 实证 | 现在的护栏 |

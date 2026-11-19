@@ -1,0 +1,174 @@
+# dsh-ui-cell CI（护栏主体 + 上游保真核对）
+#
+# 三个 job：
+#   1. guardrails        : pnpm typecheck + pnpm test（本仓 157 条护栏的主体）
+#   2. build             : tsdown 产物 + npm 包的发布面清单
+#   3. upstream-fidelity : 克隆公开上游的基线 tag，逐件核对保真 + token 清单 + 站点新鲜度
+#
+# 为什么要有第 3 个 job：上游保真的三条纪律（token 清单与上游逐字节一致、
+# 逐件内容与上游一致或已登记偏离、文档站是最新构建）此前**只能在本机跑**
+# —— 本机要备一份 DSH checkout。而公开上游仓（deepseek-ai/deepseek-harness）
+# 有我们锚定的那个 tag，CI 自己克隆即可，不需要 secrets。
+#
+# ⚠ 不要在这里用 `|| echo` 吞掉非零退出码：护栏的全部价值就在于它会红。
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 最小权限：三个 job 零 secrets、不发布、不碰 releases，只读 contents
+permissions:
+  contents: read
+
+jobs:
+  # ============ 1. 护栏主体（类型 + 护栏测试）============
+  guardrails:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      # 护栏都在 tests/registry.spec.ts 里：registry 一致性、token 两道闸、
+      # 依赖闭包「单加即坏」、基线锚一致、版本注记一致、公开面不泄露本机与私有信息
+      - name: typecheck
+        run: pnpm typecheck
+
+      - name: 护栏与单测
+        run: pnpm test
+
+  # ============ 2. 构建 + 发布面清单 ============
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: guardrails
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建 CLI 产物
+        run: pnpm build
+
+      # package.json 的 bin 指向 lib/cli.mjs —— 产物没落在这个位置，
+      # 发布的包就是「装上不能用」：装完了敲 dsh-ui-cell 报 command not found
+      - name: 产物与发布面清单
+        run: |
+          set -e
+          test -f lib/cli.mjs || { echo "缺少 lib/cli.mjs（bin 指向它）"; exit 1; }
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs'
+            const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
+            const files = pkg.files ?? []
+            const required = ['lib', 'src', 'skills', 'registry.json', 'AGENTS.md', 'README.md']
+            const missing = required.filter(f => !files.includes(f))
+            if (missing.length > 0) {
+              console.error('package.json 的 files 少了：' + missing.join(', '))
+              process.exit(1)
+            }
+            console.log('✓ 发布面清单包含：' + files.join(', '))
+          "
+
+      # npm pack 的真实清单：files 字段是白名单，但构建过程可能带出多余目录
+      # --ignore-scripts 必须带：否则 pack 会再跑一遍 prepare（tsdown），
+      # 它的构建日志会混进 --json 的输出里，JSON 解析直接炸。
+      - name: npm pack 清单核对
+        run: |
+          set -e
+          npm pack --dry-run --json --ignore-scripts > /tmp/pack.json
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs'
+            const pack = JSON.parse(readFileSync('/tmp/pack.json', 'utf8'))[0]
+            const names = pack.files.map(f => f.path)
+            const must = ['registry.json', 'package.json', 'README.md', 'AGENTS.md']
+            const missing = must.filter(f => !names.includes(f))
+            if (missing.length > 0) { console.error('包里少了：' + missing.join(', ')); process.exit(1) }
+            if (!names.some(n => n.startsWith('lib/'))) { console.error('包里没有 lib/ 产物'); process.exit(1) }
+            if (!names.some(n => n.startsWith('skills/'))) { console.error('包里没有 skills/（skill 是分发物的一部分）'); process.exit(1) }
+            if (names.some(n => n.startsWith('node_modules/'))) { console.error('包里混进了 node_modules'); process.exit(1) }
+            console.log('✓ npm 包 ' + names.length + ' 个文件，清单符合预期')
+          "
+
+  # ============ 3. 上游保真核对（需要公开上游的基线 tag）============
+  upstream-fidelity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: guardrails
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      # 基线 tag 由 registry.json 的 dshVersion 推导（dsh-v0.2.2-rc.5），
+      # 不写死在工作流里 —— 升级时改 registry 就够了，工作流不用跟着改
+      - name: 克隆公开上游的基线 tag
+        run: |
+          set -e
+          TAG="dsh-v$(node -p "require('./registry.json').dshVersion")"
+          echo "上游基线 tag：$TAG"
+          git clone --depth 1 --branch "$TAG" \
+            https://github.com/deepseek-ai/deepseek-harness.git /tmp/dsh-upstream
+          git -C /tmp/dsh-upstream log -1 --format='基线 commit：%H'
+
+      # token 清单（tokens/official-tokens.json）与上游逐字节一致：
+      # token 增删改名都要重新同步，否则本仓引用的 token 可能已经不存在了
+      - name: token 清单与上游逐字节一致
+        env:
+          DSH_CHECKOUT: /tmp/dsh-upstream
+        run: pnpm vendor:check
+
+      # 逐件保真：53 个有上游出处的条目，要么内容与上游一致，
+      # 要么是 docs/upstream-deviations.json 里**已登记**的偏离（多一个少一个都红）
+      - name: 逐件保真核对（偏离须已登记）
+        env:
+          DSH_CHECKOUT: /tmp/dsh-upstream
+        run: pnpm upstream:diff --expect docs/upstream-deviations.json
+
+      # 文档站是提交进仓的生成物：改了源文件没重建站点，公开面护栏就抓不到
+      # 新的泄露面。这里重建一次并与仓里的产物比对（构建是确定性的，同输入同输出）
+      - name: 文档站新鲜度（重建结果须与仓内产物一致）
+        env:
+          DSH_CHECKOUT: /tmp/dsh-upstream
+        run: |
+          set -e
+          pnpm docs:build
+          if ! git diff --exit-code --stat docs/wiki/index.html; then
+            echo "文档站产物与源文件不同步：改了 src/ 或 registry.json 就要重建站点（pnpm docs:build）"
+            exit 1
+          fi
+          echo "✓ 文档站是最新的"

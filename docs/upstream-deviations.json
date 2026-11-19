@@ -1,0 +1,59 @@
+{
+  "note": "本仓与 DSH 上游的**已登记偏离**清单。CI 用它判「有意偏离」与「没跟上」：scripts/diff-upstream.mjs --expect docs/upstream-deviations.json 断言实际偏离集合与本文件一致（多一个少一个都红）。偏离不是永久豁免：上游改了对应文件，本清单就会失配，强制重新审视一遍（是跟还是继续不跟，理由要更新）。每条偏离的细节同时写在 registry.json 对应条目的 upstream 字段里。",
+  "baseline": {
+    "dshVersion": "0.2.2-rc.5",
+    "dshCommit": "9c2670d3bce5275e0d1610272958121af87787bb"
+  },
+  "deviations": [
+    {
+      "entry": "icon",
+      "kind": "保真偏离",
+      "reason": "上游 0.2.2 起图标改为文档级 sprite（<use href=\"#dsw-icon-*\">，ui-theme 维护 symbol 表），本仓刻意不跟：插件可能独立于宿主 sprite 运行，inline path 才符合「复制即独立」。本仓只带常用图标子集（19 个），不跟上游 rc.5 新增的 layers / eye / eye-off / upload 图形与 users-outline 坐标调整。"
+    },
+    {
+      "entry": "disclosure-row",
+      "kind": "本仓侧功能改动",
+      "reason": "内容区改相位状态机，展开收起有动画（docs/issues/015）。"
+    },
+    {
+      "entry": "path-label",
+      "kind": "依赖内联",
+      "reason": "上游依赖 workspace 包 @deepseek-ai/dsh-util-workspace-path，本仓内联为 path-parts.ts（第三方插件不依赖 DSH workspace 包）。"
+    },
+    {
+      "entry": "config-field",
+      "kind": "保真偏离",
+      "reason": "控件字号归主题档位、按钮去 UA padding、select 换 DSH chevron（DOM 多一层包裹，箭头不再由浏览器自绘），见 docs/issues/014。"
+    },
+    {
+      "entry": "anchored-position",
+      "kind": "上游已删、本仓保留",
+      "reason": "上游 rc.5 删除了 useAnchoredPosition.ts（改用 CSS anchor 定位），本仓保留此件供自有 popover / combobox 使用，不再被 menu 依赖。"
+    },
+    {
+      "entry": "clipboard-copy",
+      "kind": "类型放宽",
+      "reason": "setTimeout 的 ref 类型放宽为 number，浏览器与 Node 都能编译。"
+    },
+    {
+      "entry": "code-highlighting",
+      "kind": "本仓自有实现",
+      "reason": "静态语法集，不带上游的懒加载与流式会话；上游 rc.5 新增的 Perl 语法补丁同样不跟，理由同 Go 补丁。"
+    },
+    {
+      "entry": "code-block",
+      "kind": "本仓自研对应件",
+      "reason": "上游 rc.5 的 diff 围栏逐行渲染，本仓新增 diff-fence.ts 对应件实现同等能力。"
+    },
+    {
+      "entry": "markdown-text",
+      "kind": "内容块裁剪",
+      "reason": "裁流式臂 / DraggableImage / 官方 LinkIcon；KaTeX CSS 文本化。上游 rc.5 新增的 FenceBlocks 拆分、copy-tex 与 MarkdownDelegate 新钩子本仓不跟（docs/issues/005）。"
+    },
+    {
+      "entry": "read-block",
+      "kind": "内容块裁剪",
+      "reason": "裁流式臂，去掉 useSyncExternalStore 的增量订阅（docs/issues/005）；上游 rc.5 该文件未变。"
+    }
+  ]
+}
