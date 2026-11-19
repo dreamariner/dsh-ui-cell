@@ -11,8 +11,13 @@ DSH 官方把设计 token 分三层：
 | `--dsw-specific-*` | 场景级（`--dsw-specific-menu`） | 绑定具体宿主场景 |
 
 第三方插件样式只许引用 alias 层。本仓的所有样式（官方保真件 + 本仓自有件）遵守同一条纪律；
-官方复制件里官方自己用了 static/specific/字面色的（tooltip/toast/hover-card 等），
+官方复制件里官方自己用了 static/specific/字面色的（hover-card / image-lightbox /
+user-message-bubble / zoom-controls / shiki / code-block / markdown-text 等），
 按「保真优先」在护栏的 `OFFICIAL_EXCEPTIONS` 逐文件登记并写明理由，升级重 diff 时跟随官方。
+
+> 例外表会**越跟越少**：上游 rc.5 把 tooltip 的气泡文字色、toast 的动作色、
+> json-tree 的整套色板都换成 alias token，本仓跟完后这三个文件退出版例外表
+> （json-tree 连字面色与暗色覆盖块一起删了）。上游修掉的地方，本仓不再靠例外兜着。
 
 ## 二、圆角档位：按「组件的体量」选，不按好看选
 
@@ -87,7 +92,8 @@ pnpm test                                     # 含「清单与上游逐字节�
 
 ## 六、例外与裁剪（何时「不保真」是正当的）
 
-- **官方复制件例外**：官方自己用 static/字面色的，登记进 `OFFICIAL_EXCEPTIONS` 保真保留
+- **官方复制件例外**：官方自己用 static/字面色的，登记进 `OFFICIAL_EXCEPTIONS` 保真保留；
+  上游后来改用 alias token 的，本仓跟完后**退出例外表**（例：tooltip / toast / json-tree）
 - **内容块的 DSH 私有耦合裁剪**（issue 005）：官方 markdown 家族里的流式增量解析、
   DraggableImage（DSH workspace 的 file-drag 耦合）、官方 LinkIcon（simple-icons 运行时依赖）、
   品牌件（FileTypeIcon / SiteGlyph）——第三方插件用不上或代价不成比例，裁掉并写明理由。

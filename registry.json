@@ -3,7 +3,7 @@
   "homepage": "https://github.com/dreamariner/dsh-ui-cell",
   "dshVersion": "0.2.2-rc.5",
   "dshCommit": "9c2670d3bce5275e0d1610272958121af87787bb",
-  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。 组件基线是混合态：animated-rows / checkbox / modal / quote-preview / risk-confirmation 五个件已重导入 DSH v0.2.2-rc.5（9c2670d3bc），其余条目仍是 rc.1 的复制件；顶层 dshVersion/dshCommit 只在全量重同步时动（沿用 rc.2 时的先例），逐条重 diff 的进度见 docs/issues。",
+  "notes": "组件源自 DSH 官方 ui-primitives（practices.md sanctioned 的复制路径），类名 duc- 化，样式只引用 --dsw-alias-* / --dsw-radius-* token。升级 DSH 时按 upstream 字段逐组件重 diff，不是整包覆盖；重 diff 用 scripts/diff-upstream.mjs（--base <commit> 按上游变更集驱动）。items[].dependencies 是组件间依赖，add 时自动解析闭包（deps 先于本体复制）；护栏校验声明与实际导入一致。 组件基线：0.2.2-rc.5（9c2670d3bc）。全 53 个有上游出处的条目已逐条比对：内容与上游一致，或偏离已写进各自的 upstream 字段（图标 sprite 化不跟、markdown 家族裁剪、disclosure-row 相位机、config-field 控件改写等）。",
   "items": [
     {
       "name": "foundation",
@@ -27,7 +27,7 @@
         "button.css"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/Button.tsx"
+      "upstream": "packages/client/ui-primitives/src/Button.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)"
     },
     {
       "name": "input",
@@ -148,7 +148,7 @@
         "shortcut-keys",
         "dismiss-on-outside-pointer"
       ],
-      "upstream": "packages/client/ui-primitives/src/Tooltip.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)（rc.5 起气泡文字色由 --dsw-static-neutral-bluish-00 改为 --dsw-alias-tooltip-label）"
+      "upstream": "packages/client/ui-primitives/src/Tooltip.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起气泡文字色由 --dsw-static-neutral-bluish-00 改为 --dsw-alias-tooltip-label，并加 darwin 平台的 -webkit-app-region: no-drag；两处本仓均已跟）"
     },
     {
       "name": "menu",
@@ -278,7 +278,7 @@
         "path-parts.ts"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/PathLabel.tsx"
+      "upstream": "packages/client/ui-primitives/src/PathLabel.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（本仓偏离：上游依赖 workspace 包 @deepseek-ai/dsh-util-workspace-path，本仓内联为 path-parts.ts（插件不依赖 DSH workspace 包））"
     },
     {
       "name": "config-field",
@@ -428,7 +428,7 @@
         "animated-rows.css"
       ],
       "dependencies": [],
-      "upstream": "packages/client/ui-primitives/src/AnimatedRows.tsx @ dsh 0.2.2-rc.5 (9c2670d3bc)"
+      "upstream": "packages/client/ui-primitives/src/AnimatedRows.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起视口按浏览器窗口裁剪（visibleViewport），快照里存 viewport；本仓已跟，仅类型声明顺序与上游不同）"
     },
     {
       "name": "user-message-bubble",
@@ -1082,7 +1082,7 @@
       "dependencies": [
         "clipboard"
       ],
-      "upstream": "packages/client/ui-primitives/src/use-clipboard-copy.ts"
+      "upstream": "packages/client/ui-primitives/src/use-clipboard-copy.ts @ dsh v0.2.2-rc.5 (9c2670d3bc)（本仓偏离：setTimeout 的 ref 类型放宽为 number，浏览器与 Node 都能编译）"
     },
     {
       "name": "json-tree",
@@ -1097,7 +1097,7 @@
         "icon",
         "menu"
       ],
-      "upstream": "packages/client/ui-primitives/src（对应 json-tree）"
+      "upstream": "packages/client/ui-primitives/src/JsonTree.tsx @ dsh v0.2.2-rc.5 (9c2670d3bc)（rc.5 起字面色板改为 --dsw-alias-json-tree-* token 并删掉暗色覆盖块；本仓已跟，token 存在性由 pinned 清单校验）"
     },
     {
       "name": "json-block",
@@ -1309,7 +1309,7 @@
         "clipboard",
         "markdown-text"
       ],
-      "upstream": "packages/client/ui-primitives/src/ReadBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)"
+      "upstream": "packages/client/ui-primitives/src/ReadBlock.tsx @ dsh v0.2.2-rc.1 (66491b05e3)（本仓偏离：裁流式臂，去掉 useSyncExternalStore 的增量订阅，见 docs/issues/005；上游 rc.5 该文件未变）"
     },
     {
       "name": "web-block",

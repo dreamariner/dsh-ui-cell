@@ -9,7 +9,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './button.css'
 
-/** Visual variant, each backed by the --dsw-alias-button-* token family. */
+/** Visual variant, each backed by its --dsw-alias-button-* token family. */
 export type ButtonVariant = 'primary' | 'ghost' | 'outline' | 'toolbar'
 
 type ButtonProps = {

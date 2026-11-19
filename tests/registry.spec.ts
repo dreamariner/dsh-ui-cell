@@ -88,11 +88,12 @@ describe('token 纪律（DSH 官方规范）', () => {
   // 未登记的文件出现这些形态仍然要红。
   // hover-card.css 曾带字面深底（#2C2C2E / #FFFFFF，旧版上游的写法），2026-11-19 对齐
   // 现行上游（hovercard alias token 族）后恢复逐字节一致，退出例外表 —— 它不再被允许字面色。
+  // json-tree.css 同理：上游 rc.5 把字面色板换成 --dsw-alias-json-tree-* token 族并删掉
+  // 暗色覆盖块，本仓跟随后退出例外表（2026-11-19，issue 030）。
+  // tooltip.css / toast.css 的 --dsw-static-* 例外同样失效：上游 rc.5 把气泡文字色
+  // 与 toast 动作色都换成 alias token，本仓已跟 → 一并退出例外表。
   const OFFICIAL_EXCEPTIONS = new Map<string, RegExp[]>([
-    ['tooltip.css', [/--dsw-static-/]],
-    ['toast.css', [/--dsw-static-/]],
     ['hover-card.css', [/--dsw-specific-/]],
-    ['json-tree.css', [/#[0-9a-fA-F]{3,8}\b/, /\brgba?\(/]],
     ['image-lightbox.css', [/--dsw-specific-/]],
     ['user-message-bubble.css', [/--dsw-specific-/]],
     ['zoom-controls.css', [/#[0-9a-fA-F]{3,8}\b/]],
@@ -231,6 +232,48 @@ describe('与上游同步（需要 DSH_CHECKOUT，缺省跳过）', () => {
     expect(manifest.dshVersion).toMatch(/^0\.2\./)
     expect(manifest.dshCommit).toMatch(/^[0-9a-f]{40}$/)
     expect(manifest.hostContextVariables).toContain('--dsh-frame-chrome-top')
+  })
+
+  // 基线锚一致：registry 的组件基线与 pinned token 快照必须指向同一个上游版本。
+  // 2026-11-19 之前没有这条护栏，于是出现过「token 清单已到 rc.5、registry 还停 rc.1」
+  // 的错位（组件基线与 token 基线说的不是一回事），而当时没有任何检查会报。
+  it('registry 的基线锚与 pinned token 快照一致（同一个上游版本）', () => {
+    const manifest = JSON.parse(
+      readFileSync(join(import.meta.dirname, '..', 'tokens', 'official-tokens.json'), 'utf8'),
+    ) as { dshVersion: string; dshCommit: string }
+    expect(registry.dshVersion, 'registry 的 dshVersion 与 pinned 快照不一致').toBe(manifest.dshVersion)
+    expect(registry.dshCommit, 'registry 的 dshCommit 与 pinned 快照不一致').toBe(manifest.dshCommit)
+  })
+})
+
+describe('上游 rc.5 的具体改动已落地（2026-11-19 审计，issue 030）', () => {
+  const css = (name: string): string => readFileSync(join(src, name), 'utf8')
+  const tsx = (name: string): string => readFileSync(join(src, name), 'utf8')
+
+  it('json-tree：字面色板已换成 alias token 族（rc.5 起上游这么做，且不再有暗色覆盖块）', () => {
+    const text = css('json-tree.css')
+    for (const key of ['property', 'string', 'number', 'keyword', 'punctuation', 'icon', 'hover']) {
+      expect(text, `json-tree 没用上 --dsw-alias-json-tree-${key}`).toContain(`var(--dsw-alias-json-tree-${key})`)
+    }
+    // 不能再有字面色板与暗色覆盖块（上游 rc.5 删掉了）
+    expect(text).not.toMatch(/#[0-9a-fA-F]{6}\b/)
+    expect(text).not.toMatch(/rgba?\(/)
+    expect(text).not.toContain('data-ds-dark-theme')
+  })
+
+  it('tooltip：macOS 桌面端的气泡不参与窗口拖拽（rc.5 起上游加的 darwin no-drag）', () => {
+    expect(css('tooltip.css')).toMatch(/html\[data-platform='darwin'\][^\n]*no-drag/)
+  })
+
+  it('animated-rows：视口按浏览器窗口裁剪，且快照里带 viewport（rc.5 起上游的可见性判定）', () => {
+    const text = tsx('animated-rows.tsx')
+    expect(text).toContain('function visibleViewport(')
+    expect(text).toMatch(/top:\s*Math\.max\(0, rect\.top\)/)
+    expect(text).toMatch(/snapshot\.viewport/)
+  })
+
+  it('button：上游 rc.5 的注释措辞已同步（保真件的注释也跟）', () => {
+    expect(tsx('button.tsx')).toContain('backed by its --dsw-alias-button-* token family')
   })
 })
 
