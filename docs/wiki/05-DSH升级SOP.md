@@ -232,7 +232,7 @@ npx dsh-ui-cell add button input modal --to my-plugin               # add 能跑
 ### 最后两笔
 
 - **父仓的 submodule 指针**：本仓在 `dreamariner/` 下，父仓要推进指针（父仓里若已有其它未推提交，自己决定什么时候一起推）
-- **站点**：文档站是提交进仓的生成物，Pages 直接指向 `docs/wiki`；改了站点源要**重建再推**，发版本身不需要额外动作
+- **站点**：文档站是提交进仓的生成物，GitHub Pages 由 `pages.yml` 工作流原样发布 `docs/wiki/`（Pages 分支模式只认 `/` 与 `/docs`，够不着 `docs/wiki`，故走 workflow 部署）；改了站点源要**重建再推**，推送后工作流自动发布，发版本身不需要额外动作
 
 ## 二、本轮（rc.1 → rc.5）的十个教训
 

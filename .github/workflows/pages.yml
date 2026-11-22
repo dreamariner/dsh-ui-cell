@@ -1,0 +1,39 @@
+# GitHub Pages 部署：把 docs/wiki/（自包含文档站 + wiki markdown）原样发上去。
+#
+# 为什么不做构建：docs/wiki/index.html 是**提交进仓的生成物**（scripts/build-docs.mjs
+# 产出，单文件自包含、零外部请求），新鲜度由 ci.yml 的 upstream-fidelity job 守着
+# （克隆上游基线 → 重建对比）。这里只做「上传 + 发布」，零构建零依赖。
+#
+# 注意：Pages 的分支模式只认 / 或 /docs 两个源目录（API 限制），docs/wiki 够不着，
+# 所以走 workflow 部署（2026-11-22 起）。改了站点源要重建再推（pnpm docs:build）。
+
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/wiki/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs/wiki
+      - id: deployment
+        uses: actions/deploy-pages@v4
