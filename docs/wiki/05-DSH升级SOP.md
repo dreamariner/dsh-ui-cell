@@ -165,6 +165,7 @@ DSH 升级的最后一步：把当前状态发成 npm 包。以下是 2026-11-19
 | CI 绿 | `gh run list --limit 1` | 三个 job 全 success |
 | 版本没发过 | `npm view @dreamariner/dsh-ui-cell versions` | 不含当前版本 |
 | 打包清单 | `pnpm publish --dry-run` | 无警告（**也要求工作树干净**，见下） |
+| 版本戳先 bump 再重建 | 顺序：先改 `package.json` 版本号，**再** `pnpm docs:build` | CI 的文档站新鲜度检查会重建对比，站内版本戳（`build-docs.mjs @ <版本>`）取自当时的 package.json；先建后 bump = 差 3 行版本戳 = CI 红（2026-11-20 发 0.6.1 实踩，11-22 才发现） |
 
 ### 发布
 
