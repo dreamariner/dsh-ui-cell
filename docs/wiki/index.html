@@ -7729,7 +7729,9 @@ body { margin: 0; font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Micros
 .doc-side .group { font-size: 11px; color: #8b949e; margin: 14px 8px 4px; letter-spacing: 0.05em; }
 .doc-theme-btn { flex: none; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid #d0d4da; border-radius: 6px; background: #fff; color: #57606a; cursor: pointer; }
 .doc-theme-btn:hover { background: #eef0f2; color: #1f2328; }
-.doc-main { flex: 1 1 0; min-width: 0; padding: 28px 40px 80px; max-width: 980px; }
+/* 内容列：限宽 980px 后用 auto 外边距在右栏空间居中。
+   （flex: 1 1 0 + max-width 只把宽度限住，不居中 —— 宽屏下剩余空间全甩到右侧） */
+.doc-main { flex: 1 1 0; min-width: 0; padding: 28px 40px 80px; max-width: 980px; margin: 0 auto; }
 .doc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .doc-top h2 { margin: 0; font-size: 20px; }
 .doc-intro { color: #57606a; font-size: 13px; line-height: 1.7; margin: 0 0 24px; }
