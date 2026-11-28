@@ -37,6 +37,19 @@
   opacity: 0.4;
 }
 
+/* 展开后的选项列表由 Chromium 自绘，页面 CSS 够不到它，配色只认 select 元素的
+   used color-scheme：不声明时按 light 处理，Windows 深色主题下弹层白底
+   （macOS 的弹层是系统 NSMenu、跟随系统外观，所以此前只在 Windows 显形）。
+   显式声明：亮色 light，深色挂宿主主题属性 body[data-ds-dark-theme]，
+   让弹层与面板配色同源（issue 039）。 */
+.select {
+  color-scheme: light;
+}
+
+body[data-ds-dark-theme] .select {
+  color-scheme: dark;
+}
+
 .chevron {
   position: absolute;
   right: 8px;
